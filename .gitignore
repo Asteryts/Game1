@@ -1,0 +1,9 @@
+# Partida guardada de cada jugador (records y logros)
+datos_nova.txt
+
+# Carpetas que Processing crea al exportar
+application.*/
+windows-*/
+linux-*/
+macos-*/
+out/
