@@ -33,6 +33,7 @@ final int ESC_TELROTO = 61;
 final int ESC_PENALES = 62;
 final int ESC_FOTO = 63;
 final int ESC_TECLADO = 64;
+final int ESC_MANOTAZO = 65;   // minijuego con la camara (Camara.pde)
 
 // colores neon (son "final" para que se puedan usar desde cualquier pestaña sin problemas de orden)
 final color neonCian = #00F0FF;
@@ -288,12 +289,12 @@ void dibujarAvisos() {
 // ------------------------------------- LOGROS -------------------------------------
 String[] logroNombre = {"Bienvenido a Nova", "Ojo critico", "Agente del caos", "Jugador arcade", "Maestro verificador", "Cazabots",
   "Memoria de elefante", "Explorador urbano", "En vivo y en directo", "Fin de la historia", "Lengua suelta", "Atrapabulos",
-  "Oido fino", "Goleador", "Ojo de halcon", "Dedos veloces", "Amigo de los gatos"};
+  "Oido fino", "Goleador", "Ojo de halcon", "Dedos veloces", "Amigo de los gatos", "Mano de NOVA"};
 String[] logroDesc = {"Llega al mapa de la ciudad", "Alcanza 50 de confiabilidad", "Llega a 70 de viralidad", "Juega cualquier minijuego",
   "8 aciertos o mas en el Verificador", "Elimina 15 bots en una ronda", "Completa el Rastreo de Fuentes", "Visita todos los lugares de Nova",
   "Termina el programa de Nova Noticias", "Descubre un final", "Habla con 10 personajes", "300 puntos en Atrapa Bulos",
-  "Llega a la ronda 7 en Telefono Roto", "Mete 5 de 5 penales", "Encuentra las 10 diferencias", "600 puntos en Teclado Veloz", "Hazte amigo de un gato del mapa"};
-boolean[] logros = new boolean[17];
+  "Llega a la ronda 7 en Telefono Roto", "Mete 5 de 5 penales", "Encuentra las 10 diferencias", "600 puntos en Teclado Veloz", "Hazte amigo de un gato del mapa", "300 puntos en Manotazo"};
+boolean[] logros = new boolean[18];
 
 void desbloquear(int i) {
   if (i < 0 || i >= logros.length || logros[i]) return;
@@ -412,6 +413,7 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_PENALES) dibujarPenales();
   else if (scene == ESC_FOTO) dibujarFotoTrucada();
   else if (scene == ESC_TECLADO) dibujarTeclado();
+  else if (scene == ESC_MANOTAZO) dibujarManotazo();
   else if (esCaminable(scene)) dibujarEscenaCaminable();
   else if (scene == ESC_ESTUDIO) dibujarEstudio();
   else if (scene == ESC_PLAZA) dibujarPlaza();

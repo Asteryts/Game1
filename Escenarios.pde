@@ -172,7 +172,7 @@ ArrayList<Interactivo> interParque = new ArrayList<Interactivo>();
 ArrayList<Interactivo> interCentro = new ArrayList<Interactivo>();
 Interactivo cercano = null;
 float[][] obsParque = {{338, 200, 124, 66}, {60, 110, 112, 66}, {540, 340, 220, 95}};
-float[][] obsCentro = {{350, 240, 100, 40}, {80, 205, 100, 30}, {620, 205, 100, 30}, {80, 375, 100, 30}};
+float[][] obsCentro = {{350, 240, 100, 40}, {80, 205, 100, 30}, {620, 205, 100, 30}, {80, 375, 100, 30}, {620, 375, 100, 30}};
 
 String[] fortunas = {
   "Lanzas una moneda a la fuente... Tu fortuna: 'Quien verifica dos veces, comparte una vez'.",
@@ -241,6 +241,7 @@ void prepararEscenarios() {
   interCentro.add(maquina(130, 262, "Terminal: Caza Bots", ESC_CAZABOTS));
   interCentro.add(maquina(670, 262, "Terminal: Rastreo", ESC_MEMORIA));
   interCentro.add(maquina(130, 432, "Terminal: Verificador", ESC_VERIFICADOR));
+  interCentro.add(maquina(670, 432, "Terminal: Manotazo (camara)", ESC_MANOTAZO));
   Interactivo orbe = new Interactivo(400, 300, "NOVA", 1);
   orbe.frases = consejosNova;
   interCentro.add(orbe);
@@ -255,7 +256,7 @@ void prepararEscenarios() {
     "B-07: ...REPORTADO. MIS 50 CUENTAS HAN SIDO SUSPENDIDAS. APAGANDO... ADIOS, HUMANO HONESTO. BZZT."},
     "B-07: BZZT. ESTOY EN MODO AHORRO DE ENERGIA.");
   interCentro.add(robot);
-  interCentro.add(persona(610, 446, "Ingeniera Ada", #505064, #141414, new Charla("Ingeniera Ada", new String[] {
+  interCentro.add(persona(520, 446, "Ingeniera Ada", #505064, #141414, new Charla("Ingeniera Ada", new String[] {
     "Bienvenido al Centro NOVA. Soy Ada, del equipo que entreno a la IA de la ciudad.",
     "NOVA rastreo todo: la foto de Dani, el rumor del parque y el titular de Ramirez nacieron de la misma bola de nieve.",
     "El concejo nos pide una decision: podemos hacer que NOVA borre automaticamente todo lo que parezca rumor...",
@@ -582,6 +583,7 @@ void fondoCentro() {
   terminal(130, 250, "CAZA BOTS", neonRosa);
   terminal(670, 250, "RASTREO", neonAmarillo);
   terminal(130, 420, "VERIFICADOR", neonCian);
+  terminal(670, 420, "MANOTAZO", #FF5AA0);
   orbeNova(400, 205);
 }
 

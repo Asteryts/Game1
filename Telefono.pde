@@ -396,31 +396,31 @@ void appStats(float sx, float cy, float sw, float ch) {
   text("Decisiones tomadas: " + decisionesTomadas, sx + 16, by);
   text("Personas con las que hablaste: " + personasConocidas(), sx + 16, by + 18);
   text("Logros: " + contarLogros() + " / " + logros.length, sx + 16, by + 36);
-  for (int i = 0; i < records.length; i++) text(nombresJuegos[i] + ": " + records[i], sx + 16 + (i / 4) * 118, by + 58 + (i % 4) * 15);
+  for (int i = 0; i < records.length; i++) text(nombresJuegos[i] + ": " + records[i], sx + 16 + (i / 5) * 118, by + 58 + (i % 5) * 14);
 }
 
 // ---------- JUEGOS ----------
 void appJuegos(float sx, float cy, float sw, float ch) {
   cabeceraApp("Juegos", coloresApps[2], sx, cy, sw);
   for (int i = 0; i < nombresJuegos.length; i++) {
-    float by = cy + 42 + i * 40;
-    boolean s = encima(sx + 10, by, sw - 20, 36);
+    float by = cy + 40 + i * 36;
+    boolean s = encima(sx + 10, by, sw - 20, 32);
     fill(s ? color(50, 40, 80) : color(26, 22, 44), 240);
-    rect(sx + 10, by, sw - 20, 36, 10);
+    rect(sx + 10, by, sw - 20, 32, 10);
     fill(coloresJuegos[i]);
-    rect(sx + 10, by, 6, 36, 10, 0, 0, 10);
+    rect(sx + 10, by, 6, 32, 10, 0, 0, 10);
     textFont(fuenteUI);
     textAlign(LEFT, TOP);
     textSize(12);
     fill(255);
-    text(nombresJuegos[i], sx + 24, by + 4);
+    text(nombresJuegos[i], sx + 24, by + 3);
     textSize(9);
     fill(180);
-    text("Record: " + records[i], sx + 24, by + 20);
+    text("Record: " + records[i], sx + 24, by + 18);
     fill(coloresJuegos[i]);
     textSize(11);
     textAlign(RIGHT, CENTER);
-    text("Jugar >", sx + sw - 20, by + 18);
+    text("Jugar >", sx + sw - 20, by + 16);
   }
 }
 
@@ -532,7 +532,7 @@ void clickTelefono() {
     }
   } else if (telApp == 3) {
     for (int i = 0; i < nombresJuegos.length; i++) {
-      if (encima(sx + 10, cy + 42 + i * 40, sw - 20, 36)) {
+      if (encima(sx + 10, cy + 40 + i * 36, sw - 20, 32)) {
         cerrarTelefono();
         telAnim = 0;
         lanzarJuego(escenasJuegos[i], false);

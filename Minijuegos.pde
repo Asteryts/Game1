@@ -15,10 +15,10 @@ int puntaje = 0;
 boolean nuevoRecord = false;
 String textoPremio = "";
 String resumenJuego = "";
-int[] records = new int[8];
-boolean[] premiado = new boolean[8];
-int[] umbralPremio = {700, 250, 12, 500, 600, 300, 800, 500};
-String[] nombresJuegos = {"Verificador Express", "Atrapa Bulos", "Caza Bots", "Rastreo de Fuentes", "Telefono Roto", "Penales", "Foto Trucada", "Teclado Veloz"};
+int[] records = new int[9];
+boolean[] premiado = new boolean[9];
+int[] umbralPremio = {700, 250, 12, 500, 600, 300, 800, 500, 250};
+String[] nombresJuegos = {"Verificador Express", "Atrapa Bulos", "Caza Bots", "Rastreo de Fuentes", "Telefono Roto", "Penales", "Foto Trucada", "Teclado Veloz", "Manotazo"};
 String[] descJuegos = {
   "Real o bulo? Clasifica titulares antes de que se acabe el tiempo.",
   "Atrapa la informacion verificada y esquiva los bulos que caen.",
@@ -27,7 +27,8 @@ String[] descJuegos = {
   "Memoriza como pasa el rumor y repitelo sin deformarlo.",
   "Apunta, elige la fuerza y vence al portero del barrio.",
   "Encuentra las 5 cosas que cambiaron en la foto editada.",
-  "Escribe las palabras antes de que se vuelvan virales."
+  "Escribe las palabras antes de que se vuelvan virales.",
+  "Con la CAMARA: mueve la mano para darle manotazos a los bulos."
 };
 String[] instruccionesJuegos = {
   "Apareceran 10 publicaciones de Conecta.\nA o FLECHA IZQUIERDA = es FALSO\nD o FLECHA DERECHA = es REAL\nFijate en quien publica y en cuando se creo la cuenta.",
@@ -37,11 +38,12 @@ String[] instruccionesJuegos = {
   "El rumor pasa de amigo en amigo. Mira el orden en que hablan.\nLuego repitelo con clic o con las teclas 1, 2, 3 y 4.\nCada ronda el mensaje es mas largo. Si te equivocas, se deforma!",
   "Tienes 5 tiros. Primer clic (o ESPACIO): fija la direccion.\nSegundo clic: fija la fuerza. Mucha fuerza = por encima del arco.\nLas esquinas valen mas, pero el portero cada vez adivina mejor.",
   "Te mostramos una foto original y una version editada.\nHaz clic donde veas un cambio: colores, cosas que se movieron,\nque crecieron o que desaparecieron. Los errores restan tiempo!",
-  "Caen palabras: escribelas con el teclado antes de que lleguen abajo.\nEscribe la primera letra y el juego elige esa palabra.\nSi una palabra llega al fondo, pierdes una vida."
+  "Caen palabras: escribelas con el teclado antes de que lleguen abajo.\nEscribe la primera letra y el juego elige esa palabra.\nSi una palabra llega al fondo, pierdes una vida.",
+  "Ponte frente a la camara, con buena luz. Mueve la mano en el aire\npara darle MANOTAZOS a los bulos ROJOS. No toques los VERDES: son reales.\nSi un bulo llega abajo, se vuelve viral. (Sin camara se juega con el mouse.)"
 };
-color[] coloresJuegos = {#00F0FF, #3CFF96, #FF3CC8, #FFDC3C, #FF8C3C, #46DC64, #8C78FF, #3CDCDC};
+color[] coloresJuegos = {#00F0FF, #3CFF96, #FF3CC8, #FFDC3C, #FF8C3C, #46DC64, #8C78FF, #3CDCDC, #FF5AA0};
 
-int[] escenasJuegos = {41, 42, 43, 44, 61, 62, 63, 64};   // ESC_VERIFICADOR ... ESC_TECLADO
+int[] escenasJuegos = {41, 42, 43, 44, 61, 62, 63, 64, 65};   // ESC_VERIFICADOR ... ESC_MANOTAZO
 
 int idxJuego(int s) {
   for (int i = 0; i < escenasJuegos.length; i++) if (escenasJuegos[i] == s) return i;
@@ -63,6 +65,7 @@ void lanzarJuego(int s, boolean desdeSala) {
   puntaje = 0;
   nuevoRecord = false;
   textoPremio = "";
+  if (s == ESC_MANOTAZO) pedirCamara = 2;   // se enciende la camara en el siguiente cuadro (Camara.pde)
   desbloquear(3);
 }
 
@@ -77,6 +80,7 @@ void empezarJuego() {
   else if (scene == ESC_ATRAPA) resetAtrapa();
   else if (scene == ESC_CAZABOTS) resetCazaBots();
   else if (scene == ESC_MEMORIA) resetMemoria();
+  else if (scene == ESC_MANOTAZO) resetManotazo();
   else if (scene == ESC_TELROTO) resetTelefonoRoto();
   else if (scene == ESC_PENALES) resetPenales();
   else if (scene == ESC_FOTO) resetFotoTrucada();
@@ -120,12 +124,15 @@ void terminarJuego() {
     resumenJuego = halladasF + " diferencias encontradas, " + erroresF + " errores";
   } else if (scene == ESC_TECLADO) {
     resumenJuego = vidasT > 0 ? "Ninguna palabra mas se hizo viral!" : "Demasiadas palabras virales...";
+  } else if (scene == ESC_MANOTAZO) {
+    resumenJuego = bulosGolpeados + " bulos sacados a manotazos" + (modoMouse ? " (con el mouse)" : "");
   }
   guardarDatos();
   explosionConfeti(width / 2, 160, nuevoRecord ? 90 : 30);
 }
 
 void salirJuego() {
+  if (scene == ESC_MANOTAZO) apagarCamara();   // la camara solo se usa en ese juego
   scene = juegoDesdeSala ? ESC_MINIJUEGOS : regresoJuego;
   pararMovimiento();
 }
@@ -158,8 +165,8 @@ void dibujarSalaArcade() {
   fill(200);
   textAlign(CENTER, CENTER);
   text("Entrena tu ojo de verificador. Cada juego da un premio la primera vez que superas su meta.", width / 2, 84);
-  for (int i = 0; i < 8; i++) {
-    float cx = 18 + (i % 4) * 194, cy = 102 + (i / 4) * 190, cw = 180, chh = 176;
+  for (int i = 0; i < nombresJuegos.length; i++) {
+    float cx = 12 + (i % 5) * 156, cy = 102 + (i / 5) * 190, cw = 148, chh = 176;
     boolean s = encima(cx, cy, cw, chh);
     float lev = s ? -5 : 0;
     color c = coloresJuegos[i];
@@ -177,26 +184,26 @@ void dibujarSalaArcade() {
     noStroke();
     pushMatrix();
     translate(cx + cw / 2, cy + 46 + lev);
-    scale(0.62);
+    scale(0.56);
     iconoJuego(i, 0, 0, c);
     popMatrix();
     textFont(fuente);
-    textSize(15);
+    textSize(13);
     fill(c);
     textAlign(CENTER, TOP);
     text(nombresJuegos[i], cx + cw / 2, cy + 82 + lev);
     textFont(fuenteUI);
     textSize(10);
     fill(220);
-    text(descJuegos[i], cx + 10, cy + 102 + lev, cw - 20, 40);
+    text(descJuegos[i], cx + 8, cy + 102 + lev, cw - 16, 48);
     fill(170);
     textSize(9);
     textAlign(LEFT, TOP);
-    text("Record " + records[i] + (premiado[i] ? "  -  premio listo" : "  -  meta " + umbralPremio[i]), cx + 10, cy + chh - 18 + lev);
+    text("Record " + records[i] + (premiado[i] ? "  -  premio listo" : "  -  meta " + umbralPremio[i]), cx + 8, cy + chh - 16 + lev);
     fill(c);
-    textSize(13);
-    textAlign(RIGHT, BOTTOM);
-    text(s ? "JUGAR >" : "", cx + cw - 10, cy + chh - 6 + lev);
+    textSize(11);
+    textAlign(RIGHT, TOP);
+    text(s ? "JUGAR >" : "", cx + cw - 8, cy + 8 + lev);
   }
   botonVolver();
 }
@@ -289,6 +296,18 @@ void iconoJuego(int i, float cx, float cy, color c) {
         rect(cx - 34 + k * 18 + f * 6, cy - 22 + f * 16 + b, 15, 13, 3);
       }
     }
+  } else if (i == 8) {
+    // manotazo: una mano y una camara
+    fill(255, 214, 170);
+    rect(cx - 16, cy - 6 + b, 28, 26, 5);
+    for (int k = 0; k < 4; k++) rect(cx - 16 + k * 7, cy - 26 + b, 5, 22, 3);
+    rect(cx + 12, cy + b, 10, 5, 2);
+    fill(40);
+    rect(cx + 6, cy - 34, 30, 20, 4);
+    fill(c);
+    ellipse(cx + 21, cy - 24, 12, 12);
+    fill(neonRojo);
+    ellipse(cx + 32, cy - 31, 4, 4);
   } else {
     pushMatrix();
     translate(cx - 12, cy + b);
@@ -310,8 +329,8 @@ void clickSala() {
     scene = regresoSala;
     return;
   }
-  for (int i = 0; i < 8; i++) {
-    if (encima(18 + (i % 4) * 194, 102 + (i / 4) * 190, 180, 176)) lanzarJuego(escenasJuegos[i], true);
+  for (int i = 0; i < nombresJuegos.length; i++) {
+    if (encima(12 + (i % 5) * 156, 102 + (i / 5) * 190, 148, 176)) lanzarJuego(escenasJuegos[i], true);
   }
 }
 

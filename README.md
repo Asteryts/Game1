@@ -7,8 +7,9 @@ Explora la ciudad, habla con la gente y decide qué compartes: tus decisiones mu
 ## Cómo jugarlo
 
 1. Instala Processing 4.
-2. Abre `Lab.pde` (las demás pestañas `.pde` se cargan solas).
-3. Presiona ▶ (Run).
+2. Instala la **Video Library for Processing 4** (en Processing: *Sketch → Importar biblioteca → Gestionar bibliotecas*, busca "Video Library for Processing 4"). Sin ella el juego no compila, porque el minijuego Manotazo usa la cámara.
+3. Abre `Lab.pde` (las demás pestañas `.pde` se cargan solas).
+4. Presiona ▶ (Run).
 
 ## Controles
 
@@ -32,7 +33,7 @@ Explora la ciudad, habla con la gente y decide qué compartes: tus decisiones mu
 
 ## Minijuegos
 
-Verificador Express, Atrapa Bulos, Caza Bots, Rastreo de Fuentes, Teléfono Roto, Penales, Foto Trucada y Teclado Veloz.
+Verificador Express, Atrapa Bulos, Caza Bots, Rastreo de Fuentes, Teléfono Roto, Penales, Foto Trucada, Teclado Veloz y **Manotazo**, que se juega moviendo la mano frente a la cámara web (sin cámara se juega con el mouse).
 Están en la Sala Arcade del menú, en la app Juegos del teléfono y en máquinas repartidas por la ciudad.
 
 ## Archivos
@@ -48,6 +49,7 @@ Están en la Sala Arcade del menú, en la app Juegos del teléfono y en máquina
 | `Fondos.pde` | Fondos dibujados con código para las escenas sin imagen |
 | `Eventos.pde` | Eventos aleatorios del mapa |
 | `Minijuegos.pde`, `Minijuegos2.pde` | La Sala Arcade y los 8 minijuegos |
+| `Camara.pde` | El minijuego Manotazo: lee la cámara y detecta el movimiento de la mano |
 | `Pixel.pde` | Hace que los fondos y personajes dibujados con código se vean pixel art |
 | `data/` | Imágenes, sprites y la fuente |
 
