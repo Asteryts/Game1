@@ -314,7 +314,7 @@ void registrarLugares() {
   Lugar ca = new Lugar(ESC_CANCHA, "Barrio  -  Cancha");
   ca.puerta(3, ESC_MERCADO, "Mercado", 380, 480);
   ca.yMin = 118;
-  ca.obs = new float[][] {{8, 210, 44, 140}, {748, 210, 44, 140}};
+  ca.obs = new float[][] {{8, 210, 44, 140}, {748, 210, 44, 140}, {610, 178, 80, 26}};
   ca.agregar(persona(230, 210, "Entrenador Rafa", #E6E6E6, #141414, charla("Entrenador Rafa", new String[] {
     "Eso, muchachos, a calentar! Ah, hola. Soy Rafa, el entrenador del torneo del barrio.",
     "Esta mañana alguien dijo que el torneo se cancelaba porque iban a tumbar la cancha. Casi no viene nadie!",
@@ -330,6 +330,7 @@ void registrarLugares() {
     "Lo mejor: el equipo rival nos pidio perdon. Ahora somos amigas!"
   })));
   ca.agregar(maquina(400, 318, "Balon: Penales", ESC_PENALES));
+  ca.agregar(maquina(650, 222, "Pantalla: Salto con la Mano", ESC_SALTO));
   lugares.put(ESC_CANCHA, ca);
 
   // ---------------- 56 CALLEJON DE LOS MURALES ----------------
@@ -1025,6 +1026,23 @@ void fondoCancha() {
     dibujarNPC(0, 0, paletaRopa[(i * 2) % paletaRopa.length], #2A1E14, i * 2.3, false, "");
     popMatrix();
   }
+  // pantalla gigante del minijuego de saltar con la mano
+  fill(0, 70);
+  rect(612, 200, 80, 8);
+  fill(60, 60, 80);
+  rect(620, 150, 6, 52);
+  rect(678, 150, 6, 52);
+  fill(20, 18, 40);
+  rect(600, 120, 104, 66, 6);
+  fill(80, 180, 255, 200);
+  rect(606, 126, 92, 54, 3);
+  float saltoP = abs(sin(frameCount * 0.08)) * 16;
+  fill(255, 214, 170);
+  rect(626, 156 - saltoP, 10, 14, 2);
+  fill(neonRojo);
+  rect(656, 164, 12, 12, 2);
+  fill(70, 56, 96);
+  rect(606, 174, 92, 6);
   // el balon de los penales
   float bb = abs(sin(frameCount * 0.08)) * 4;
   fill(0, 70);

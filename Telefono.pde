@@ -403,24 +403,24 @@ void appStats(float sx, float cy, float sw, float ch) {
 void appJuegos(float sx, float cy, float sw, float ch) {
   cabeceraApp("Juegos", coloresApps[2], sx, cy, sw);
   for (int i = 0; i < nombresJuegos.length; i++) {
-    float by = cy + 40 + i * 36;
-    boolean s = encima(sx + 10, by, sw - 20, 32);
+    float by = cy + 38 + i * 32;
+    boolean s = encima(sx + 10, by, sw - 20, 29);
     fill(s ? color(50, 40, 80) : color(26, 22, 44), 240);
-    rect(sx + 10, by, sw - 20, 32, 10);
+    rect(sx + 10, by, sw - 20, 29, 9);
     fill(coloresJuegos[i]);
-    rect(sx + 10, by, 6, 32, 10, 0, 0, 10);
+    rect(sx + 10, by, 6, 29, 9, 0, 0, 9);
     textFont(fuenteUI);
     textAlign(LEFT, TOP);
     textSize(12);
     fill(255);
-    text(nombresJuegos[i], sx + 24, by + 3);
+    text(nombresJuegos[i], sx + 24, by + 2);
     textSize(9);
     fill(180);
-    text("Record: " + records[i], sx + 24, by + 18);
+    text("Record: " + records[i], sx + 24, by + 16);
     fill(coloresJuegos[i]);
     textSize(11);
     textAlign(RIGHT, CENTER);
-    text("Jugar >", sx + sw - 20, by + 16);
+    text("Jugar >", sx + sw - 20, by + 14);
   }
 }
 
@@ -532,7 +532,7 @@ void clickTelefono() {
     }
   } else if (telApp == 3) {
     for (int i = 0; i < nombresJuegos.length; i++) {
-      if (encima(sx + 10, cy + 40 + i * 36, sw - 20, 32)) {
+      if (encima(sx + 10, cy + 38 + i * 32, sw - 20, 29)) {
         cerrarTelefono();
         telAnim = 0;
         lanzarJuego(escenasJuegos[i], false);

@@ -33,7 +33,11 @@ Explora la ciudad, habla con la gente y decide qué compartes: tus decisiones mu
 
 ## Minijuegos
 
-Verificador Express, Atrapa Bulos, Caza Bots, Rastreo de Fuentes, Teléfono Roto, Penales, Foto Trucada, Teclado Veloz y **Manotazo**, que se juega moviendo la mano frente a la cámara web (sin cámara se juega con el mouse).
+Verificador Express, Atrapa Bulos, Caza Bots, Rastreo de Fuentes, Teléfono Roto, Penales, Foto Trucada, Teclado Veloz, y dos que se juegan **con la mano frente a la cámara web**:
+- **Manotazo:** mueve la mano para sacar los bulos de la pantalla.
+- **Salto con la Mano:** levanta la mano para saltar las pilas de bulos.
+
+La cámara busca **solo la mano**: combina el movimiento con el color de piel, ignora la cara y la ropa, y con la tecla **C** aprende tu tono de piel. Sin cámara se juegan con el mouse o el teclado.
 Están en la Sala Arcade del menú, en la app Juegos del teléfono y en máquinas repartidas por la ciudad.
 
 ## Archivos
@@ -49,7 +53,9 @@ Están en la Sala Arcade del menú, en la app Juegos del teléfono y en máquina
 | `Fondos.pde` | Fondos dibujados con código para las escenas sin imagen |
 | `Eventos.pde` | Eventos aleatorios del mapa |
 | `Minijuegos.pde`, `Minijuegos2.pde` | La Sala Arcade y los 8 minijuegos |
-| `Camara.pde` | El minijuego Manotazo: lee la cámara y detecta el movimiento de la mano |
+| `Camara.pde` | La cámara, la detección de la mano y el minijuego Manotazo |
+| `Salto.pde` | El minijuego Salto con la Mano |
+| `Carga.pde` | Pantallas de carga con tema para cada minijuego y lugar |
 | `Pixel.pde` | Hace que los fondos y personajes dibujados con código se vean pixel art |
 | `data/` | Imágenes, sprites y la fuente |
 

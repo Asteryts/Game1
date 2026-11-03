@@ -15,10 +15,10 @@ int puntaje = 0;
 boolean nuevoRecord = false;
 String textoPremio = "";
 String resumenJuego = "";
-int[] records = new int[9];
-boolean[] premiado = new boolean[9];
-int[] umbralPremio = {700, 250, 12, 500, 600, 300, 800, 500, 250};
-String[] nombresJuegos = {"Verificador Express", "Atrapa Bulos", "Caza Bots", "Rastreo de Fuentes", "Telefono Roto", "Penales", "Foto Trucada", "Teclado Veloz", "Manotazo"};
+int[] records = new int[10];
+boolean[] premiado = new boolean[10];
+int[] umbralPremio = {700, 250, 12, 500, 600, 300, 800, 500, 250, 400};
+String[] nombresJuegos = {"Verificador Express", "Atrapa Bulos", "Caza Bots", "Rastreo de Fuentes", "Telefono Roto", "Penales", "Foto Trucada", "Teclado Veloz", "Manotazo", "Salto con la Mano"};
 String[] descJuegos = {
   "Real o bulo? Clasifica titulares antes de que se acabe el tiempo.",
   "Atrapa la informacion verificada y esquiva los bulos que caen.",
@@ -28,7 +28,8 @@ String[] descJuegos = {
   "Apunta, elige la fuerza y vence al portero del barrio.",
   "Encuentra las 5 cosas que cambiaron en la foto editada.",
   "Escribe las palabras antes de que se vuelvan virales.",
-  "Con la CAMARA: mueve la mano para darle manotazos a los bulos."
+  "Con la CAMARA: mueve la mano para darle manotazos a los bulos.",
+  "Con la CAMARA: levanta la mano para saltar las pilas de bulos."
 };
 String[] instruccionesJuegos = {
   "Apareceran 10 publicaciones de Conecta.\nA o FLECHA IZQUIERDA = es FALSO\nD o FLECHA DERECHA = es REAL\nFijate en quien publica y en cuando se creo la cuenta.",
@@ -39,11 +40,12 @@ String[] instruccionesJuegos = {
   "Tienes 5 tiros. Primer clic (o ESPACIO): fija la direccion.\nSegundo clic: fija la fuerza. Mucha fuerza = por encima del arco.\nLas esquinas valen mas, pero el portero cada vez adivina mejor.",
   "Te mostramos una foto original y una version editada.\nHaz clic donde veas un cambio: colores, cosas que se movieron,\nque crecieron o que desaparecieron. Los errores restan tiempo!",
   "Caen palabras: escribelas con el teclado antes de que lleguen abajo.\nEscribe la primera letra y el juego elige esa palabra.\nSi una palabra llega al fondo, pierdes una vida.",
-  "Ponte frente a la camara, con buena luz. Mueve la mano en el aire\npara darle MANOTAZOS a los bulos ROJOS. No toques los VERDES: son reales.\nSi un bulo llega abajo, se vuelve viral. (Sin camara se juega con el mouse.)"
+  "Mueve la MANO en el aire para darle manotazos a los bulos ROJOS. No toques los VERDES.\nEl juego busca tu piel: lo que se pinta de cian es tu mano (la cara y la ropa no cuentan).\nPrimero pon la palma en el cuadro y presiona C para calibrar. (Sin camara: mouse.)",
+  "Corres por los techos de Nova. LEVANTA LA MANO por encima de la linea amarilla\npara saltar las pilas de bulos y esquivar los bulos voladores.\nAgarra los datos verificados (verdes). Sin camara: ESPACIO, W, flecha o clic."
 };
-color[] coloresJuegos = {#00F0FF, #3CFF96, #FF3CC8, #FFDC3C, #FF8C3C, #46DC64, #8C78FF, #3CDCDC, #FF5AA0};
+color[] coloresJuegos = {#00F0FF, #3CFF96, #FF3CC8, #FFDC3C, #FF8C3C, #46DC64, #8C78FF, #3CDCDC, #FF5AA0, #50B4FF};
 
-int[] escenasJuegos = {41, 42, 43, 44, 61, 62, 63, 64, 65};   // ESC_VERIFICADOR ... ESC_MANOTAZO
+int[] escenasJuegos = {41, 42, 43, 44, 61, 62, 63, 64, 65, 66};   // ESC_VERIFICADOR ... ESC_SALTO
 
 int idxJuego(int s) {
   for (int i = 0; i < escenasJuegos.length; i++) if (escenasJuegos[i] == s) return i;
@@ -65,7 +67,7 @@ void lanzarJuego(int s, boolean desdeSala) {
   puntaje = 0;
   nuevoRecord = false;
   textoPremio = "";
-  if (s == ESC_MANOTAZO) pedirCamara = 2;   // se enciende la camara en el siguiente cuadro (Camara.pde)
+  if (esJuegoCamara(s)) pedirCamara = 3;   // se enciende la camara en unos cuadros (Camara.pde)
   desbloquear(3);
 }
 
@@ -81,6 +83,7 @@ void empezarJuego() {
   else if (scene == ESC_CAZABOTS) resetCazaBots();
   else if (scene == ESC_MEMORIA) resetMemoria();
   else if (scene == ESC_MANOTAZO) resetManotazo();
+  else if (scene == ESC_SALTO) resetSalto();
   else if (scene == ESC_TELROTO) resetTelefonoRoto();
   else if (scene == ESC_PENALES) resetPenales();
   else if (scene == ESC_FOTO) resetFotoTrucada();
@@ -126,13 +129,15 @@ void terminarJuego() {
     resumenJuego = vidasT > 0 ? "Ninguna palabra mas se hizo viral!" : "Demasiadas palabras virales...";
   } else if (scene == ESC_MANOTAZO) {
     resumenJuego = bulosGolpeados + " bulos sacados a manotazos" + (modoMouse ? " (con el mouse)" : "");
+  } else if (scene == ESC_SALTO) {
+    resumenJuego = saltosS + " saltos y " + datosS + " datos verificados" + (vidasS > 0 ? " - llegaste al final!" : "");
   }
   guardarDatos();
   explosionConfeti(width / 2, 160, nuevoRecord ? 90 : 30);
 }
 
 void salirJuego() {
-  if (scene == ESC_MANOTAZO) apagarCamara();   // la camara solo se usa en ese juego
+  if (esJuegoCamara(scene)) apagarCamara();   // la camara solo se usa en esos juegos
   scene = juegoDesdeSala ? ESC_MINIJUEGOS : regresoJuego;
   pararMovimiento();
 }
@@ -308,6 +313,17 @@ void iconoJuego(int i, float cx, float cy, color c) {
     ellipse(cx + 21, cy - 24, 12, 12);
     fill(neonRojo);
     ellipse(cx + 32, cy - 31, 4, 4);
+  } else if (i == 9) {
+    // salto con la mano: corredor saltando una pila de bulos
+    fill(70, 56, 96);
+    rect(cx - 40, cy + 26, 80, 6);
+    fill(neonRojo);
+    rect(cx + 8, cy + 6, 22, 20, 3);
+    rect(cx + 11, cy - 12, 22, 18, 3);
+    fill(c);
+    rect(cx - 30, cy - 16 + b * 2, 18, 24, 4);
+    fill(255, 214, 170);
+    ellipse(cx - 21, cy - 24 + b * 2, 14, 14);
   } else {
     pushMatrix();
     translate(cx - 12, cy + b);
@@ -442,10 +458,15 @@ void clickJuego() {
   else if (scene == ESC_TELROTO) clickTelefonoRoto();
   else if (scene == ESC_PENALES) accionPenales();
   else if (scene == ESC_FOTO) clickFotoTrucada();
+  else if (scene == ESC_SALTO) pidioSalto = true;
 }
 
 void teclaJuego() {
   boolean enter = key == ENTER || key == RETURN || key == ' ';
+  if (esJuegoCamara(scene) && estadoJuego == 0 && (key == 'c' || key == 'C')) {
+    calibrarPiel();   // aprende el color de tu palma (Camara.pde)
+    return;
+  }
   if (estadoJuego == 0 && enter) {
     empezarJuego();
     return;
@@ -468,6 +489,7 @@ void teclaJuego() {
   if (scene == ESC_TELROTO && estadoJuego == 2 && key >= '1' && key <= '4') pulsarTR(key - '1');
   if (scene == ESC_PENALES && estadoJuego == 2 && key == ' ') accionPenales();
   if (scene == ESC_TECLADO) teclaTeclado();
+  if (scene == ESC_SALTO && estadoJuego == 2 && (key == ' ' || key == 'w' || key == 'W' || (key == CODED && keyCode == UP))) pidioSalto = true;
 }
 
 // ------------------------------------- 41 VERIFICADOR EXPRESS -------------------------------------
