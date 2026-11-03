@@ -48,6 +48,7 @@ Están en la Sala Arcade del menú, en la app Juegos del teléfono y en máquina
 | `Fondos.pde` | Fondos dibujados con código para las escenas sin imagen |
 | `Eventos.pde` | Eventos aleatorios del mapa |
 | `Minijuegos.pde`, `Minijuegos2.pde` | La Sala Arcade y los 8 minijuegos |
+| `Pixel.pde` | Hace que los fondos y personajes dibujados con código se vean pixel art |
 | `data/` | Imágenes, sprites y la fuente |
 
 Los récords y logros se guardan en `datos_nova.txt`, junto a `Lab.pde`. Ese archivo no se sube al repositorio.

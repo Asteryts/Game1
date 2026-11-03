@@ -96,7 +96,14 @@ PGraphics crearCapa(int nivel) {
   return pg;
 }
 
+// (pixel art) la ciudad del menu se dibuja en el lienzo chiquito de Pixel.pde
 void dibujarFondoCiudad() {
+  empezarFondoPixel();
+  dibujarFondoCiudadMundo();
+  terminarFondoPixel();
+}
+
+void dibujarFondoCiudadMundo() {
   image(cieloMenu, 0, 0);
   // planeta con anillo (como el logo del menu viejo)
   float pf = sin(frameCount * 0.01) * 4;
@@ -172,12 +179,13 @@ void dibujarFondoCiudad() {
   // calle mojada con reflejo
   fill(12, 6, 26);
   rect(0, 405, width, 95);
-  PImage reflejo = get(0, 305, width, 100);
+  int f = nivelPixel > 0 ? PIXEL : 1;   // get() lee pixeles reales del lienzo, que es mas chiquito
+  PImage reflejo = get(0, 305 / f, width / f, 100 / f);
   pushMatrix();
   translate(0, 505);
   scale(1, -1);
   tint(255, 70);
-  image(reflejo, sin(frameCount * 0.05) * 2, 0);
+  image(reflejo, sin(frameCount * 0.05) * 2, 0, width, 100);
   noTint();
   popMatrix();
   fill(10, 4, 24, 120);

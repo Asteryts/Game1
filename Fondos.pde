@@ -76,7 +76,15 @@ void flechaSalida(float fx, float fy, int dir, String t) {
 }
 
 // ------------------------------------- BARRIO -------------------------------------
+// (pixel art) el fondo se dibuja en el lienzo chiquito de Pixel.pde; las flechas quedan nitidas
 void fondoBarrio(int s) {
+  empezarFondoPixel();
+  fondoBarrioMundo(s);
+  terminarFondoPixel();
+  salidasBarrio(s);
+}
+
+void fondoBarrioMundo(int s) {
   float sem = s * 17.31;
   degradado(0, 0, width, 70, color(14, 8, 34), color(58, 28, 84));
   noStroke();
@@ -162,7 +170,6 @@ void fondoBarrio(int s) {
   for (int i = 0; i < 6; i++) arbolito(60 + i * 140 + hsh(sem + i * 4) * 40, 440 + hsh(sem + i) * 45, 22 + hsh(sem + i * 2) * 10, i);
   for (int i = 0; i < 4; i++) poste(90 + i * 210 + hsh(sem + i * 3) * 20, 206, i);
   objetosBarrio(s);
-  salidasBarrio(s);
 }
 
 void salidasBarrio(int s) {
@@ -353,6 +360,12 @@ void letreroJunta() {
 
 // ------------------------------------- ENTRADA A NOVA (escena 5) -------------------------------------
 void fondoEntrada() {
+  empezarFondoPixel();
+  fondoEntradaMundo();
+  terminarFondoPixel();
+}
+
+void fondoEntradaMundo() {
   degradado(0, 0, width, 170, color(20, 10, 45), color(90, 40, 110));
   noStroke();
   for (int i = 0; i < 16; i++) {
@@ -431,8 +444,19 @@ float[][] pancartas;
 String[] textosPancarta = {"VERDAD", "FUERA", "FAKE?", "#Nova", "FUENTE?", "NO + BULOS", "DATOS!"};
 
 void fondoAlcaldia() {
+  empezarFondoPixel();
+  fondoAlcaldiaMundo();
+  terminarFondoPixel();
+}
+
+void fondoAlcaldiaMundo() {
   if (cacheAlcaldia == null) construirAlcaldia();
   image(cacheAlcaldia, 0, 0);
+  fill(255, 220, 120);
+  textFont(fuenteUI);
+  textSize(13);
+  textAlign(CENTER, CENTER);
+  text("ALCALDIA DE NOVA", 400, 25);   // fuera de la imagen guardada, para que salga nitido
   // banderas que ondean
   for (int i = 0; i < 2; i++) {
     float fx = 120 + i * 560;
@@ -485,11 +509,6 @@ void construirAlcaldia() {
   pg.rect(60, 104, 680, 10);
   pg.fill(30, 25, 50);
   pg.rect(280, 16, 240, 20, 4);
-  pg.fill(255, 220, 120);
-  pg.textFont(fuenteUI);
-  pg.textSize(13);
-  pg.textAlign(CENTER, CENTER);
-  pg.text("ALCALDIA DE NOVA", 400, 25);
   pg.fill(90, 64, 52);
   pg.rect(372, 58, 56, 56, 28, 28, 0, 0);
   // piso de la plaza

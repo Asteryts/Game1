@@ -114,6 +114,12 @@ void irAEscena(int dest, int dir) {
 }
 
 void dibujarFondoLugar(int s) {
+  empezarFondoPixel();   // (pixel art) ver Pixel.pde
+  dibujarFondoLugarMundo(s);
+  terminarFondoPixel();
+}
+
+void dibujarFondoLugarMundo(int s) {
   if (s == ESC_PARQUE) fondoParque();
   else if (s == ESC_CENTRO) fondoCentro();
   else if (s == ESC_AVENIDA) fondoAvenida();

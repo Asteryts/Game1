@@ -113,10 +113,9 @@ class Particula {
       fill(c, 255 * a);
       ellipse(x, y, tam, tam);
     } else if (tipo == 1) {
-      stroke(c, 150 * a);
-      strokeWeight(tam);
-      line(x, y, x - vx * 2.2, y - vy * 2.2);
-      noStroke();
+      // gota en pixeles (cuadritos de 2x2 en diagonal)
+      fill(c, 150 * a);
+      for (int k = 0; k < 4; k++) rect(floor((x - vx * 0.6 * k) / PIXEL) * PIXEL, floor((y - vy * 0.6 * k) / PIXEL) * PIXEL, PIXEL, PIXEL);
     } else if (tipo == 2) {
       pushMatrix();
       translate(x, y);
@@ -367,6 +366,7 @@ void guardarDatos() {
 void vidaSetup() {
   fuenteUI = createFont("Arial", 18, true);
   crearVineta();
+  prepararPixel();
   prepararMenu();
   prepararTelefono();
   prepararEscenarios();
@@ -861,7 +861,8 @@ void iconoCelular(float cx, float cy, float s, boolean vibra) {
 
 // ------------------------------------- PERSONAJES ANIMADOS -------------------------------------
 // cx = centro, pies = donde pisa. fase cambia el ritmo para que no se muevan todos igual
-void dibujarNPC(float cx, float pies, color ropa, color pelo, float fase, boolean marca, String nombre) {
+// (lo llama dibujarNPC de Pixel.pde, que lo vuelve un sprite pixel art y le pone el nombre)
+void dibujarNPCCuerpo(float cx, float pies, color ropa, color pelo, float fase, boolean marca) {
   pushStyle();
   float t = frameCount * 0.06 + fase;
   float bob = sin(t) * 1.5;
@@ -869,6 +870,12 @@ void dibujarNPC(float cx, float pies, color ropa, color pelo, float fase, boolea
   noStroke();
   fill(0, 90);
   ellipse(cx, pies, 36, 10);
+  // contorno oscuro, como en el pixel art de las calles
+  fill(16, 8, 28);
+  rect(cx - 11, pies - 20, 22, 22, 2);
+  rect(cx - 15, pies - 42 + bob, 30, 29, 9);
+  rect(cx - 19, pies - 38 + bob, 38, 22, 6);
+  ellipse(cx, pies - 50 + bob, 30, 30);
   fill(40, 38, 60);
   rect(cx - 9, pies - 18, 7, 17, 2);
   rect(cx + 2, pies - 18, 7, 17, 2);
@@ -925,26 +932,19 @@ void dibujarNPC(float cx, float pies, color ropa, color pelo, float fase, boolea
     textAlign(CENTER, CENTER);
     text("!", cx, hy - 33 - b);
   }
-  if (nombre != null && !nombre.equals("")) {
-    textFont(fuenteUI);
-    textSize(11);
-    float w = textWidth(nombre) + 12;
-    fill(0, 150);
-    rect(cx - w / 2, pies + 5, w, 16, 8);
-    fill(255);
-    textAlign(CENTER, CENTER);
-    text(nombre, cx, pies + 12);
-  }
   popStyle();
 }
 
-void dibujarRobot(float cx, float pies, float fase, String nombre) {
+void dibujarRobotCuerpo(float cx, float pies, float fase) {
   pushStyle();
   float t = frameCount * 0.07 + fase;
   float flota = sin(t) * 3;
   noStroke();
   fill(0, 90);
   ellipse(cx, pies, 34 - flota, 9);
+  fill(16, 8, 28);
+  rect(cx - 18, pies - 46 + flota, 36, 34, 7);
+  rect(cx - 17, pies - 74 + flota, 34, 30, 7);
   fill(150, 160, 180);
   rect(cx - 16, pies - 44 + flota, 32, 30, 6);
   fill(90, 100, 120);
@@ -967,16 +967,6 @@ void dibujarRobot(float cx, float pies, float fase, String nombre) {
   ellipse(cx, pies - 84 + flota, 7, 7);
   fill(neonCian);
   rect(cx - 8, pies - 36 + flota, 16, 4, 2);
-  if (nombre != null && !nombre.equals("")) {
-    textFont(fuenteUI);
-    textSize(11);
-    float w = textWidth(nombre) + 12;
-    fill(0, 150);
-    rect(cx - w / 2, pies + 5, w, 16, 8);
-    fill(255);
-    textAlign(CENTER, CENTER);
-    text(nombre, cx, pies + 12);
-  }
   popStyle();
 }
 
