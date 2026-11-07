@@ -21,7 +21,7 @@ String[] textosLetreros = {"BAR", "404", "NOVA", "CAFE", "IA", "HOTEL"};
 // AQUI VAN SUS NOMBRES! (cambien las lineas del equipo por sus nombres reales)
 String[] creditos = {
   "CIUDAD NOVA", "", "un juego sobre rumores, redes y decisiones", "", "",
-  "- EQUIPO -", "(escriban aqui sus nombres)", "(en el arreglo 'creditos' de Menu.pde)", "", "",
+  "- EQUIPO -", "(Santiago Ortega)", "(Valeria Chacon)", "(David Mendoza)", "(Gabriela Bustillo)",
   "- ESCENARIOS -", "Barrio Residencial", "Colegio y Cafe 404", "Alcaldia de Nova", "Parque Central", "Centro NOVA", "Nova Noticias", "Plaza de la Votacion", "", "",
   "- MINIJUEGOS -", "Verificador Express", "Atrapa Bulos", "Caza Bots", "Rastreo de Fuentes", "", "",
   "Hecho con Processing", "", "", "Gracias por jugar.", "Recuerda: en Nova, tu eres el filtro."
