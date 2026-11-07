@@ -304,23 +304,16 @@ boolean clickPopupMapa() {
       popupAbierto = false;
     } else if (eventoPopup.tipo == 0) {
       String[] r = rumoresMapa[eventoPopup.variante % rumoresMapa.length];
-      boolean cuenta = rumoresPremiados < 10;
-      rumoresPremiados++;
-      if (i == 0) {
-        if (cuenta) {
-          viralidad += 5;
-          confiabilidad -= 4;
-          impacto -= 3;
+      if (i == 0) {   // repetirlo: antes, la pausa (Responsable.pde)
+        pedirRevision("Rumor en la calle", r[0], "Alguien en la calle", false, "No se sabe", false, "Ninguna", false, new Accion() {
+          public void hacer() {
+            aplicarRumorMapa(0);
+          }
         }
-        popupTexto = r[1];
+        );
       } else {
-        if (cuenta) {
-          confiabilidad += 3;
-          impacto += 2;
-        }
-        popupTexto = r[2];
+        aplicarRumorMapa(1);
       }
-      popupFase = 1;
     } else if (eventoPopup.tipo == 2) {
       popupAbierto = false;
       if (i == 0) lanzarJuego(escenasJuegos[eventoPopup.variante % escenasJuegos.length], false);
@@ -334,6 +327,29 @@ boolean clickPopupMapa() {
     return true;
   }
   return true;   // el clic fuera de los botones no hace nada mientras la ventanita esta abierta
+}
+
+// 0 = repetir el rumor, 1 = preguntar de donde salio
+void aplicarRumorMapa(int i) {
+  String[] r = rumoresMapa[eventoPopup.variante % rumoresMapa.length];
+  boolean cuenta = rumoresPremiados < 10;
+  rumoresPremiados++;
+  if (i == 0) {
+    if (cuenta) {
+      viralidad += 5;
+      confiabilidad -= 4;
+      impacto -= 3;
+    }
+    popupTexto = r[1];
+  } else {
+    if (cuenta) {
+      confiabilidad += 3;
+      impacto += 2;
+    }
+    popupTexto = r[2];
+  }
+  popupFase = 1;
+  anotarDecision("Rumor en la calle", i == 0 ? "Repetir: " + r[0] : "Preguntar de donde salio: " + r[0], i == 1, i == 0, popupTexto);
 }
 
 boolean clickEventoMapa() {

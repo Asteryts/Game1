@@ -75,8 +75,23 @@ void avanzarCharla() {
   }
 }
 
-void elegirCharla(int i) {
+void elegirCharla(final int i) {
   if (!charlaEligiendo || i < 0 || i >= charlaActiva.eleccion.length) return;
+  float[] e = charlaActiva.efectos[i];
+  boolean comparte = e[0] >= 10 && e[1] < 0;   // riega el rumor: antes, la pausa (Responsable.pde)
+  if (comparte) {
+    pedirRevisionDe(charlaActiva.hablante, charlaActiva.eleccion[i], new Accion() {
+      public void hacer() {
+        aplicarEleccionCharla(i);
+      }
+    }
+    );
+    return;
+  }
+  aplicarEleccionCharla(i);
+}
+
+void aplicarEleccionCharla(int i) {
   float[] e = charlaActiva.efectos[i];
   viralidad += e[0];
   confiabilidad += e[1];
@@ -85,6 +100,7 @@ void elegirCharla(int i) {
   charlaLetras = 0;
   charlaEligiendo = false;
   charlaActiva.terminada = true;
+  anotarDecision(charlaActiva.hablante, charlaActiva.eleccion[i], e[1] > 0, e[0] >= 10 && e[1] < 0, charlaActiva.respuestas[i]);
 }
 
 void cerrarCharla() {
@@ -158,6 +174,7 @@ class Interactivo {
   String[] frases;   // para objetos que dicen algo distinto cada vez
   boolean hablado = false;
   boolean oculto = false;   // true = lo dibuja el fondo (por ejemplo, detras de un mostrador)
+  boolean ausente = false;  // true = no esta (por algo que hiciste; ver aplicarRecuerdos en Responsable.pde)
 
   Interactivo(float ix, float iy, String nombre, int tipo) {
     this.ix = ix;
@@ -290,6 +307,11 @@ int charlasNuevasHabladas() {
 }
 
 void interactuar(Interactivo it) {
+  Charla segunRecuerdos = charlaSegunRecuerdos(it);   // algunos cuentan lo que paso por lo que hiciste
+  if (segunRecuerdos != null) {
+    abrirCharla(segunRecuerdos);
+    return;
+  }
   if (it.tipo == 0 || it.tipo == 3) {
     it.hablado = true;
     abrirCharla(it.charla);
@@ -378,6 +400,7 @@ void dibujarEscenaCaminable() {
   cercano = null;
   float mejor = 70;
   for (Interactivo it : L.inter) {
+    if (it.ausente) continue;
     float d = dist(x + 50, y + 25, it.ix, it.iy - 15);
     if (d < mejor) {
       mejor = d;
@@ -391,7 +414,7 @@ void dibujarEscenaCaminable() {
       dibujarJugador();
       jugadorListo = true;
     }
-    if (it.oculto) continue;
+    if (it.oculto || it.ausente) continue;
     if (it.tipo == 0) dibujarNPC(it.ix, it.iy, it.ropa, it.pelo, it.fase, !it.hablado && it.charla.eleccion != null, it.nombre);
     else if (it.tipo == 3) dibujarRobot(it.ix, it.iy, it.fase, it.nombre);
     else destelloObj(it.ix, it.iy - 50);
@@ -725,6 +748,7 @@ void dibujarMapaVivo() {
     ellipse(ax, ay, 4, 4);
   }
   eventosDelMapa();   // cosas aleatorias del mapa (Eventos.pde)
+  dibujarDifusiones();   // tus rumores regandose por la ciudad (Responsable.pde)
   // pines
   int sobreLugar = -1;
   for (int i = 0; i < lugaresMapa.length; i++) {
@@ -1341,21 +1365,26 @@ void dibujarFinal() {
   fill(200);
   textAlign(CENTER, CENTER);
   text("Viralidad " + int(viralidad) + "   -   Confiabilidad " + int(confiabilidad) + "   -   Impacto " + int(impacto) + "   -   " + decisionesTomadas + " decisiones", width / 2, 392);
-  botonNeon("Nueva partida", 190, 418, 200, 48, neonRosa, false);
-  botonNeon("Seguir explorando", 410, 418, 200, 48, neonCian, false);
+  botonNeon("Ver tu historial", 110, 418, 180, 48, neonAmarillo, frameCount % 60 < 30);
+  botonNeon("Nueva partida", 310, 418, 180, 48, neonRosa, false);
+  botonNeon("Seguir explorando", 510, 418, 180, 48, neonCian, false);
 }
 
 void clickFinal() {
-  if (encima(190, 418, 200, 48)) {
+  if (encima(110, 418, 180, 48)) {
+    historialScroll = 0;
+    scene = ESC_HISTORIAL;   // cada decision, que paso y la leccion (Responsable.pde)
+  } else if (encima(310, 418, 180, 48)) {
     reiniciarPartida();
     scene = 0;
-  } else if (encima(410, 418, 200, 48)) {
+  } else if (encima(510, 418, 180, 48)) {
     scene = 1;
   }
 }
 
 // ------------------------------------- NUEVA PARTIDA -------------------------------------
 void reiniciarPartida() {
+  reiniciarResponsable();
   viralidad = 0;
   confiabilidad = 0;
   impacto = 0;

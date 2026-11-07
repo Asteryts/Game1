@@ -9,6 +9,7 @@ float telAnim = 0;
 int telApp = 0;            // 0 inicio, 1 conecta, 2 stats, 3 juegos, 4 logros, 5 nova
 float feedScroll = 0;
 float logrosScroll = 0;
+float mensajesScroll = 0;
 int feedVisibles = 3;      // las demas publicaciones llegan como notificaciones mientras juegas
 int[] estadoFeed;          // 0 pendiente, 1 compartida, 2 verificada
 ArrayList<String> chatNova = new ArrayList<String>();
@@ -40,8 +41,8 @@ String[] consejosNova = {
   "Que mucha gente lo comparta no lo vuelve verdad. Mil reenvios de un rumor siguen siendo un rumor."
 };
 
-String[] nombresApps = {"Conecta", "Stats", "Juegos", "Logros", "NOVA IA", "Mapa"};
-color[] coloresApps = {#FF3CC8, #00F0FF, #3CFF96, #FFDC3C, #9650FF, #FF8C3C};
+String[] nombresApps = {"Conecta", "Stats", "Juegos", "Logros", "NOVA IA", "Mensajes", "Mapa"};
+color[] coloresApps = {#FF3CC8, #00F0FF, #3CFF96, #FFDC3C, #9650FF, #50B4FF, #FF8C3C};
 
 void prepararTelefono() {
   estadoFeed = new int[feed.length];
@@ -67,6 +68,8 @@ void teclaTelefono() {
 void mouseWheel(MouseEvent ev) {
   if (telefonoAbierto && telApp == 1) feedScroll += ev.getCount() * 40;
   if (telefonoAbierto && telApp == 4) logrosScroll += ev.getCount() * 30;
+  if (telefonoAbierto && telApp == 6) mensajesScroll += ev.getCount() * 30;
+  if (scene == ESC_HISTORIAL) historialScroll += ev.getCount() * 40;
 }
 
 void dibujarTelefono() {
@@ -109,6 +112,7 @@ void dibujarTelefono() {
   else if (telApp == 3) appJuegos(sx, cy, sw, ch);
   else if (telApp == 4) appLogros(sx, cy, sw, ch);
   else if (telApp == 5) appNova(sx, cy, sw, ch);
+  else if (telApp == 6) appMensajes(sx, cy, sw, ch);
   // barra de estado
   fill(0, 120);
   rect(sx, sy, sw, 26);
@@ -189,6 +193,15 @@ void iconoApp(int i, float cx, float cy, float s) {
     fill(255);
     ellipse(cx, cy, 14, 14);
   } else if (i == 5) {
+    // un sobre
+    noStroke();
+    rect(cx - 15, cy - 10, 30, 21, 3);
+    stroke(c);
+    strokeWeight(2.5);
+    line(cx - 14, cy - 9, cx, cy + 2);
+    line(cx, cy + 2, cx + 14, cy - 9);
+    noStroke();
+  } else if (i == 6) {
     noStroke();
     ellipse(cx, cy - 5, 20, 20);
     triangle(cx - 9, cy - 1, cx + 9, cy - 1, cx, cy + 14);
@@ -199,7 +212,7 @@ void iconoApp(int i, float cx, float cy, float s) {
 }
 
 float[] posApp(int i, float sx, float cy) {
-  return new float[] {sx + 46 + (i % 3) * 82, cy + 150 + (i / 3) * 96};
+  return new float[] {sx + 46 + (i % 3) * 82, cy + 122 + (i / 3) * 86};
 }
 
 void homeTelefono(float sx, float cy, float sw, float ch) {
@@ -220,24 +233,53 @@ void homeTelefono(float sx, float cy, float sw, float ch) {
     textSize(11);
     textAlign(CENTER, CENTER);
     text(nombresApps[i], p[0], p[1] + 40);
-    if (i == 0 && notifPendientes > 0) {
+    int sinLeer = i == 0 ? notifPendientes : i == 5 ? mensajesSinLeer : 0;
+    if (sinLeer > 0) {
       fill(neonRojo);
       ellipse(p[0] + 25, p[1] - 25, 20, 20);
       fill(255);
-      text(notifPendientes, p[0] + 25, p[1] - 26);
+      text(sinLeer, p[0] + 25, p[1] - 26);
     }
   }
-  // widget con tus estadisticas
-  float wy = cy + ch - 74;
-  fill(10, 8, 24, 200);
-  rect(sx + 14, wy, sw - 28, 64, 14);
-  fill(neonCian);
-  textAlign(LEFT, CENTER);
+}
+
+// ---------- MENSAJES (los que te escriben por lo que hiciste; Responsable.pde) ----------
+void appMensajes(float sx, float cy, float sw, float ch) {
+  float top = cy + 40;
+  float total = 0;
+  textFont(fuenteUI);
   textSize(11);
-  text(perfilJugador(), sx + 26, wy + 14);
-  barraTel(sx + 26, wy + 28, sw - 52, viralidad, neonRosa);
-  barraTel(sx + 26, wy + 39, sw - 52, confiabilidad, neonCian);
-  barraTel(sx + 26, wy + 50, sw - 52, impacto, neonAmarillo);
+  for (Mensaje m : mensajes) total += 30 + (int(textWidth(m.texto) / (sw - 40)) + 1) * 14;
+  mensajesScroll = constrain(mensajesScroll, 0, max(0, total - (ch - 44)));
+  float yy = top - mensajesScroll;
+  if (mensajes.size() == 0) {
+    fill(170);
+    textAlign(CENTER, TOP);
+    text("Aqui te escribe la gente segun lo que hagas en Nova.", sx + 20, top + 30, sw - 40, 60);
+  }
+  for (int k = mensajes.size() - 1; k >= 0; k--) {
+    Mensaje m = mensajes.get(k);
+    int lineas = int(textWidth(m.texto) / (sw - 40)) + 1;
+    float h = 24 + lineas * 14;
+    if (yy > cy - h && yy < cy + ch) {
+      fill(26, 22, 44, 240);
+      rect(sx + 8, yy, sw - 16, h, 10);
+      fill(coloresApps[5]);
+      textAlign(LEFT, TOP);
+      textSize(11);
+      text(m.de, sx + 18, yy + 5);
+      fill(150);
+      textAlign(RIGHT, TOP);
+      textSize(9);
+      text(m.hora, sx + sw - 18, yy + 6);
+      fill(235);
+      textAlign(LEFT, TOP);
+      textSize(11);
+      text(m.texto, sx + 18, yy + 20, sw - 36, lineas * 14 + 4);
+    }
+    yy += h + 6;
+  }
+  cabeceraApp("Mensajes", coloresApps[5], sx, cy, sw);
 }
 
 void barraTel(float bx, float by, float bw, float v, color c) {
@@ -340,8 +382,28 @@ void botonMini(String t, float bx, float by, float bw, float bh, color c) {
   text(t, bx + bw / 2, by + bh / 2 - 1);
 }
 
-void resolverPost(int k, boolean compartir) {
+void resolverPost(final int k, boolean compartir) {
   boolean falso = feed[k][2].equals("F");
+  if (compartir) {   // antes de compartir, la pausa con las 3 preguntas (Responsable.pde)
+    pedirRevision("Conecta (" + feed[k][0] + ")", feed[k][1],
+      feed[k][0] + (falso ? "  (cuenta sin respaldo)" : "  (cuenta conocida)"), !falso,
+      falso ? "Sin fecha clara" : "Con fecha y hora", !falso,
+      feed[k][3], !falso, new Accion() {
+      public void hacer() {
+        aplicarPost(k, true);
+      }
+    }
+    );
+    return;
+  }
+  aplicarPost(k, false);
+}
+
+void aplicarPost(int k, boolean compartir) {
+  boolean falso = feed[k][2].equals("F");
+  String quien = "Conecta (" + feed[k][0] + ")";
+  if (compartir) anotarDecision(quien, "Compartir: " + feed[k][1], !falso, true, falso ? "Le diste alas a un bulo. " + feed[k][3] : "Compartiste informacion confiable.");
+  else anotarDecision(quien, "Verificar: " + feed[k][1], true, false, falso ? "Lo frenaste. " + feed[k][3] : "Confirmaste que era real.");
   if (compartir) {
     estadoFeed[k] = 1;
     if (falso) {
@@ -550,6 +612,12 @@ void clickTelefono() {
 
 void abrirApp(int i) {
   if (i == 5) {
+    telApp = 6;
+    mensajesSinLeer = 0;
+    mensajesScroll = 0;
+    return;
+  }
+  if (i == 6) {
     cerrarTelefono();
     CerrarDialogo();
     cerrarCharla();

@@ -2754,6 +2754,10 @@ void mousePressed() {
     ignorarClick = true;
     return;
   }
+  if (revisarClickOriginal()) {   // (responsable) anota la decision y, si es "compartir", primero la pausa (Responsable.pde)
+    ignorarClick = true;
+    return;
+  }
   if (mostrarDialogo && paginter) {
     if (mouseX > 100 && mouseX < 350 && mouseY > 440 && mouseY < 470) {
       elegirOpcion(0);       // botón de la izquierda

@@ -35,6 +35,7 @@ final int ESC_FOTO = 63;
 final int ESC_TECLADO = 64;
 final int ESC_MANOTAZO = 65;   // minijuego con la camara (Camara.pde)
 final int ESC_SALTO = 66;      // minijuego de saltar con la mano (Salto.pde)
+final int ESC_HISTORIAL = 67;  // tu historial de decisiones (Responsable.pde)
 
 // colores neon (son "final" para que se puedan usar desde cualquier pestaña sin problemas de orden)
 final color neonCian = #00F0FF;
@@ -290,12 +291,12 @@ void dibujarAvisos() {
 // ------------------------------------- LOGROS -------------------------------------
 String[] logroNombre = {"Bienvenido a Nova", "Ojo critico", "Agente del caos", "Jugador arcade", "Maestro verificador", "Cazabots",
   "Memoria de elefante", "Explorador urbano", "En vivo y en directo", "Fin de la historia", "Lengua suelta", "Atrapabulos",
-  "Oido fino", "Goleador", "Ojo de halcon", "Dedos veloces", "Amigo de los gatos", "Mano de NOVA", "Saltarin"};
+  "Oido fino", "Goleador", "Ojo de halcon", "Dedos veloces", "Amigo de los gatos", "Mano de NOVA", "Saltarin", "Pensar antes de compartir"};
 String[] logroDesc = {"Llega al mapa de la ciudad", "Alcanza 50 de confiabilidad", "Llega a 70 de viralidad", "Juega cualquier minijuego",
   "8 aciertos o mas en el Verificador", "Elimina 15 bots en una ronda", "Completa el Rastreo de Fuentes", "Visita todos los lugares de Nova",
   "Termina el programa de Nova Noticias", "Descubre un final", "Habla con 10 personajes", "300 puntos en Atrapa Bulos",
-  "Llega a la ronda 7 en Telefono Roto", "Mete 5 de 5 penales", "Encuentra las 10 diferencias", "600 puntos en Teclado Veloz", "Hazte amigo de un gato del mapa", "300 puntos en Manotazo", "Aguanta los 60 s en Salto con la Mano"};
-boolean[] logros = new boolean[19];
+  "Llega a la ronda 7 en Telefono Roto", "Mete 5 de 5 penales", "Encuentra las 10 diferencias", "600 puntos en Teclado Veloz", "Hazte amigo de un gato del mapa", "300 puntos en Manotazo", "Aguanta los 60 s en Salto con la Mano", "Detente 3 veces antes de compartir un bulo"};
+boolean[] logros = new boolean[20];
 
 void desbloquear(int i) {
   if (i < 0 || i >= logros.length || logros[i]) return;
@@ -416,6 +417,7 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_TECLADO) dibujarTeclado();
   else if (scene == ESC_MANOTAZO) dibujarManotazo();
   else if (scene == ESC_SALTO) dibujarSalto();
+  else if (scene == ESC_HISTORIAL) dibujarHistorial();
   else if (esCaminable(scene)) dibujarEscenaCaminable();
   else if (scene == ESC_ESTUDIO) dibujarEstudio();
   else if (scene == ESC_PLAZA) dibujarPlaza();
@@ -459,6 +461,7 @@ void vidaDespuesDeDibujar() {
   }
   if (libre) generarAmbiente();
   vigilarEstadisticas();
+  actualizarResponsable();   // rumores que crecen y mensajes que llegan (Responsable.pde)
   if (frameCount % 30 == 0) revisarLogros();
 
   for (int i = particulas.size() - 1; i >= 0; i--) {
@@ -483,7 +486,8 @@ void vidaDespuesDeDibujar() {
   }
   dibujarTelefono();
   if (pausaAbierta) dibujarPausa();
-  dibujarAvisos();
+  if (scene != ESC_HISTORIAL) dibujarAvisos();
+  dibujarRevision();
   dibujarPantallaCarga();
   if (fundido > 0) {
     noStroke();
@@ -529,6 +533,7 @@ boolean vidaKeyPressed() {
     if (key == ESC) key = 0;
     return true;
   }
+  if (teclaRevision()) return true;   // la pausa antes de compartir (Responsable.pde)
   if (key == ESC) {
     key = 0;   // para que Processing no cierre el juego con ESC
     if (telefonoAbierto) {
@@ -554,6 +559,10 @@ boolean vidaKeyPressed() {
     }
     if (scene == ESC_MINIJUEGOS) {
       scene = regresoSala;
+      return true;
+    }
+    if (scene == ESC_HISTORIAL) {
+      scene = ESC_FINAL;
       return true;
     }
     if (esMinijuego(scene)) {
@@ -599,6 +608,7 @@ void vidaKeyReleased() {
 
 boolean vidaMousePressed() {
   if (entradaDuranteCarga()) return true;
+  if (clickRevision()) return true;
   if (pausaAbierta) {
     clickPausa();
     return true;
@@ -671,6 +681,7 @@ void clickEscenaPropia() {
   } else if (scene == ESC_ESTUDIO) clickEstudio();
   else if (scene == ESC_PLAZA) clickPlaza();
   else if (scene == ESC_FINAL) clickFinal();
+  else if (scene == ESC_HISTORIAL) clickHistorial();
 }
 
 // ------------------------------------- AYUDANTES -------------------------------------

@@ -929,6 +929,19 @@ void fondoMercado() {
   cajaFrutas(150, 238, color(255, 180, 40));
   cajaFrutas(200, 238, color(230, 60, 60));
   cajaFrutas(250, 238, color(120, 200, 60));
+  if (recuerda("Don Pacho", false)) {   // el audio contra la competencia asusto a todos (Responsable.pde)
+    pushMatrix();
+    translate(200, 222);
+    rotate(-0.12);
+    fill(240, 230, 200);
+    rect(-46, -16, 92, 32, 3);
+    fill(200, 40, 50);
+    textFont(fuenteUI);
+    textSize(14);
+    textAlign(CENTER, CENTER);
+    text("CERRADO", 0, -1);
+    popMatrix();
+  }
   puesto(515, 205, color(150, 80, 255), "YULI REPARA");
   for (int i = 0; i < 4; i++) {
     fill(30);

@@ -56,6 +56,7 @@ Están en la Sala Arcade del menú, en la app Juegos del teléfono y en máquina
 | `Camara.pde` | La cámara, la detección de la mano y el minijuego Manotazo |
 | `Salto.pde` | El minijuego Salto con la Mano |
 | `Carga.pde` | Pantallas de carga con tema para cada minijuego y lugar |
+| `Responsable.pde` | Uso responsable: la pausa antes de compartir, los rumores que se riegan por el mapa, los mensajes de los afectados, los personajes que recuerdan y tu historial al final |
 | `Pixel.pde` | Hace que los fondos y personajes dibujados con código se vean pixel art |
 | `data/` | Imágenes, sprites y la fuente |
 
