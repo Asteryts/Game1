@@ -97,7 +97,9 @@ void terminarJuego() {
     records[idx] = puntaje;
     nuevoRecord = true;
   }
-  if (puntaje >= umbralPremio[idx] && !premiado[idx]) {
+  boolean premioNuevo = puntaje >= umbralPremio[idx] && !premiado[idx];
+  pagarMinijuego(idx, premioNuevo);   // NovaCoins segun tu rendimiento (Tienda.pde)
+  if (premioNuevo) {
     premiado[idx] = true;
     confiabilidad += 5;
     impacto += 5;
@@ -172,6 +174,7 @@ void dibujarSalaArcade() {
   text("Entrena tu ojo de verificador. Cada juego da un premio la primera vez que superas su meta.", width / 2, 84);
   for (int i = 0; i < nombresJuegos.length; i++) {
     float cx = 12 + (i % 5) * 156, cy = 102 + (i / 5) * 190, cw = 148, chh = 176;
+    if (i == 0) botonNeon("Ruleta Nova", 682, 52, 110, 26, neonRojo, false);   // el casino (Tienda.pde)
     boolean s = encima(cx, cy, cw, chh);
     float lev = s ? -5 : 0;
     color c = coloresJuegos[i];
@@ -345,6 +348,10 @@ void clickSala() {
     scene = regresoSala;
     return;
   }
+  if (encima(682, 52, 110, 26)) {
+    abrirRuleta(ESC_MINIJUEGOS);
+    return;
+  }
   for (int i = 0; i < nombresJuegos.length; i++) {
     if (encima(12 + (i % 5) * 156, 102 + (i / 5) * 190, 148, 176)) lanzarJuego(escenasJuegos[i], true);
   }
@@ -419,6 +426,17 @@ void pantallaResultados(int idx) {
   fill(textoPremio.startsWith("Premio") ? neonVerde : color(170));
   textSize(13);
   text(textoPremio, width / 2, 302);
+  // NovaCoins ganadas (Tienda.pde)
+  textFont(fuenteUI);
+  textSize(15);
+  String tm = monedasUltimoJuego > 0 ? "+" + monedasUltimoJuego + " NovaCoins" + textoMonedasJuego : "Sin NovaCoins esta vez";
+  float wm = textWidth(tm);
+  dibujarMoneda(width / 2 - wm / 2 - 10, 326, 18, true);
+  textFont(fuenteUI);
+  textSize(15);
+  fill(monedasUltimoJuego > 0 ? neonAmarillo : color(150));
+  textAlign(CENTER, CENTER);
+  text(tm, width / 2 + 4, 325);
   botonNeon("Otra vez", 215, 350, 170, 48, c, false);
   botonNeon("Salir", 415, 350, 170, 48, neonRosa, false);
 }

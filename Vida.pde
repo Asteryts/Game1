@@ -347,6 +347,7 @@ void cargarDatos() {
     }
     if (l.length > 1) for (int i = 0; i < min(l[1].length(), logros.length); i++) logros[i] = l[1].charAt(i) == '1';
     if (l.length > 2) introVista = trim(l[2]).equals("1");
+    if (l.length > 3) cargarGuardadoTienda(l[3]);   // NovaCoins y gadgets (Tienda.pde)
   }
   catch (Exception e) {
     println("No se pudieron cargar los datos: " + e);
@@ -357,7 +358,7 @@ void guardarDatos() {
   try {
     String lg = "";
     for (boolean b : logros) lg += b ? "1" : "0";
-    String[] l = {join(nf(records, 0), ","), lg, introVista ? "1" : "0"};
+    String[] l = {join(nf(records, 0), ","), lg, introVista ? "1" : "0", textoGuardadoTienda()};
     saveStrings(sketchPath("datos_nova.txt"), l);
   }
   catch (Exception e) {
@@ -418,6 +419,8 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_MANOTAZO) dibujarManotazo();
   else if (scene == ESC_SALTO) dibujarSalto();
   else if (scene == ESC_HISTORIAL) dibujarHistorial();
+  else if (scene == ESC_TIENDA) dibujarTienda();
+  else if (scene == ESC_RULETA) dibujarRuleta();
   else if (esCaminable(scene)) dibujarEscenaCaminable();
   else if (scene == ESC_ESTUDIO) dibujarEstudio();
   else if (scene == ESC_PLAZA) dibujarPlaza();
@@ -456,6 +459,7 @@ void vidaDespuesDeDibujar() {
   boolean libre = !pausaAbierta && !telefonoAbierto;
   if (libre && esExploracion(scene)) {
     relojJuego += 0.03;
+    estelaAlCaminar();   // gadget Estela de Luz (Tienda.pde)
     polvoAlCaminar();
     if (--proximaNotif <= 0) llegaNotificacion();
   }
@@ -477,6 +481,7 @@ void vidaDespuesDeDibujar() {
   pistasInteraccion();
   if (esExploracion(scene)) dibujarHUD();
   dibujarFlotantes(libre);
+  actualizarMonedas();   // contador de NovaCoins y monedas volando (Tienda.pde)
   dibujarBanner();
   if (destello > 0) {
     noStroke();
@@ -563,6 +568,14 @@ boolean vidaKeyPressed() {
     }
     if (scene == ESC_HISTORIAL) {
       scene = ESC_FINAL;
+      return true;
+    }
+    if (scene == ESC_TIENDA) {
+      salirTienda();
+      return true;
+    }
+    if (scene == ESC_RULETA) {
+      salirRuleta();
       return true;
     }
     if (esMinijuego(scene)) {
@@ -652,6 +665,14 @@ boolean teclaEscenaPropia() {
     return true;
   }
   if (esCaminable(scene)) return teclaCaminable();
+  if (scene == ESC_TIENDA) {
+    teclaTienda();
+    return true;
+  }
+  if (scene == ESC_RULETA) {
+    teclaRuleta();
+    return true;
+  }
   if (scene == ESC_ESTUDIO) {
     teclaEstudio();
     return true;
@@ -682,6 +703,8 @@ void clickEscenaPropia() {
   else if (scene == ESC_PLAZA) clickPlaza();
   else if (scene == ESC_FINAL) clickFinal();
   else if (scene == ESC_HISTORIAL) clickHistorial();
+  else if (scene == ESC_TIENDA) clickTienda();
+  else if (scene == ESC_RULETA) clickRuleta();
 }
 
 // ------------------------------------- AYUDANTES -------------------------------------
@@ -1019,7 +1042,7 @@ void tinteHora() {
       fill(255, 120, 40, 34 * atardecer);
       rect(0, 0, width, height);
     }
-    if (noche > 0) {
+    if (noche > 0 && !gadgetActivo(1)) {   // con las Gafas Nocturnas (Tienda.pde) no se oscurece
       fill(10, 20, 70, 70 * noche);
       rect(0, 0, width, height);
     }
@@ -1097,6 +1120,7 @@ void vigilarEstadisticas() {
     colorDestello = buena ? neonCian : neonRosa;
     destello = 60;
     chispas(width / 2, yy, buena ? neonCian : neonRosa, 40);
+    monedasPorDecision(dv, dc, di);   // buenas decisiones dan NovaCoins, malas quitan (Tienda.pde)
   }
   prevViral = viralidad;
   prevConf = confiabilidad;
@@ -1254,7 +1278,7 @@ void dibujarPausa() {
   textSize(12);
   fill(180);
   textAlign(CENTER, CENTER);
-  text("Viralidad " + int(viralidad) + "   -   Confiabilidad " + int(confiabilidad) + "   -   Impacto " + int(impacto) + "   -   Logros " + contarLogros() + "/" + logros.length, width / 2, 455);
+  text("Viralidad " + int(viralidad) + "   -   Confiabilidad " + int(confiabilidad) + "   -   Impacto " + int(impacto) + "   -   Logros " + contarLogros() + "/" + logros.length + "   -   NovaCoins " + monedas, width / 2, 455);
 }
 
 void clickPausa() {

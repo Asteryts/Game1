@@ -188,7 +188,7 @@ void alEntrarAlMapa() {
 
 void nuevoEvento() {
   if (puntosMapa == null) puntosMapa = puntosEventos();
-  if (eventosMapa.size() >= 3) return;
+  if (eventosMapa.size() >= (gadgetActivo(2) ? 5 : 3)) return;   // con el Radar de Eventos (Tienda.pde) caben 5
   EventoMapa e = new EventoMapa();
   // se elige el tipo al azar, segun su peso
   float total = 0;
@@ -288,7 +288,7 @@ void eventosDelMapa() {
     proximoEvento--;
     if (proximoEvento <= 0) {
       nuevoEvento();
-      proximoEvento = random(500, 900);
+      proximoEvento = random(500, 900) * (gadgetActivo(2) ? 0.45 : 1);
     }
   }
   EventoMapa sobreEv = null;

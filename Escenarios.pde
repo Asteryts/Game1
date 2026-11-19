@@ -217,12 +217,20 @@ Interactivo maquina(float ix, float iy, String nombre, int destino) {
   return it;
 }
 
+// kiosco de la Tienda NOVA o de la Ruleta (Tienda.pde)
+Interactivo kiosco(float ix, float iy, String nombre, int destino) {
+  Interactivo it = new Interactivo(ix, iy, nombre, 4);
+  it.destino = destino;
+  return it;
+}
+
 void prepararEscenarios() {
   interParque.clear();
   interCentro.clear();
 
   // ---------------- PARQUE ----------------
   interParque.add(maquina(115, 196, "Kiosko Arcade", ESC_ATRAPA));
+  interParque.add(kiosco(700, 215, "Tienda NOVA", ESC_TIENDA));
   Interactivo fuenteDeseos = new Interactivo(400, 290, "Fuente de los deseos", 1);
   fuenteDeseos.frases = fortunas;
   interParque.add(fuenteDeseos);
@@ -259,6 +267,7 @@ void prepararEscenarios() {
   interCentro.add(maquina(670, 262, "Terminal: Rastreo", ESC_MEMORIA));
   interCentro.add(maquina(130, 432, "Terminal: Verificador", ESC_VERIFICADOR));
   interCentro.add(maquina(670, 432, "Terminal: Manotazo (camara)", ESC_MANOTAZO));
+  interCentro.add(kiosco(260, 200, "Ruleta Nova", ESC_RULETA));
   Interactivo orbe = new Interactivo(400, 300, "NOVA", 1);
   orbe.frases = consejosNova;
   interCentro.add(orbe);
@@ -320,6 +329,9 @@ void interactuar(Interactivo it) {
     if (it.nombre.startsWith("Fuente")) chispas(400, 230, neonAmarillo, 25);
   } else if (it.tipo == 2) {
     lanzarJuego(it.destino, false);
+  } else if (it.tipo == 4) {   // kiosco de la tienda o de la ruleta (Tienda.pde)
+    if (it.destino == ESC_RULETA) abrirRuleta(scene);
+    else abrirTienda(false);
   }
 }
 
@@ -417,14 +429,15 @@ void dibujarEscenaCaminable() {
     if (it.oculto || it.ausente) continue;
     if (it.tipo == 0) dibujarNPC(it.ix, it.iy, it.ropa, it.pelo, it.fase, !it.hablado && it.charla.eleccion != null, it.nombre);
     else if (it.tipo == 3) dibujarRobot(it.ix, it.iy, it.fase, it.nombre);
+    else if (it.tipo == 4) dibujarKiosco(it.ix, it.iy, it.destino == ESC_RULETA);
     else destelloObj(it.ix, it.iy - 50);
   }
   if (!jugadorListo) dibujarJugador();
   dibujarFrenteLugar(scene, true);
   if (cercano != null && charlaActiva == null) {
-    float ky = cercano.tipo == 0 ? cercano.iy - 92 : cercano.tipo == 3 ? cercano.iy - 112 : cercano.iy - 76;
+    float ky = cercano.tipo == 0 ? cercano.iy - 92 : cercano.tipo == 3 ? cercano.iy - 112 : cercano.tipo == 4 ? cercano.iy - 124 : cercano.iy - 76;
     teclaFlotante("E", cercano.ix, ky);
-    if (cercano.tipo == 1 || cercano.tipo == 2) {
+    if (cercano.tipo == 1 || cercano.tipo == 2 || cercano.tipo == 4) {
       textFont(fuenteUI);
       textSize(12);
       float w = textWidth(cercano.nombre) + 16;
@@ -753,7 +766,7 @@ void dibujarMapaVivo() {
   int sobreLugar = -1;
   for (int i = 0; i < lugaresMapa.length; i++) {
     float[] l = lugaresMapa[i];
-    if (mouseX > l[0] && mouseX < l[2] && mouseY > l[1] && mouseY < l[3] && !telefonoAbierto && !pausaAbierta && !popupAbierto) sobreLugar = i;
+    if (mouseX > l[0] && mouseX < l[2] && mouseY > l[1] && mouseY < l[3] && !telefonoAbierto && !pausaAbierta && !popupAbierto && kioscoMapaEncima() < 0) sobreLugar = i;
   }
   for (int i = 0; i < lugaresMapa.length; i++) {
     float[] l = lugaresMapa[i];
@@ -809,6 +822,7 @@ void dibujarMapaVivo() {
     fill(neonCian);
     text("clic para entrar", tx + w / 2, ty + 24);
   }
+  dibujarKioscosMapa();   // kioscos de la Tienda NOVA (Tienda.pde)
   // telefono del mapa
   float p = 0.5 + 0.5 * sin(frameCount * 0.1);
   noFill();
@@ -842,6 +856,7 @@ void dibujarMapaVivo() {
 boolean clickMapaVivo() {
   if (popupAbierto) return clickPopupMapa();
   if (clickEventoMapa()) return true;
+  if (clickKioscosMapa()) return true;
   // (expansion) la alcaldia ahora se alcanza caminando por la Avenida Central
   float[] alc = lugaresMapa[2];
   if (mouseX > alc[0] && mouseX < alc[2] && mouseY > alc[1] && mouseY < alc[3]) {

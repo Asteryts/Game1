@@ -41,8 +41,8 @@ String[] consejosNova = {
   "Que mucha gente lo comparta no lo vuelve verdad. Mil reenvios de un rumor siguen siendo un rumor."
 };
 
-String[] nombresApps = {"Conecta", "Stats", "Juegos", "Logros", "NOVA IA", "Mensajes", "Mapa"};
-color[] coloresApps = {#FF3CC8, #00F0FF, #3CFF96, #FFDC3C, #9650FF, #50B4FF, #FF8C3C};
+String[] nombresApps = {"Conecta", "Stats", "Juegos", "Logros", "NOVA IA", "Mensajes", "Mapa", "NovaShop"};
+color[] coloresApps = {#FF3CC8, #00F0FF, #3CFF96, #FFDC3C, #9650FF, #50B4FF, #FF8C3C, #FFB400};
 
 void prepararTelefono() {
   estadoFeed = new int[feed.length];
@@ -207,6 +207,16 @@ void iconoApp(int i, float cx, float cy, float s) {
     triangle(cx - 9, cy - 1, cx + 9, cy - 1, cx, cy + 14);
     fill(c);
     ellipse(cx, cy - 5, 8, 8);
+  } else if (i == 7) {
+    // bolsa de compras con una NovaCoin
+    noStroke();
+    rect(cx - 13, cy - 6, 26, 20, 4);
+    noFill();
+    stroke(255);
+    strokeWeight(2.5);
+    arc(cx, cy - 6, 14, 16, PI, TWO_PI);
+    noStroke();
+    dibujarMoneda(cx + 11, cy + 10, 14, false);
   }
   noStroke();
 }
@@ -491,11 +501,37 @@ void appJuegos(float sx, float cy, float sw, float ch) {
     textAlign(CENTER, TOP);
     text(nombresJuegos[i], p[0] - 38, p[1] + 30, 76, 26);
   }
+  // la Ruleta Nova (casino, Tienda.pde) va al final
+  float[] pr = posIconoJuego(nombresJuegos.length, sx, cy, sw);
+  boolean sr = encima(pr[0] - 36, pr[1] - 30, 72, 72);
+  float levR = sr ? -3 : 0;
+  noStroke();
+  fill(neonRojo, sr ? 90 : 45);
+  rect(pr[0] - 28, pr[1] - 28 + levR, 56, 56, 16);
+  fill(lerpColor(neonRojo, color(14, 10, 32), 0.78));
+  rect(pr[0] - 25, pr[1] - 25 + levR, 50, 50, 14);
+  pushMatrix();
+  translate(pr[0], pr[1] + levR);
+  rotate(frameCount * 0.03);
+  for (int k = 0; k < 10; k++) {
+    fill(k == 0 ? color(20, 170, 80) : (k % 2 == 1 ? color(210, 30, 50) : color(25, 22, 30)));
+    arc(0, 0, 38, 38, k * TWO_PI / 10, (k + 1) * TWO_PI / 10, PIE);
+  }
+  popMatrix();
+  dibujarMoneda(pr[0], pr[1] + levR, 14, false);
+  textFont(fuenteUI);
+  textSize(9);
+  fill(sr ? neonRojo : color(235));
+  textAlign(CENTER, TOP);
+  text("Ruleta Nova", pr[0] - 38, pr[1] + 30, 76, 26);
   // abajo: el record del juego que tienes encima
   textFont(fuenteUI);
   textSize(10);
   textAlign(CENTER, CENTER);
-  if (encimaDe >= 0) {
+  if (sr) {
+    fill(neonRojo);
+    text("Tienes " + monedas + " NovaCoins para apostar", sx + sw / 2, cy + ch - 6);
+  } else if (encimaDe >= 0) {
     fill(coloresJuegos[encimaDe]);
     text("Record: " + records[encimaDe] + "   -   clic para jugar", sx + sw / 2, cy + ch - 6);
   } else {
@@ -507,7 +543,7 @@ void appJuegos(float sx, float cy, float sw, float ch) {
 // posicion (centro) del icono de cada juego: 3 por fila, el ultimo centrado si queda solo
 float[] posIconoJuego(int i, float sx, float cy, float sw) {
   int fila = i / 3, col = i % 3;
-  int enFila = min(3, nombresJuegos.length - fila * 3);
+  int enFila = min(3, nombresJuegos.length + 1 - fila * 3);   // +1 = la ruleta
   float x = sx + sw / 2 + (col - (enFila - 1) / 2.0) * 80;
   return new float[] {x, cy + 62 + fila * 78};
 }
@@ -628,6 +664,14 @@ void clickTelefono() {
         return;
       }
     }
+    float[] pr = posIconoJuego(nombresJuegos.length, sx, cy, sw);
+    if (encima(pr[0] - 36, pr[1] - 30, 72, 72)) {
+      cerrarTelefono();
+      telAnim = 0;
+      CerrarDialogo();
+      abrirRuleta(scene);
+      return;
+    }
   } else if (telApp == 5) {
     if (encima(sx + 30, cy + ch - 40, sw - 60, 32) && novaEscribiendo <= 0) {
       chatNova.add("Tu: Algun consejo?");
@@ -649,6 +693,13 @@ void abrirApp(int i) {
     CerrarDialogo();
     cerrarCharla();
     scene = 1;
+    return;
+  }
+  if (i == 7) {   // compra online: abre la tienda con comision (Tienda.pde)
+    cerrarTelefono();
+    telAnim = 0;
+    CerrarDialogo();
+    abrirTienda(true);
     return;
   }
   telApp = i + 1;

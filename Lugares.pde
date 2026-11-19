@@ -232,6 +232,7 @@ void registrarLugares() {
     "El carrito de helados tiene sabores raros: 'Mango Verificado', 'Fresa sin Fuente' y 'Chicle Viral'.",
     "El heladero te guiña el ojo: 'El de Mango Verificado nunca falla'.",
     "Un letrero dice: 'Hoy 2x1 si me cuentas un dato con fuente'."}));
+  av.agregar(kiosco(480, 330, "Tienda NOVA", ESC_TIENDA));
   lugares.put(ESC_AVENIDA, av);
 
   // ---------------- 53 PASEO DE CAMPANA ----------------
@@ -308,6 +309,7 @@ void registrarLugares() {
     "El gato te mira, bosteza y sigue durmiendo. Es el ser mas tranquilo de Nova.",
     "Miau. (El gato no tiene opiniones politicas. Que envidia.)"}));
   me.agregar(maquina(700, 185, "Ciber Nova: Teclado Veloz", ESC_TECLADO));
+  me.agregar(kiosco(400, 330, "Tienda NOVA", ESC_TIENDA));
   lugares.put(ESC_MERCADO, me);
 
   // ---------------- 55 CANCHA ----------------
