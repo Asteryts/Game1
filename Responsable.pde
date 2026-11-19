@@ -729,4 +729,6 @@ void reiniciarResponsable() {
   vecesDetenido = 0;
   historialScroll = 0;
   revisionActiva = null;
+  rumoresPremiados = 0;
+  for (int k = 0; k < dilemasPremiados.length; k++) dilemasPremiados[k] = 0;
 }

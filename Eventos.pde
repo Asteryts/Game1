@@ -1,13 +1,14 @@
 // =====================================================================================
 //  EVENTOS.pde -> cosas aleatorias que pasan en el MAPA
 //  Cada vez que vuelves al mapa es distinto: pueden aparecer rumores sueltos, datos curiosos,
-//  retos relampago (un minijuego al azar) o gatos callejeros. Ademas pasan pajaros, un dron
-//  de Conecta, nubes, a veces llueve y suben hashtags de los barrios.
+//  retos relampago (un minijuego al azar), gatos callejeros y dilemas (encuestas flash, celulares
+//  perdidos, peleas en comentarios, capturas editadas, premios falsos y musicos callejeros).
+//  Ademas pasan pajaros, un dron de Conecta, nubes, a veces llueve y suben hashtags de los barrios.
 // =====================================================================================
 
 class EventoMapa {
   float ex, ey, vida, anim = 0;
-  int tipo;       // 0 rumor, 1 dato curioso, 2 reto relampago, 3 gato
+  int tipo;       // 0 rumor, 1 dato curioso, 2 reto relampago, 3 gato, 4 a 9 dilemas (ver nombresEvento)
   int variante;
 }
 
@@ -25,8 +26,104 @@ float[][] bandada = new float[6][2];
 float bandadaX = -200, bandadaY = 100;
 float nubesOff = 0;
 
-String[] nombresEvento = {"Rumor suelto", "Dato curioso", "Reto relampago", "Gato callejero"};
-color[] coloresEvento = {#FF3CC8, #00F0FF, #FFDC3C, #FF8C3C};
+String[] nombresEvento = {"Rumor suelto", "Dato curioso", "Reto relampago", "Gato callejero",
+  "Encuesta flash", "Celular perdido", "Pelea en comentarios", "Captura editada", "Premio falso", "Musico callejero"};
+color[] coloresEvento = {#FF3CC8, #00F0FF, #FFDC3C, #FF8C3C, #9650FF, #50B4FF, #FF6E3C, #FFB43C, #C8FF3C, #FF8CDC};
+// que tan seguido sale cada tipo (mismo orden que nombresEvento)
+float[] pesoEvento = {20, 12, 12, 8, 9, 8, 9, 9, 8, 5};
+
+// ------------------------------------- DILEMAS DEL MAPA (tipos 4 a 9) -------------------------------------
+// cada tipo tiene su leccion, cuanto mueve cada opcion {viralidad, confiabilidad, impacto} y 2 situaciones.
+// La opcion A es la que hace daño (o la graciosa, en el musico) y la B la responsable.
+String[] leccionesDilema = {
+  "Una encuesta en redes mide lo que la gente cree, no lo que es verdad.",
+  "La privacidad de los demas se respeta aunque nadie te este viendo.",
+  "En una pelea de comentarios nadie gana: la calma y las fuentes, si.",
+  "Una captura de pantalla se edita en segundos: busca siempre la publicacion original.",
+  "Nadie regala premios por mensaje: si te piden datos o que compartas, es una trampa.",
+  ""
+};
+float[][][] efectosDilema = {
+  {{6, -4, -3}, {0, 3, 3}},
+  {{0, -6, -4}, {0, 5, 5}},
+  {{6, -5, -4}, {0, 3, 4}},
+  {{10, -8, -6}, {0, 5, 4}},
+  {{4, -6, -6}, {0, 4, 3}},
+  {{0, 0, 0}, {0, 0, 0}}
+};
+// texto, opcion A, opcion B, que pasa con A, que pasa con B, A es compartir ("1"/"0"),
+// y si A es compartir: las respuestas de la pausa (quien, cuando, pruebas)
+String[][][] situacionesDilema = {
+  { // 4 encuesta flash
+    {"Conecta lanza una encuesta: 'Crees que el video de Clemencia comprando votos es real?'",
+      "Votar 'Si, se ve clarito'", "Votar 'No se, no hay fuente'",
+      "El 71% voto 'si'. Ahora la encuesta se comparte como si fuera una prueba.",
+      "Tu voto suma al 29% que pide fuentes. Una periodista cita ese dato en Nova Noticias.", "0", "", "", ""},
+    {"Encuesta en el grupo del colegio: 'Dani es espia de la constructora? Si / No'",
+      "Votar 'Si, obvio'", "Votar 'Eso es un invento'",
+      "La encuesta se vuelve viral y Dani la ve. Le duele mas que la foto.",
+      "Varios compañeros cambian su voto al ver el tuyo. Alguien cierra la encuesta.", "0", "", "", ""}
+  },
+  { // 5 celular perdido
+    {"Encuentras un celular en una banca. Esta desbloqueado y tiene los chats abiertos.",
+      "Revisar sus chats", "Llevarlo a objetos perdidos",
+      "Lees conversaciones que no te tocaban. Si alguien hiciera eso con tu celular, como te sentirias?",
+      "Su dueña, Valentina, lo recupera esa misma tarde y te escribe para darte las gracias.", "0", "", "", ""},
+    {"Un celular suena en el piso del bus. En la pantalla: 'Mama (12 llamadas perdidas)'.",
+      "Mirar sus fotos", "Contestar y avisar",
+      "Era el celular de Tomas. El nunca sabra que viste sus fotos... pero tu si.",
+      "La mama de Tomas respira aliviada. El pasa a recogerlo en un rato.", "0", "", "", ""}
+  },
+  { // 6 pelea en comentarios
+    {"En una publicacion de Conecta, dos vecinos se insultan por las elecciones. Ya van 300 comentarios.",
+      "Insultar tambien", "Pedir calma con una fuente",
+      "Tu comentario recibe 40 'me enoja'. La pelea sigue hasta la madrugada.",
+      "Un vecino lee la fuente y borra su insulto. El hilo se calma.", "0", "", "", ""},
+    {"Alguien comento: 'Los del barrio de la cancha son todos unos mentirosos'.",
+      "Responder con otro insulto", "Reportar y responder bien",
+      "Ahora son dos barrios peleando. Nadie recuerda por que empezo.",
+      "El comentario se borra y tres personas te dan la razon. Con respeto se gana mas.", "0", "", "", ""}
+  },
+  { // 7 captura editada
+    {"Te llega una captura: Ramirez 'publicando' que va a cerrar el colegio. La fecha dice 31 de febrero.",
+      "Reenviar la captura", "Buscar la publicacion real",
+      "La captura llega a 3 grupos. Alguien nota la fecha imposible... demasiado tarde.",
+      "El 31 de febrero no existe y la publicacion original tampoco. Era un montaje.", "1",
+      "Una captura sin enlace", "31 de febrero (no existe)", "No hay publicacion original"},
+    {"Una captura de un 'mensaje' de Clemencia insultando a los votantes. La letra no es la de Conecta.",
+      "Reenviar la captura", "Buscar la publicacion real",
+      "Medio barrio ya cree que Clemencia insulto a los votantes. Ella nunca escribio eso.",
+      "En el perfil de Clemencia no existe ese mensaje. Avisas al grupo que es falso.", "1",
+      "Una captura reenviada muchas veces", "Sin fecha", "La letra ni siquiera es la de Conecta"}
+  },
+  { // 8 premio falso
+    {"Mensaje: 'Ganaste un bono de 500.000 de la Alcaldia! Escribe tu documento y tu contraseña'.",
+      "Poner mis datos", "Ignorar y reportar",
+      "No habia bono: ahora alguien tiene tus datos y esta escribiendole a tus contactos.",
+      "La Alcaldia confirma que no regala bonos por mensaje. Tu reporte bloquea el numero.", "0", "", "", ""},
+    {"Un enlace dice: 'Gana entradas para el concierto del domingo! Solo compartelo con 20 amigos'.",
+      "Compartir con 20 amigos", "Revisar quien lo organiza",
+      "No habia concierto. Tus 20 amigos ahora reciben mensajes de spam por tu culpa.",
+      "El 'organizador' es una cuenta creada ayer. Avisas a tus amigos que no caigan.", "1",
+      "Un numero desconocido", "Sin fecha", "Ninguna: no hay ningun concierto anunciado"}
+  },
+  { // 9 musico callejero (solo para divertirse)
+    {"Un musico toca acordeon en la esquina. Su cancion se llama 'No me compartas sin leerme'.",
+      "Dar una moneda", "Pedir una cancion",
+      "Te sonrie y toca mas fuerte. Un par de personas se detienen a escuchar.",
+      "Te dedica 'El corrido del bulo'. Hasta los perros del barrio bailan.", "0", "", "", ""},
+    {"Una chica canta rap en la plaza: 'Si no tiene fuente, no lo pases, pariente'.",
+      "Aplaudir", "Pedirle otra",
+      "La gente se une a los aplausos. Ella te hace un saludo con la gorra.",
+      "Improvisa una estrofa sobre ti: 'Ese si verifica, ese si sabe'. Todos se rien.", "0", "", "", ""}
+  }
+};
+int[] dilemasPremiados = new int[6];   // cada tipo de dilema solo mueve estadisticas las primeras 3 veces
+
+String[] situacionDilema(EventoMapa e) {
+  String[][] s = situacionesDilema[e.tipo - 4];
+  return s[e.variante % s.length];
+}
 String[] hashtags = {"#Escandalo", "#NovaDecide", "#YLaFuente?", "#FueraBulos", "#Elecciones", "#Verifica", "#Chisme", "#ParqueSi"};
 
 // texto del rumor, que pasa si lo repites, que pasa si preguntas
@@ -35,7 +132,11 @@ String[][] rumoresMapa = {
   {"Un señor en la parada del bus: 'Dicen que las votaciones se pasan para el lunes!'", "Varias personas casi no van a votar el domingo.", "Revisas la Registraduria: las votaciones siguen siendo el domingo."},
   {"Un grupo de chicos: 'El Cafe 404 lo van a cerrar porque vende cafe con IA'", "El cafe pierde clientes por un chiste mal entendido.", "Le escribes al cafe: era un meme. Ellos mismos lo aclaran con humor."},
   {"Un audio en el grupo del barrio: 'Se cayo un puente en la avenida, no salgan!'", "El panico llena el grupo. El puente esta perfecto.", "Miras las camaras de Transito: el puente esta bien. Avisas al grupo."},
-  {"Una cuenta sin foto: 'Gonzalo tiene 14 carros, por eso quiere la ciclorruta... ironia'", "El chiste se vuelve 'noticia' y nadie entiende nada.", "Buscas la declaracion de bienes oficial: Gonzalo tiene una bicicleta."}
+  {"Una cuenta sin foto: 'Gonzalo tiene 14 carros, por eso quiere la ciclorruta... ironia'", "El chiste se vuelve 'noticia' y nadie entiende nada.", "Buscas la declaracion de bienes oficial: Gonzalo tiene una bicicleta."},
+  {"Una vecina por la ventana: 'Van a cortar la luz en todo Nova el dia de las elecciones!'", "Medio barrio compra velas y planea no salir a votar.", "La empresa de energia dice que no hay ningun corte programado."},
+  {"Un repartidor: 'En el Mercado estan regalando celulares, pero solo hoy!'", "Una multitud llega al mercado. No hay celulares, solo un enlace falso.", "Le preguntas a Yuli, la del mercado: es la misma estafa del enlace."},
+  {"Un audio anonimo: 'El agua de la llave de Nova tiene un quimico raro, no la tomen'", "La gente compra agua embotellada a precios absurdos.", "Salud Nova publica los analisis del agua: todo esta normal."},
+  {"Un chico en la esquina: 'El colegio va a cerrar una semana por una plaga de ratas'", "Varios papas no mandan a sus hijos al colegio.", "La coordinadora Gladys desmiente: no hay ratas ni cierre."}
 };
 
 String[] datosCuriosos = {
@@ -43,7 +144,12 @@ String[] datosCuriosos = {
   "Dato: si una noticia no tiene fecha, autor ni fuente, es mejor no compartirla hasta saber mas.",
   "Dato: la mayoria de bulos usan palabras como URGENTE, COMPARTE YA o ANTES DE QUE LO BORREN.",
   "Dato: una foto real puede usarse con una historia falsa. Busca siempre la imagen original.",
-  "Dato: preguntar 'quien lo dijo?' frena mas rumores que cualquier algoritmo."
+  "Dato: preguntar 'quien lo dijo?' frena mas rumores que cualquier algoritmo.",
+  "Dato: la lectura lateral es abrir otra pestaña para averiguar quien esta detras de una pagina.",
+  "Dato: una encuesta en redes no es una prueba: solo vota quien la ve y quiere votar.",
+  "Dato: los bots publican a toda hora, sin dormir. Las personas, no.",
+  "Dato: si un titular te da mucha rabia, respira: esta hecho para que compartas sin pensar.",
+  "Dato: activar la verificacion en dos pasos protege tu cuenta aunque alguien sepa tu contraseña."
 };
 
 String[] respuestasGato = {
@@ -84,8 +190,18 @@ void nuevoEvento() {
   if (puntosMapa == null) puntosMapa = puntosEventos();
   if (eventosMapa.size() >= 3) return;
   EventoMapa e = new EventoMapa();
-  float r = random(1);
-  e.tipo = r < 0.42 ? 0 : r < 0.62 ? 1 : r < 0.84 ? 2 : 3;
+  // se elige el tipo al azar, segun su peso
+  float total = 0;
+  for (float p : pesoEvento) total += p;
+  float r = random(total);
+  e.tipo = 0;
+  for (int k = 0; k < pesoEvento.length; k++) {
+    if (r < pesoEvento[k]) {
+      e.tipo = k;
+      break;
+    }
+    r -= pesoEvento[k];
+  }
   e.variante = int(random(100));
   for (int intento = 0; intento < 10; intento++) {
     float[] p = puntosMapa[int(random(puntosMapa.length))];
@@ -242,13 +358,45 @@ void dibujarEvento(EventoMapa e, boolean s) {
       vertex(cos(a) * rr, -14 + b + sin(a) * rr);
     }
     endShape(CLOSE);
-  } else {
+  } else if (e.tipo == 3) {
     ellipse(0, -12 + b, 16, 13);
     triangle(-8, -16 + b, -6, -24 + b, -2, -18 + b);
     triangle(8, -16 + b, 6, -24 + b, 2, -18 + b);
     fill(15, 10, 32);
     ellipse(-3, -13 + b, 2.5, 3);
     ellipse(3, -13 + b, 2.5, 3);
+  } else if (e.tipo == 4) {   // encuesta: barras
+    rect(-8, -14 + b, 4, 8);
+    rect(-2, -20 + b, 4, 14);
+    rect(4, -17 + b, 4, 11);
+  } else if (e.tipo == 5) {   // celular
+    rect(-5, -23 + b, 10, 18, 2);
+    fill(15, 10, 32);
+    rect(-3, -21 + b, 6, 12);
+  } else if (e.tipo == 6) {   // dos globos que pelean
+    rect(-10, -22 + b, 11, 8, 2);
+    rect(-1, -14 + b, 11, 8, 2);
+    fill(15, 10, 32);
+    textSize(8);
+    text("!", -4.5, -19 + b);
+    text("!", 4.5, -11 + b);
+  } else if (e.tipo == 7) {   // una foto con tijera
+    rect(-8, -20 + b, 16, 12, 2);
+    fill(15, 10, 32);
+    triangle(-6, -10 + b, -1, -16 + b, 3, -10 + b);
+    stroke(c);
+    strokeWeight(1.5);
+    line(-9, -6 + b, 9, -22 + b);
+    noStroke();
+  } else if (e.tipo == 8) {   // un regalo
+    rect(-8, -16 + b, 16, 10, 1);
+    rect(-9, -19 + b, 18, 4, 1);
+    fill(15, 10, 32);
+    rect(-1, -19 + b, 2, 13);
+  } else {   // una nota musical
+    ellipse(-3, -9 + b, 7, 6);
+    rect(0, -23 + b, 2, 14);
+    rect(0, -23 + b, 7, 3);
   }
   popMatrix();
 }
@@ -262,7 +410,8 @@ void abrirPopup(EventoMapa e) {
   if (e.tipo == 0) popupTexto = rumoresMapa[e.variante % rumoresMapa.length][0];
   else if (e.tipo == 1) popupTexto = datosCuriosos[e.variante % datosCuriosos.length];
   else if (e.tipo == 2) popupTexto = "Reto relampago! Un juego sorpresa te espera: " + nombresJuegos[e.variante % nombresJuegos.length] + ". Te le mides?";
-  else popupTexto = "Un gato callejero se te acerca, te mira fijamente y maulla. Parece que quiere algo.";
+  else if (e.tipo == 3) popupTexto = "Un gato callejero se te acerca, te mira fijamente y maulla. Parece que quiere algo.";
+  else popupTexto = situacionDilema(e)[0];
 }
 
 String[] botonesPopup() {
@@ -270,7 +419,37 @@ String[] botonesPopup() {
   if (eventoPopup.tipo == 0) return new String[] {"Repetirlo", "Preguntar de donde salio"};
   if (eventoPopup.tipo == 1) return new String[] {"Interesante!"};
   if (eventoPopup.tipo == 2) return new String[] {"A jugar!", "Ahora no"};
-  return new String[] {"Acariciarlo", "Darle de tu arepa"};
+  if (eventoPopup.tipo == 3) return new String[] {"Acariciarlo", "Darle de tu arepa"};
+  String[] s = situacionDilema(eventoPopup);
+  return new String[] {s[1], s[2]};
+}
+
+// donde va cada boton de la ventanita: {x, ancho}
+float[] botonPopup(int i, int n) {
+  if (n == 1) return new float[] {width / 2 - 100, 200};
+  return new float[] {150 + i * 255, 245};
+}
+
+// 0 = la opcion A, 1 = la opcion B de un dilema del mapa
+void aplicarDilema(int i) {
+  int k = eventoPopup.tipo - 4;
+  String[] s = situacionDilema(eventoPopup);
+  if (dilemasPremiados[k] < 3) {
+    float[] e = efectosDilema[k][i];
+    viralidad += e[0];
+    confiabilidad += e[1];
+    impacto += e[2];
+  }
+  dilemasPremiados[k]++;
+  popupTexto = s[3 + i];
+  popupFase = 1;
+  if (eventoPopup.tipo == 9) {   // el musico es solo para divertirse
+    chispas(width / 2, 220, coloresEvento[9], 30);
+    return;
+  }
+  anotarDecision("Mapa: " + nombresEvento[eventoPopup.tipo], s[1 + i], i == 1, i == 0 && s[5].equals("1"), popupTexto);
+  historial.get(historial.size() - 1).leccion = leccionesDilema[k];
+  if (i == 1) chispas(width / 2, 220, neonVerde, 30);
 }
 
 void dibujarPopupMapa() {
@@ -279,27 +458,25 @@ void dibujarPopupMapa() {
   fill(0, 150);
   rect(0, 0, width, height);
   color c = coloresEvento[eventoPopup.tipo];
-  panelNeon(170, 140, 460, 210, c);
-  tituloNeon(nombresEvento[eventoPopup.tipo].toUpperCase(), width / 2, 168, 22, c);
+  panelNeon(130, 130, 540, 230, c);
+  tituloNeon(nombresEvento[eventoPopup.tipo].toUpperCase(), width / 2, 160, 22, c);
   textFont(fuenteUI);
   textSize(15);
   fill(235);
   textAlign(CENTER, TOP);
-  text(popupTexto, 200, 196, 400, 90);
+  text(popupTexto, 160, 188, 480, 100);
   String[] bs = botonesPopup();
-  float bw = bs.length == 1 ? 180 : 190;
   for (int i = 0; i < bs.length; i++) {
-    float bx = bs.length == 1 ? width / 2 - bw / 2 : 205 + i * 200;
-    botonNeon(bs[i], bx, 290, bw, 42, i == 0 ? c : neonCian, false);
+    float[] b = botonPopup(i, bs.length);
+    botonNeon(bs[i], b[0], 300, b[1], 42, i == 0 ? c : neonCian, false);
   }
 }
 
 boolean clickPopupMapa() {
   String[] bs = botonesPopup();
-  float bw = bs.length == 1 ? 180 : 190;
   for (int i = 0; i < bs.length; i++) {
-    float bx = bs.length == 1 ? width / 2 - bw / 2 : 205 + i * 200;
-    if (!encima(bx, 290, bw, 42)) continue;
+    float[] b = botonPopup(i, bs.length);
+    if (!encima(b[0], 300, b[1], 42)) continue;
     if (popupFase == 1 || eventoPopup.tipo == 1) {
       popupAbierto = false;
     } else if (eventoPopup.tipo == 0) {
@@ -317,12 +494,25 @@ boolean clickPopupMapa() {
     } else if (eventoPopup.tipo == 2) {
       popupAbierto = false;
       if (i == 0) lanzarJuego(escenasJuegos[eventoPopup.variante % escenasJuegos.length], false);
-    } else {
+    } else if (eventoPopup.tipo == 3) {
       popupTexto = respuestasGato[i];
       popupFase = 1;
       gatosVistos++;
       desbloquear(16);
       chispas(width / 2, 220, neonAmarillo, 30);
+    } else {
+      // los dilemas: si la opcion A es compartir, primero la pausa (Responsable.pde)
+      final String[] s = situacionDilema(eventoPopup);
+      if (i == 0 && s[5].equals("1")) {
+        pedirRevision("Mapa: " + nombresEvento[eventoPopup.tipo], s[0], s[6], false, s[7], false, s[8], false, new Accion() {
+          public void hacer() {
+            aplicarDilema(0);
+          }
+        }
+        );
+      } else {
+        aplicarDilema(i);
+      }
     }
     return true;
   }
