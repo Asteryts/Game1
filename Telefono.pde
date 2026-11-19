@@ -464,26 +464,52 @@ void appStats(float sx, float cy, float sw, float ch) {
 // ---------- JUEGOS ----------
 void appJuegos(float sx, float cy, float sw, float ch) {
   cabeceraApp("Juegos", coloresApps[2], sx, cy, sw);
+  // los juegos como iconos de apps, con el mismo dibujo que tienen en el menu de minijuegos
+  int encimaDe = -1;
   for (int i = 0; i < nombresJuegos.length; i++) {
-    float by = cy + 38 + i * 32;
-    boolean s = encima(sx + 10, by, sw - 20, 29);
-    fill(s ? color(50, 40, 80) : color(26, 22, 44), 240);
-    rect(sx + 10, by, sw - 20, 29, 9);
-    fill(coloresJuegos[i]);
-    rect(sx + 10, by, 6, 29, 9, 0, 0, 9);
+    float[] p = posIconoJuego(i, sx, cy, sw);
+    boolean s = encima(p[0] - 36, p[1] - 30, 72, 72);
+    if (s) encimaDe = i;
+    float lev = s ? -3 : 0;
+    color c = coloresJuegos[i];
+    noStroke();
+    fill(c, s ? 90 : 45);
+    rect(p[0] - 28, p[1] - 28 + lev, 56, 56, 16);
+    fill(lerpColor(c, color(14, 10, 32), 0.78));
+    rect(p[0] - 25, p[1] - 25 + lev, 50, 50, 14);
+    pushMatrix();
+    translate(p[0], p[1] + lev);
+    scale(0.42);
+    iconoJuego(i, 0, 0, c);
+    popMatrix();
+    fill(255, 30);
+    noStroke();
+    rect(p[0] - 25, p[1] - 25 + lev, 50, 22, 14, 14, 0, 0);
     textFont(fuenteUI);
-    textAlign(LEFT, TOP);
-    textSize(12);
-    fill(255);
-    text(nombresJuegos[i], sx + 24, by + 2);
     textSize(9);
-    fill(180);
-    text("Record: " + records[i], sx + 24, by + 16);
-    fill(coloresJuegos[i]);
-    textSize(11);
-    textAlign(RIGHT, CENTER);
-    text("Jugar >", sx + sw - 20, by + 14);
+    fill(s ? c : color(235));
+    textAlign(CENTER, TOP);
+    text(nombresJuegos[i], p[0] - 38, p[1] + 30, 76, 26);
   }
+  // abajo: el record del juego que tienes encima
+  textFont(fuenteUI);
+  textSize(10);
+  textAlign(CENTER, CENTER);
+  if (encimaDe >= 0) {
+    fill(coloresJuegos[encimaDe]);
+    text("Record: " + records[encimaDe] + "   -   clic para jugar", sx + sw / 2, cy + ch - 6);
+  } else {
+    fill(170);
+    text("Toca un juego para jugar", sx + sw / 2, cy + ch - 6);
+  }
+}
+
+// posicion (centro) del icono de cada juego: 3 por fila, el ultimo centrado si queda solo
+float[] posIconoJuego(int i, float sx, float cy, float sw) {
+  int fila = i / 3, col = i % 3;
+  int enFila = min(3, nombresJuegos.length - fila * 3);
+  float x = sx + sw / 2 + (col - (enFila - 1) / 2.0) * 80;
+  return new float[] {x, cy + 62 + fila * 78};
 }
 
 // ---------- LOGROS ----------
@@ -594,7 +620,8 @@ void clickTelefono() {
     }
   } else if (telApp == 3) {
     for (int i = 0; i < nombresJuegos.length; i++) {
-      if (encima(sx + 10, cy + 38 + i * 32, sw - 20, 29)) {
+      float[] p = posIconoJuego(i, sx, cy, sw);
+      if (encima(p[0] - 36, p[1] - 30, 72, 72)) {
         cerrarTelefono();
         telAnim = 0;
         lanzarJuego(escenasJuegos[i], false);
