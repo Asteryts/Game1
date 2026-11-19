@@ -436,7 +436,8 @@ String m9="Presiona E para hablar con Benito";
 //la fuente del juego que a una persona se le ocurrio poner una llamada cyberpunkwaifus
 void setup(){                                                                      //esta es una funcion que se ejecuta una sola vez
 
-  size(800, 500);            //el tamaño de la ventana
+  // el tamaño de la ventana (800x500) ahora se pone en settings(), en Pantalla.pde, para poder usar pantalla completa
+  prepararPantalla();
   fuente = createFont("CyberpunkWaifus (1).ttf", 32);//carga la fuente
   if (fuente != null) {                                                        //esta no estoy segura de borrarla pero la puse por si acaso que es que verifica si la fuente cargo porque cuando intentaba no me cargaba
     textFont(fuente);                                                            //aqui se aplica como determinada/obligatoria
@@ -478,6 +479,7 @@ void setup(){                                                                   
   y = height/2;
   actual = abajo;
   vidaSetup();   // (v2.0) prepara el menu animado, telefono, minijuegos, escenarios nuevos... (ver Vida.pde)
+  terminarPreparacionPantalla();
 }
 
 boolean hayColision(float px, float py) {
