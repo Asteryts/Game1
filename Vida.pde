@@ -379,6 +379,7 @@ void vidaSetup() {
   cargarSonidos();   // musica y efectos hechos con notas (Sonido.pde, de Red Quest)
   prepararSofi();    // Sofi y los dias de la semana (Dias.pde)
   prepararHistoria(); // las situaciones de Red Quest (Situaciones.pde)
+  prepararShawn();   // (Ruta.pde)
   prepararDias();
   prevViral = viralidad;
   prevConf = confiabilidad;
@@ -392,6 +393,7 @@ boolean vidaAntesDeDibujar() {
     alCambiarEscena(escenaAnterior, scene);
     escenaAnterior = scene;
   }
+  actualizarMovimientoClic();   // el clic para caminar se vuelve "teclas" (Mover.pde)
   if (sacudida > 0.4) {
     translate(random(-sacudida, sacudida), random(-sacudida, sacudida));
     sacudida *= 0.86;
@@ -428,6 +430,10 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_RULETA) dibujarRuleta();
   else if (scene == ESC_FIN_DIA) dibujarFinDelDia();
   else if (scene == ESC_FIN_GRAVE) dibujarFinGrave();
+  else if (scene == ESC_JUICIO) dibujarJuicio();          // (Ruta.pde)
+  else if (scene == ESC_SILENCIO) dibujarSilencio();
+  else if (scene == ESC_EPILOGO) dibujarEpilogo();
+  else if (scene == ESC_FINAL_SECRETO) dibujarFinalSecreto();
   else if (esCaminable(scene)) dibujarEscenaCaminable();
   else if (scene == ESC_ESTUDIO) dibujarEstudio();
   else if (scene == ESC_PLAZA) dibujarPlaza();
@@ -488,6 +494,9 @@ void vidaDespuesDeDibujar() {
 
   if (esExploracion(scene)) tinteHora();
   pistasInteraccion();
+  dibujarAtmosfera();   // culpa: Nova sombria o brillante, murmullos y Shawn (Ruta.pde)
+  dibujarGuiaLugar();   // el anillo amarillo debajo de quien sigue (Ruta.pde)
+  dibujarMarcaClic();   // el marcador del clic (Mover.pde)
   if (esExploracion(scene)) dibujarHUD();
   dibujarFlotantes(libre);
   actualizarMonedas();   // contador de NovaCoins y monedas volando (Tienda.pde)
@@ -503,7 +512,7 @@ void vidaDespuesDeDibujar() {
   dibujarTelefono();
   dibujarSituacion();   // (Situaciones.pde)
   if (pausaAbierta) dibujarPausa();
-  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE) dibujarAvisos();
+  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE && scene != ESC_JUICIO && scene != ESC_SILENCIO && scene != ESC_FINAL_SECRETO) dibujarAvisos();
   dibujarRevision();
   dibujarPantallaCarga();
   if (fundido > 0) {
@@ -546,6 +555,7 @@ void dibujarDebugCoords() {
 }
 
 boolean vidaKeyPressed() {
+  teclaCancelaClic();   // las teclas cancelan el camino del mouse (Mover.pde)
   if (entradaDuranteCarga()) {
     if (key == ESC) key = 0;
     return true;
@@ -591,7 +601,11 @@ boolean vidaKeyPressed() {
       salirRuleta();
       return true;
     }
-    if (scene == ESC_FIN_DIA || scene == ESC_FIN_GRAVE) return true;
+    if (scene == ESC_FIN_DIA || scene == ESC_FIN_GRAVE || scene == ESC_JUICIO || scene == ESC_SILENCIO || scene == ESC_FINAL_SECRETO) return true;
+    if (scene == ESC_EPILOGO) {
+      scene = ESC_FINAL;
+      return true;
+    }
     if (esMinijuego(scene)) {
       salirJuego();
       return true;
@@ -638,6 +652,7 @@ boolean vidaMousePressed() {
   sonar(0);
   if (clickRevision()) return true;
   if (clickSituacion()) return true;   // Conecta con una situacion abierta (Situaciones.pde)
+  if (clickParaCaminar()) return true;  // clic para caminar, estilo LoL (Mover.pde)
   if (pausaAbierta) {
     clickPausa();
     return true;
@@ -731,6 +746,10 @@ void clickEscenaPropia() {
   else if (scene == ESC_RULETA) clickRuleta();
   else if (scene == ESC_FIN_DIA) clickFinDelDia();
   else if (scene == ESC_FIN_GRAVE) clickFinGrave();
+  else if (scene == ESC_JUICIO) clickJuicio();            // (Ruta.pde)
+  else if (scene == ESC_SILENCIO) clickSilencio();
+  else if (scene == ESC_EPILOGO) clickEpilogo();
+  else if (scene == ESC_FINAL_SECRETO) clickFinalSecreto();
 }
 
 // ------------------------------------- AYUDANTES -------------------------------------

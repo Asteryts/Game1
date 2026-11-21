@@ -395,11 +395,13 @@ void dibujarTienda() {
   fill(180);
   textAlign(CENTER, CENTER);
   text("duplica tus NovaCoins... o no", 115, 122);
+  botonNeon(modoRopa ? "Ver gadgets" : "Ver ropa", 30, 140, 170, 32, modoRopa ? neonCian : #C8283C, false);
 
   // tarjetas de los gadgets
-  for (int i = 0; i < nombresGadgets.length; i++) dibujarTarjetaGadget(i);
+  if (!modoRopa) for (int i = 0; i < nombresGadgets.length; i++) dibujarTarjetaGadget(i);
   // detalle del gadget elegido
-  dibujarDetalleGadget(gadgetElegido);
+  if (!modoRopa) dibujarDetalleGadget(gadgetElegido);
+  else dibujarRopaTienda();   // los outfits de Red Quest (Ruta.pde)
   // el dron que trae el pedido (compras online)
   if (dronT >= 0) {
     dronT += 1;
@@ -668,6 +670,14 @@ void clickTienda() {
     salirTienda();
     return;
   }
+  if (encima(30, 140, 170, 32)) {   // gadgets o ropa (Ruta.pde)
+    modoRopa = !modoRopa;
+    return;
+  }
+  if (modoRopa && !encima(30, 76, 170, 36)) {
+    clickRopaTienda();
+    return;
+  }
   if (encima(30, 76, 170, 36)) {
     abrirRuleta(regresoTienda);
     return;
@@ -775,15 +785,13 @@ void dibujarKioscosMapa() {
     noFill();
     ellipse(kx, ky - 12, 34, 34);
     noStroke();
-    // bolsa de compras
+    // una NovaCoin grande girando (para que no se confunda con los candados del mapa)
+    dibujarMoneda(kx, ky - 12, 24, true);
     fill(#FFB400);
-    rect(kx - 9, ky - 16, 18, 15, 3);
-    noFill();
-    stroke(#FFB400);
-    strokeWeight(2);
-    arc(kx, ky - 16, 10, 12, PI, TWO_PI);
-    noStroke();
-    dibujarMoneda(kx + 12, ky - 24, 11, false);
+    textFont(fuenteUI);
+    textSize(9);
+    textAlign(CENTER, CENTER);
+    text("TIENDA", kx, ky + 12);
   }
   if (s >= 0) {
     float kx = kioscosMapa[s][0], ky = kioscosMapa[s][1];
@@ -1107,6 +1115,7 @@ String textoGuardadoTienda() {
   for (int i = 0; i < tengoGadget.length; i++) t += tengoGadget[i] + (i < tengoGadget.length - 1 ? "," : "");
   t += ";";
   for (boolean b : gadgetEncendido) t += b ? "1" : "0";
+  t += ";" + textoGuardadoRopa();   // la ropa (Ruta.pde)
   return t;
 }
 
@@ -1120,6 +1129,7 @@ void cargarGuardadoTienda(String l) {
     String[] g = split(p[2], ',');
     for (int i = 0; i < min(g.length, tengoGadget.length); i++) tengoGadget[i] = int(g[i]);
     for (int i = 0; i < min(p[3].length(), gadgetEncendido.length); i++) gadgetEncendido[i] = p[3].charAt(i) == '1';
+    if (p.length >= 6) cargarGuardadoRopa(p[4], p[5]);   // la ropa (Ruta.pde)
   }
   catch (Exception e) {
     println("No se pudieron cargar las monedas: " + e);

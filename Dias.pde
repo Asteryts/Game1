@@ -149,6 +149,7 @@ void guardarInicioDia() {
   inicioS = relacionSofi;
   inicioMonedas = monedas;
   inicioDecisiones = decisionesTomadas;
+  inicioCulpa = culpa;
 }
 
 // el reloj camina solo, pero no pasa al siguiente momento sin decisiones
@@ -185,6 +186,7 @@ int diasElecciones() {
 // se llama cada cuadro desde vidaDespuesDeDibujar
 void actualizarDias() {
   actualizarHistoria();   // quien aparece hoy (Situaciones.pde)
+  actualizarShawn();      // (Ruta.pde)
   hudS = lerp(hudS, relacionSofi, 0.08);
   actualizarSofi();
   if (scene == 1 && puedeDormir() && !popupAbierto && !telefonoAbierto && !pausaAbierta) {
@@ -223,9 +225,14 @@ void irAFinDelDia() {
   tFinDia = 0;
   scene = ESC_FIN_DIA;
   sonar(12);
+  empezarNoche();   // primero la noche en el celular (Ruta.pde)
 }
 
 void dibujarFinDelDia() {
+  if (faseNoche == 0) {
+    dibujarNocheCelular();   // (Ruta.pde)
+    return;
+  }
   if (!pausaAbierta) tFinDia++;
   // cielo de noche sobre Nova
   degradado(0, 0, width, height, color(6, 8, 30), color(40, 14, 60));
@@ -281,20 +288,25 @@ void dibujarFinDelDia() {
     fill(colorSofi, 255 * b);
     textAlign(LEFT, TOP);
     textSize(11);
-    text("Mensaje nuevo  -  " + textoHora(), 194, 300);
+    text(dia < 2 ? "Mañana, " + nombreDia[dia + 1] : "Mañana: las elecciones", 194, 300);
     fill(240, 255 * b);
     textSize(13);
-    text(nocheSofi[nivelSofi()][min(dia, 2)], 194, 316, 412, 34);
+    text(dia < 2 ? "Sofi estara en " + lugarSofi[dia + 1] + ". Culpa: " + culpa + (culpa >= 3 ? " (Nova se esta oscureciendo)" : "") : "Las urnas abren en la Plaza de la Votacion. Culpa: " + culpa, 194, 316, 412, 34);
   }
   if (tFinDia > 100) botonNeon(dia < 2 ? "Dormir hasta el " + nombreDia[dia + 1] : "Dormir... mañana son las elecciones", 220, 408, 360, 48, neonMorado, frameCount % 60 < 30);
 }
 
 void clickFinDelDia() {
+  if (faseNoche == 0) {
+    clickNocheCelular();
+    return;
+  }
   if (tFinDia > 100 && encima(220, 408, 360, 48)) empezarDiaNuevo();
   else if (tFinDia < 100) tFinDia = 100;
 }
 
 void teclaFinDelDia() {
+  if (faseNoche == 0) return;
   if (key == ENTER || key == RETURN || key == ' ') {
     if (tFinDia > 100) empezarDiaNuevo();
     else tFinDia = 100;

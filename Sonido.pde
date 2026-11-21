@@ -115,7 +115,7 @@ void sonarVoz(String quien) {
 
 // el ambiente de Nova: sombrio (0), regulado (1) o brillante (2), segun como vas
 int nivelAmbiente() {
-  float promedio = 50 + (confiabilidad + impacto) * 0.25 - viralidad * 0.5 + (relacionSofi - 50) * 0.2;
+  float promedio = promedioAmbiente();   // ahora tambien cuenta la culpa (Ruta.pde)
   if (promedio < 38) return 0;
   if (promedio <= 68) return 1;
   return 2;
@@ -124,7 +124,9 @@ int nivelAmbiente() {
 int musicaDeseada() {
   if (!musicaActiva) return -1;
   if (scene == ESC_INTRO || scene == ESC_FIN_DIA) return 3;
-  if (scene == ESC_FIN_GRAVE) return 0;
+  if (scene == ESC_FIN_GRAVE || scene == ESC_JUICIO || scene == ESC_SILENCIO) return 0;
+  if (scene == ESC_FINAL_SECRETO) return 2;
+  if (scene == ESC_EPILOGO) return finalSecretoElegido ? 2 : min(2, indiceFinalRQ());
   if (scene == 0 || scene == 2 || scene == ESC_COMO_JUGAR || scene == ESC_HISTORIAL) return 1;
   if (scene == ESC_MINIJUEGOS || esMinijuego(scene) || scene == ESC_RULETA || scene == ESC_TIENDA) return 2;
   if (scene == ESC_FINAL) return (finalTipo == 0 || finalTipo == 2) ? 2 : 0;

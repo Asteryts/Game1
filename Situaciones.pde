@@ -255,6 +255,7 @@ void alElegirCharlaHistoria(Charla c, int i) {
     if (c != charlaSec[k]) continue;
     secHecho[k] = true;
     secBien[k] = i == 0;
+    if (i != 0) sumarCulpa();   // (Ruta.pde)
     if (i == 0) {
       avisar("Insignia: " + insignia[k], nombreSec[k] + " no lo va a olvidar.", #46DC64);
       if (pruebaDeSec[k] >= 0) darPrueba(pruebaDeSec[k], nombreSec[k] + " te la mando.");
@@ -283,6 +284,7 @@ boolean situacionAbierta() {
 }
 
 int opcionesVisibles(int s) {
+  if (s == 8 && finalSecretoDisponible()) return 5;   // la opcion secreta (Ruta.pde)
   return opcionSit[s][3].equals("") ? 3 : 4;
 }
 
@@ -312,7 +314,9 @@ void elegirOpcionSit(final int o) {
 }
 
 void aplicarOpcionSit(int s, int o) {
-  float pts = puntosSit[s][o];
+  float pts = puntosDe(s, o);
+  if (pts <= 0) sumarCulpa();   // (Ruta.pde)
+  if (o == 4) finalSecretoElegido = true;
   float v0 = viralidad, c0 = confiabilidad, i0 = impacto;
   if (pts >= 0) {
     confiabilidad += pts * 0.6;
@@ -327,14 +331,14 @@ void aplicarOpcionSit(int s, int o) {
   cambiosSit[0] = viralidad - v0;
   cambiosSit[1] = confiabilidad - c0;
   cambiosSit[2] = impacto - i0;
-  cambiosSit[3] = relacionSit[s][o] * 0.8;
+  cambiosSit[3] = relacionDe(s, o) * 0.8;
   cambiarRelacionSofi(cambiosSit[3]);
   ultimaFueDeSofi = true;   // ya se cambio la relacion: que no se cuente doble
   sitElegida[s] = o;
   opcionTomada = o;
   estadoSit = 2;
   letrasSit = 0;
-  anotarDecision(autorSit[s], opcionSit[s][o], pts > 0, comparteOpcion(s, o) && pts < 0, consecuenciaSit[s][o]);
+  anotarDecision(autorSit[s], textoOpcionSit(s, o), pts > 0, comparteOpcion(s, o) && pts < 0, consecuenciaDe(s, o));
 }
 
 // despues de ver lo que paso
@@ -456,41 +460,42 @@ void dibujarSituacion() {
     textAlign(LEFT, CENTER);
     text("Que haces?", sx + 14, cy + 140);
     for (int o = 0; o < opcionesVisibles(s); o++) {
-      float oy = cy + 156 + o * 60;
+      float paso = opcionesVisibles(s) > 4 ? 50 : 60, altoO = opcionesVisibles(s) > 4 ? 44 : 52;
+      float oy = cy + 156 + o * paso;
       boolean bloq = opcionBloqueada(s, o);
-      boolean enc = !bloq && encima(sx + 10, oy, sw - 20, 52) && revisionActiva == null;
-      color c = o == 3 ? #46DC64 : neonCian;
+      boolean enc = !bloq && encima(sx + 10, oy, sw - 20, altoO) && revisionActiva == null;
+      color c = o == 4 ? #B4A0FF : (o == 3 ? #46DC64 : neonCian);
       fill(enc ? color(red(c) * 0.25, green(c) * 0.25, blue(c) * 0.25) : color(24, 20, 44));
       stroke(bloq ? color(90) : c, enc ? 255 : 140);
       strokeWeight(enc ? 2.5 : 1.5);
-      rect(sx + 10, oy, sw - 20, 52, 10);
+      rect(sx + 10, oy, sw - 20, altoO, 10);
       noStroke();
       fill(bloq ? color(110) : c);
       textSize(13);
       textAlign(CENTER, CENTER);
-      text(str(o + 1), sx + 28, oy + 26);
+      text(str(o + 1), sx + 28, oy + altoO / 2);
       fill(bloq ? color(130) : color(240));
       textAlign(LEFT, CENTER);
       textSize(12);
       if (bloq) {
         int p = pruebaNecesaria[s];
         text("[Bloqueada] Necesitas: " + nombrePrueba[p] + ". Se gana superando la meta de " + nombresJuegos[juegoPrueba[p]] + ".", sx + 44, oy + 6, sw - 66, 42);
-      } else text(opcionSit[s][o], sx + 44, oy + 6, sw - 66, 42);
+      } else text(textoOpcionSit(s, o), sx + 44, oy + 4, sw - 66, altoO - 6);
     }
     return;
   }
   // estadoSit == 2: lo que paso
   int o = opcionTomada;
   boolean grave = opcionGrave[s] == o;
-  boolean buena = puntosSit[s][o] > 0;
+  boolean buena = puntosDe(s, o) > 0;
   color c = grave ? neonRojo : (buena ? neonVerde : neonRosa);
   fill(c, 40);
   rect(sx + 10, cy + 134, sw - 20, 170, 12);
   fill(c);
   textSize(12);
   textAlign(LEFT, TOP);
-  text("Elegiste: " + opcionSit[s][o], sx + 24, cy + 144, sw - 48, 34);
-  String t = consecuenciaSit[s][o];
+  text("Elegiste: " + textoOpcionSit(s, o), sx + 24, cy + 144, sw - 48, 34);
+  String t = consecuenciaDe(s, o);
   int n = min(int(letrasSit), t.length());
   fill(245);
   textSize(15);
@@ -524,10 +529,11 @@ boolean clickSituacion() {
   float sx = px + 12, sy = py + 12, sw = pw - 24, sh = ph - 24;
   float cy = sy + 52;
   if (estadoSit == 1) {
-    for (int o = 0; o < opcionesVisibles(sitAbierta); o++) if (encima(sx + 10, cy + 156 + o * 60, sw - 20, 52)) elegirOpcionSit(o);
+    int nv = opcionesVisibles(sitAbierta);
+    for (int o = 0; o < nv; o++) if (encima(sx + 10, cy + 156 + o * (nv > 4 ? 50 : 60), sw - 20, nv > 4 ? 44 : 52)) elegirOpcionSit(o);
     return true;
   }
-  if (letrasSit < consecuenciaSit[sitAbierta][opcionTomada].length()) letrasSit = 999;
+  if (letrasSit < consecuenciaDe(sitAbierta, opcionTomada).length()) letrasSit = 999;
   else if (encima(sx + sw / 2 - 90, sy + sh - 62, 180, 44)) cerrarSituacion();
   return true;
 }
@@ -539,9 +545,9 @@ boolean teclaSituacion() {
   if (estadoSit == 0 && enter) {
     if (letrasSit < avisoSit[sitAbierta].length()) letrasSit = 999;
     else estadoSit = 1;
-  } else if (estadoSit == 1 && key >= '1' && key <= '4') elegirOpcionSit(key - '1');
+  } else if (estadoSit == 1 && key >= '1' && key <= '5') elegirOpcionSit(key - '1');
   else if (estadoSit == 2 && enter) {
-    if (letrasSit < consecuenciaSit[sitAbierta][opcionTomada].length()) letrasSit = 999;
+    if (letrasSit < consecuenciaDe(sitAbierta, opcionTomada).length()) letrasSit = 999;
     else cerrarSituacion();
   }
   return true;
@@ -617,6 +623,7 @@ void repetirDia() {
   confiabilidad = inicioC;
   impacto = inicioI;
   relacionSofi = inicioS;
+  culpa = inicioCulpa;
   monedas = inicioMonedas;
   monedasVista = monedas;
   prevViral = viralidad;

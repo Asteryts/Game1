@@ -1272,7 +1272,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
     strokeWeight(2);
     dibujarNPC(301, 419, #5A8C50, #9A9A9A, 0.5, !a1, "Salomeo");   // (v2.0) antes era un cuadro blanco
     noStroke();
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
     if (mostrarDialogo) {
       fill(20, 20, 25, 230);
       stroke(255);
@@ -1329,7 +1329,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
       if (y > height - altoPersonaje) y = height - altoPersonaje;
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
     fill(a2 ? color(100, 255, 100) : 255);
     stroke(255);
     dibujarNPC(292, 394, #3C4C8C, #222222, 1.1, !a2, "Armando");   // (v2.0)
@@ -1389,7 +1389,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
       }
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
     fill(a3 ? color(100, 255, 100) : 255);
     stroke(255);
@@ -1465,7 +1465,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
       if (y > height - altoPersonaje) y = height - altoPersonaje;
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
     fill(b1 ? color(100, 255, 100) : 255);
     stroke(255);
@@ -1519,7 +1519,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
       if (y > height - altoPersonaje) y = height - altoPersonaje;
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
     fill(b2 ? color(100, 255, 100) : 255);
     stroke(255);
     dibujarNPC(width/2, height/2 + 25, #2896A0, #141414, 3.3, !b2, "Aquiles");   // (v2.0)
@@ -1570,7 +1570,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
         if (y > height - altoPersonaje) y = height - altoPersonaje;
       }
     }
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
     fill(b3 ? color(100, 255, 100) : 255);
     stroke(255);
     dibujarNPC(width/2, height/2 + 25, #B44678, #8C3C1E, 4.4, !b3, "Debora");   // (v2.0)
@@ -1649,7 +1649,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
       if (y > height - altoPersonaje) y = height - altoPersonaje;
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
     fill(c1 ? color(100, 255, 100) : 255);
     stroke(255);
@@ -1701,7 +1701,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
       if (y > height - altoPersonaje) y = height - altoPersonaje;
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
     fill(c2 ? color(100, 255, 100) : 255);
     stroke(255);
     dibujarNPC(width/2, height/2 + 25, #6E50B4, #DCDCDC, 5.5, !c2, "Elsa Pito");   // (v2.0)
@@ -1752,7 +1752,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
       }
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
     fill(c3 ? color(100, 255, 100) : 255);
     stroke(255);
     dibujarNPC(width/2, height/2 + 25, #283C78, #B4B4B4, 6.6, !c3, "Benito");   // (v2.0)
@@ -1964,7 +1964,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
     }
 
     // Dibuja al personaje en su posicion actual, con la imagen correspondiente
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
 
     DnpcDialog();
@@ -1990,7 +1990,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
   }
 
   // Personaje y NPCs
-  image(actual, x, y, anchoPersonaje, altoPersonaje);
+  dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
   noStroke();
   if (empleado != null) image(empleado, 350, 215, 40, 60); else dibujarNPC(370, 275, #3C5AA0, #282828, 3, false, "Empleado");   // (v2.0) sin la imagen el juego se cerraba
   if (candidatos != null) image(candidatos, 347, 145, 120, 60); else dibujarCandidatos();   // (v2.0)
@@ -2111,7 +2111,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
   }
 
   // Personaje y NPCs (el personaje se queda quieto mientras decides)
-  image(actual, x, y, anchoPersonaje, altoPersonaje);
+  dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
   noStroke();
   if (empleado != null) image(empleado, 350, 215, 40, 60); else dibujarNPC(370, 275, #3C5AA0, #282828, 3, false, "Empleado");   // (v2.0) sin la imagen el juego se cerraba
   if (candidatos != null) image(candidatos, 347, 145, 120, 60); else dibujarCandidatos();   // (v2.0)
@@ -2269,7 +2269,7 @@ text("Volver", 50, 40);
       y = 40;
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
     DnpcDialog();
 
@@ -2297,7 +2297,7 @@ text("Volver", 50, 40);
     if (!hayColision2(x, nuevaY)) y = nuevaY;
 
   // Personaje
-  image(actual, x, y, anchoPersonaje, altoPersonaje);
+  dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
  cercaNPC = choca(x, y, npcX - 30, npcY - 30, npcW + 60, npcH + 60);
   if (cercaNPC && !hablando) {
@@ -2372,7 +2372,7 @@ text("Volver", 50, 40);
       y = 400;
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
     DnpcDialog();
     
@@ -2411,7 +2411,7 @@ text("Volver", 50, 40);
       y = 40;
     }
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
     DnpcDialog();
   
@@ -2446,7 +2446,7 @@ text("Volver", 50, 40);
     
 
 
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 
     DnpcDialog();
 

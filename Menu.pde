@@ -421,7 +421,7 @@ void dibujarComoJugar() {
   fill(neonRosa);
   text("TU OBJETIVO", 437, 108);
   String[][] controles = {
-    {"W A S D / flechas", "caminar"}, {"SHIFT", "correr"}, {"E", "hablar / revisar objetos"}, {"ENTER", "avanzar dialogos"}, {"Clic", "elegir opciones"},
+    {"Clic derecho", "caminar (como en LoL)"}, {"W A S D / flechas", "caminar"}, {"SHIFT", "correr"}, {"E", "hablar / revisar objetos"}, {"ENTER", "avanzar dialogos"}, {"Clic", "elegir opciones"},
     {"P o TAB", "abrir el telefono"}, {"ESC", "pausa"}, {"F3", "modo debug"}
   };
   for (int i = 0; i < controles.length; i++) {

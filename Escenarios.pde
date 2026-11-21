@@ -324,6 +324,7 @@ int charlasNuevasHabladas() {
 }
 
 void interactuar(Interactivo it) {
+  if (hablarConShawn(it)) return;        // el fantasma de Shawn (Ruta.pde)
   if (interactuarHistoria(it)) return;   // situaciones y secundarios de Red Quest (Situaciones.pde)
   Charla segunRecuerdos = charlaSegunRecuerdos(it);   // algunos cuentan lo que paso por lo que hiciste
   if (segunRecuerdos != null) {
@@ -374,7 +375,7 @@ void dibujarJugador() {
   noStroke();
   fill(0, 90);
   ellipse(x + 50, y + 47, 44, 10);
-  image(actual, x, y, anchoPersonaje, altoPersonaje);
+  dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
 }
 
 void dibujarEscenaCaminable() {
@@ -440,6 +441,7 @@ void dibujarEscenaCaminable() {
     if (it.tipo == 0) dibujarNPC(it.ix, it.iy, it.ropa, it.pelo, it.fase, (!it.hablado && it.charla.eleccion != null) || tieneAlgoImportante(it), it.nombre);
     else if (it.tipo == 3) dibujarRobot(it.ix, it.iy, it.fase, it.nombre);
     else if (it.tipo == 4) dibujarKiosco(it.ix, it.iy, it.destino == ESC_RULETA);
+    else if (it.tipo == 5) dibujarFantasma(it.ix, it.iy, 0.85);   // Shawn (Ruta.pde)
     else destelloObj(it.ix, it.iy - 50);
   }
   if (!jugadorListo) dibujarJugador();
@@ -833,6 +835,7 @@ void dibujarMapaVivo() {
     text("clic para entrar", tx + w / 2, ty + 24);
   }
   dibujarKioscosMapa();   // kioscos de la Tienda NOVA (Tienda.pde)
+  dibujarGuiaMapa();      // candados, SIGUIENTE e "Ir a ..." (Ruta.pde)
   // telefono del mapa
   float p = 0.5 + 0.5 * sin(frameCount * 0.1);
   noFill();
@@ -868,6 +871,7 @@ void dibujarMapaVivo() {
 boolean clickMapaVivo() {
   if (popupAbierto) return clickPopupMapa();
   if (clickDormir()) return true;   // de noche: pasar al dia siguiente (Dias.pde)
+  if (clickGuiaMapa()) return true; // lugares cerrados e "Ir a ..." (Ruta.pde)
   if (clickEventoMapa()) return true;
   if (clickKioscosMapa()) return true;
   // (expansion) la alcaldia ahora se alcanza caminando por la Avenida Central
@@ -1311,6 +1315,7 @@ String[] textosFinal = {
 };
 
 void irAlFinal() {
+  if (desviarFinal()) return;   // juicio, silencio o final secreto antes de los resultados (Ruta.pde)
   float c = confiabilidad, v = viralidad, im = impacto;
   if (c >= 60 && im >= 50) finalTipo = 0;
   else if (v >= 60 && c < 40) finalTipo = 1;
@@ -1396,7 +1401,7 @@ void dibujarFinal() {
   text(epilogoSofi[nivelSofi()], width / 2, 392);
   botonNeon("Ver tu historial", 110, 418, 180, 48, neonAmarillo, frameCount % 60 < 30);
   botonNeon("Nueva partida", 310, 418, 180, 48, neonRosa, false);
-  botonNeon("Seguir explorando", 510, 418, 180, 48, neonCian, false);
+  botonNeon("Epilogo  >", 510, 418, 180, 48, neonCian, false);   // (Ruta.pde)
 }
 
 void clickFinal() {
@@ -1407,7 +1412,8 @@ void clickFinal() {
     reiniciarPartida();
     scene = 0;
   } else if (encima(510, 418, 180, 48)) {
-    scene = 1;
+    tEscenaFinal = 0;
+    scene = ESC_EPILOGO;   // la verdad de @chismes_11B y lo que paso con cada uno (Ruta.pde)
   }
 }
 
@@ -1449,6 +1455,8 @@ void reiniciarPartida() {
   prepararEscenarios();
   prepararSofi();   // Sofi vuelve a su lugar del lunes (Dias.pde)
   reiniciarHistoria();   // situaciones, pruebas e insignias (Situaciones.pde)
+  reiniciarRuta();       // culpa, Shawn y finales (Ruta.pde)
+  prepararShawn();
   prepararHistoria();
   prepararDias();   // y la semana empieza otra vez el lunes en la mañana
   cerrarCharla();
