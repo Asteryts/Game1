@@ -425,7 +425,7 @@ void dibujarComoJugar() {
     {"P o TAB", "abrir el telefono"}, {"ESC", "pausa"}, {"F3", "modo debug"}
   };
   for (int i = 0; i < controles.length; i++) {
-    float cy = 145 + i * 37;
+    float cy = 145 + i * 33;
     textSize(12);
     float w = textWidth(controles[i][0]) + 16;
     fill(235);
