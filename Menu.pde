@@ -206,85 +206,190 @@ void dibujarFondoCiudadMundo() {
   noStroke();
 }
 
+// (Star Quest) el menu combina el de Nova (ciudad neon, brillos) con el de Red Quest
+// (la red de personajes conectados, el titulo de bloques dorados y los botones de papel)
+float[] nodoMX = {0.14, 0.86, 0.08, 0.24, 0.76, 0.92};
+float[] nodoMY = {0.11, 0.11, 0.50, 0.86, 0.86, 0.50};
+String[] nodoMNombre = {"Tu", "Sofi", "Mateo", "Kevin", "Camila", "Shawn"};
+int[] conexionMA = {0, 2, 3, 4, 1, 1};
+int[] conexionMB = {2, 3, 4, 1, 0, 5};
+String[][] letraMenu = {
+  {"#####", "#....", "#####", "....#", "#####"},   // S
+  {"#####", "..#..", "..#..", "..#..", "..#.."},   // T
+  {".###.", "#...#", "#####", "#...#", "#...#"},   // A
+  {"####.", "#...#", "####.", "#..#.", "#...#"},   // R
+  {".###.", "#...#", "#...#", "#..#.", ".##.#"},   // Q
+  {"#...#", "#...#", "#...#", "#...#", ".###."},   // U
+  {"#####", "#....", "####.", "#....", "#####"}    // E
+};
+int[] letrasMenu = {0, 1, 2, 3, -1, 4, 5, 6, 0, 1};   // S T A R _ Q U E S T
+int menuDesde = 0;   // cuadro en que se abrio el menu (para la animacion del titulo)
+int ultimoCuadroMenu = -10;
+
 void dibujarMenu() {
+  if (frameCount - ultimoCuadroMenu > 2) menuDesde = frameCount;   // volviste al menu: el titulo cae otra vez
+  ultimoCuadroMenu = frameCount;
+  int tm = frameCount - menuDesde;
+  // la ciudad de Nova al fondo, apagada por la noche de Red Quest
   dibujarFondoCiudad();
   noStroke();
-  fill(5, 2, 18, 100);
-  rect(0, 0, width, height);
-  // titulo con glitch
-  boolean glitch = frameCount % 200 < 9;
-  float g = glitch ? random(-6, 6) : 0;
-  textFont(fuente);
+  for (int i = 0; i < height; i += 4) {
+    float a = map(i, 0, height, 250, 120);
+    fill(16, 16, 24, a);
+    rect(0, i, width, 4);
+  }
+  // la red de personajes
+  for (int e = 0; e < conexionMA.length; e++) {
+    float ax = nodoMX[conexionMA[e]] * width, ay = nodoMY[conexionMA[e]] * height;
+    float bx = nodoMX[conexionMB[e]] * width, by = nodoMY[conexionMB[e]] * height;
+    boolean encendida = e == 4 || contarFinalesVistos() > e || e == 0;
+    stroke(e == 4 ? #FF5A78 : (encendida ? #4856E8 : color(#2A2A3A)));
+    strokeWeight(e == 4 ? 2.5 : 2);
+    line(ax, ay, bx, by);
+  }
+  noStroke();
+  senalMenu(4, (tm % 200) / 200.0);
+  senalMenu((tm / 150) % 4, (tm % 150) / 150.0);
+  for (int n = 0; n < nodoMX.length; n++) nodoMenu(n);
+
+  // "CONECTADO"
+  textFont(fuenteUI);
+  textSize(11);
   textAlign(CENTER, CENTER);
-  textSize(66);
-  fill(neonRosa, 170);
-  text("STAR QUEST", width / 2 + 3 + g, 92);
-  fill(neonCian, 170);
-  text("STAR QUEST", width / 2 - 3 - g, 88);
-  tituloNeon("STAR QUEST", width / 2, 90, 66, color(225, 250, 255));
-  if (glitch) {
-    for (int i = 0; i < 3; i++) {
-      int gy = int(random(55, 125));
-      int gh = int(random(3, 10));
-      copy(0, gy, width, gh, int(random(-20, 20)), gy, width, gh);
+  fill(#FF5A78);
+  float wE = textWidth("CONECTADO");
+  ellipse(width / 2 - wE / 2 - 10, 22, 7, 7);
+  text("CONECTADO", width / 2, 22);
+
+  // el titulo en bloques (cae letra por letra, con su sombra)
+  tituloBloques(tm, 4, true);
+  tituloBloques(tm, 0, false);
+  if (frameCount % 260 < 6) {   // un glitch de vez en cuando, como en Nova
+    for (int i = 0; i < 2; i++) {
+      int gy = int(random(66, 112));
+      copy(0, gy, width, 4, int(random(-14, 14)), gy, width, 4);
     }
   }
-  // subtitulo que se escribe solo
-  String sub = "-  en Nova, tu eres el filtro  -";
-  int n = min(sub.length(), (frameCount / 3) % (sub.length() + 60));
   textFont(fuenteUI);
-  textSize(15);
-  fill(neonCian);
-  text(sub.substring(0, n) + (frameCount % 30 < 15 ? "_" : " "), width / 2, 142);
+  textAlign(CENTER, CENTER);
+  textSize(14);
+  fill(255);
+  text("Lo que publicas en Conecta cambia el mundo que ves", width / 2, 134);
+  String sub = "en Nova, tu eres el filtro";
+  int n = min(sub.length(), (frameCount / 3) % (sub.length() + 60));
+  textSize(11);
+  fill(neonCian, 200);
+  text(sub.substring(0, n) + (frameCount % 30 < 15 ? "_" : " "), width / 2, 154);
 
-  // botones
+  // botones de papel de Red Quest, con el brillo neon de Nova
   for (int i = 0; i < botonesMenu.length; i++) {
     float bx = width / 2 - 140, by = 176 + i * 48, bw = 280, bh = 40;
     if (encima(bx, by, bw, bh) && (mouseX != pmouseX || mouseY != pmouseY) && seleccionMenu != i) {
       seleccionMenu = i;
-      chispas(bx + 10, by + bh / 2, neonCian, 8);
+      chispas(bx + 10, by + bh / 2, #FFC846, 8);
     }
     boolean sel = seleccionMenu == i;
     brilloBotones[i] = lerp(brilloBotones[i], sel ? 1 : 0, 0.2);
     float br = brilloBotones[i];
     color c = i == 5 ? neonRosa : (i == 4 ? #FFC846 : neonCian);
-    float desp = br * 10;
+    float desp = br * 8;
     noStroke();
-    for (int k = 4; k >= 1; k--) {
-      fill(c, 18 * br);
+    for (int k = 3; k >= 1; k--) {
+      fill(c, 16 * br);
       rect(bx - k * 4 + desp, by - k * 4, bw + k * 8, bh + k * 8, 14 + k * 4);
     }
-    fill(lerpColor(color(14, 10, 32, 210), color(red(c) * 0.22, green(c) * 0.22, blue(c) * 0.22, 240), br));
-    stroke(c, 120 + 135 * br);
-    strokeWeight(1.5 + br);
-    rect(bx + desp, by, bw, bh, 12);
+    fill(0, 110);
+    rect(bx + 4 + desp, by + 4, bw, bh, 12, 5, 12, 5);
+    fill(lerpColor(color(#F4EEDF), color(#FFC846), br));
+    stroke(#15151F);
+    strokeWeight(3);
+    rect(bx + desp, by, bw, bh, 12, 5, 12, 5);
     noStroke();
     if (br > 0.05) {
-      fill(c, 255 * br);
-      float fx = bx + 18 + desp + sin(frameCount * 0.2) * 3;
-      triangle(fx, by + 14, fx, by + bh - 14, fx + 10, by + bh / 2);
-      // brillo que cruza el boton
-      float sx = bx + ((frameCount * 6) % (bw + 200)) - 100;
-      fill(255, 25 * br);
-      quad(sx + desp, by, sx + 30 + desp, by, sx + 10 + desp, by + bh, sx - 20 + desp, by + bh);
+      fill(#15151F, 255 * br);
+      float fx = bx + 16 + desp + sin(frameCount * 0.2) * 3;
+      triangle(fx, by + 13, fx, by + bh - 13, fx + 9, by + bh / 2);
     }
     textFont(fuente);
-    textSize(24);
+    textSize(20);
     textAlign(CENTER, CENTER);
-    fill(lerpColor(color(200, 200, 230), color(255), br));
+    fill(#15151F);
     text(botonesMenu[i], width / 2 + desp, by + bh / 2 - 2);
   }
   // pie de pagina
   textFont(fuenteUI);
-  textSize(11);
-  fill(190, 180, 230, 200);
+  textSize(10);
+  fill(150, 150, 180, 200);
   textAlign(LEFT, CENTER);
-  text("v2.0   -   Logros " + contarLogros() + "/" + logros.length, 14, height - 14);
+  text("Logros " + contarLogros() + "/" + logros.length + "   -   Finales " + contarFinalesVistos() + "/13", 14, height - 12);
   textAlign(RIGHT, CENTER);
-  text("W/S o flechas + ENTER   -   ESC pausa   -   P telefono   -   F3 debug", width - 14, height - 14);
-  // chispitas que suben
-  if (random(1) < 0.3) {
-    agregarParticula(new Particula(random(width), height + 5, random(-0.3, 0.3), random(-1.6, -0.6), random(120, 220), random(2, 3.5), random(1) < 0.5 ? neonCian : neonRosa, 6));
+  text("W/S o flechas + ENTER", width - 14, height - 12);
+  if (random(1) < 0.2) {
+    agregarParticula(new Particula(random(width), height + 5, random(-0.3, 0.3), random(-1.4, -0.5), random(120, 220), random(2, 3), random(1) < 0.5 ? color(#FFC846) : color(#FF5A78), 6));
+  }
+}
+
+// el cuadradito dorado que viaja por una conexion (como en Red Quest)
+void senalMenu(int e, float avance) {
+  float ax = nodoMX[conexionMA[e]] * width, ay = nodoMY[conexionMA[e]] * height;
+  float bx = nodoMX[conexionMB[e]] * width, by = nodoMY[conexionMB[e]] * height;
+  noStroke();
+  fill(#FFC846, 70);
+  rect(lerp(ax, bx, avance) - 7, lerp(ay, by, avance) - 7, 14, 14);
+  fill(#FFC846);
+  rect(lerp(ax, bx, avance) - 4, lerp(ay, by, avance) - 4, 8, 8);
+}
+
+void nodoMenu(int n) {
+  float cx = nodoMX[n] * width, cy = nodoMY[n] * height;
+  boolean principal = n < 2;
+  fill(#191926);
+  stroke(principal ? #FFC846 : color(#2A2A3A));
+  strokeWeight(2.5);
+  ellipse(cx, cy, 64, 64);
+  noStroke();
+  float u = 1.55, px = cx - 6 * u, py = cy - 14 * u;
+  float b = sin(frameCount * 0.05 + n) * 1;
+  if (n == 0) tuU(px, py + b, u, 1);
+  else if (n == 1) sofiU(px, py + b, u, 1);
+  else if (n == 2) personaU(px, py + b, u, #2B1B10, #8D5A3B, #2E8B57, #3B3B3B, 1);
+  else if (n == 3) personaU(px, py + b, u, #141414, #C68E5E, #FF8C3C, #39404D, 1);
+  else if (n == 4) personaU(px, py + b, u, #A0522D, #F0C090, #20A39E, #333A56, 1);
+  else {   // Shawn, chiquito para que quepa en su circulo
+    pushMatrix();
+    translate(cx, cy + 20);
+    scale(0.55);
+    dibujarFantasma(0, 0, 0.8);
+    popMatrix();
+  }
+  if (!principal) {   // los que no son Tu ni Sofi se ven mas apagados
+    fill(#191926, 110);
+    ellipse(cx, cy, 60, 60);
+  }
+  textFont(fuenteUI);
+  textSize(10);
+  fill(190);
+  textAlign(CENTER, CENTER);
+  text(nodoMNombre[n], cx, principal ? cy + 42 : cy + 42);
+}
+
+void tituloBloques(int tm, float corrido, boolean sombra) {
+  float c = 7.5;
+  float x0 = width / 2 - (letrasMenu.length * 6 - 1) * c / 2;
+  float y0 = 66;
+  noStroke();
+  for (int i = 0; i < letrasMenu.length; i++) {
+    int l = letrasMenu[i];
+    if (l < 0) continue;
+    float baja = max(0, 15 + i * 5 - tm) * 10;
+    for (int f = 0; f < 5; f++) {
+      for (int col = 0; col < 5; col++) {
+        if (letraMenu[l][f].charAt(col) != '#') continue;
+        if (sombra) fill(0, 150);
+        else fill(lerpColor(#FFE08A, #FF9A3C, f / 4.0));
+        rect(x0 + (i * 6 + col) * c + corrido, y0 + f * c - baja + corrido, c, c);
+      }
+    }
   }
 }
 
