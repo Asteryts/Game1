@@ -324,6 +324,7 @@ int charlasNuevasHabladas() {
 }
 
 void interactuar(Interactivo it) {
+  if (interactuarCasa(it)) return;       // cama, armario, ventana... (Casa.pde)
   if (hablarConShawn(it)) return;        // el fantasma de Shawn (Ruta.pde)
   if (interactuarHistoria(it)) return;   // situaciones y secundarios de Red Quest (Situaciones.pde)
   Charla segunRecuerdos = charlaSegunRecuerdos(it);   // algunos cuentan lo que paso por lo que hiciste
@@ -1457,6 +1458,8 @@ void reiniciarPartida() {
   reiniciarHistoria();   // situaciones, pruebas e insignias (Situaciones.pde)
   reiniciarRuta();       // culpa, Shawn y finales (Ruta.pde)
   prepararShawn();
+  registrarCasa();       // tu cuarto (Casa.pde)
+  partidaEmpezada = false;
   prepararHistoria();
   prepararDias();   // y la semana empieza otra vez el lunes en la mañana
   cerrarCharla();

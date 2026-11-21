@@ -45,7 +45,7 @@ String[][] nocheSofi = {
   {"Sofi: Hoy senti que no estaba sola. Gracias de verdad.", "Sofi: Eres de las pocas personas que verifica antes de compartir. Se nota.", "Sofi: Pase lo que pase mañana, gracias por estar."}
 };
 String[][] mananaSofi = {
-  {"Hola! Soy Sofi, del 11B. Me lance al Consejo de Juventud de Nova. Si me ves en el colegio, saludame :)", "", ""},
+  {"Buenos dias! Hoy me inscribo oficialmente al Consejo de Juventud. Te veo en el salon 10B, no me dejes sola :)", "", ""},
   {"Ayer alguien dijo cosas de mi en Conecta. No se si fuiste tu...", "Buenos dias! Hoy estare en el Paseo de Campaña repartiendo volantes.", "Buenos dias! Hoy estare en el Paseo de Campaña. Pasa a saludar :D"},
   {"Hoy estare en el Parque. Si quieres hablar, ahi estoy.", "Ultimo dia de campaña! Estare en el Parque Central.", "Ultimo dia de campaña!! Te espero en el Parque Central, necesito tu opinion."},
   {"Hoy son las elecciones.", "Hoy son las elecciones! Nos vemos en la Plaza de la Votacion.", "HOY ES EL DIA! Nos vemos en la Plaza de la Votacion. Gracias por todo."}
@@ -189,12 +189,12 @@ void actualizarDias() {
   actualizarShawn();      // (Ruta.pde)
   hudS = lerp(hudS, relacionSofi, 0.08);
   actualizarSofi();
-  if (scene == 1 && puedeDormir() && !popupAbierto && !telefonoAbierto && !pausaAbierta) {
+  if (scene == 1 && puedeDormir() && escenaObjetivo() != ESC_CASA && !popupAbierto && !telefonoAbierto && !pausaAbierta) {
     float b = 0.5 + 0.5 * sin(frameCount * 0.08);
     noStroke();
     fill(neonMorado, 40 * b);
     rect(616, 432, 178, 56, 16);
-    botonNeon("Dormir  >", 624, 440, 162, 40, neonMorado, false);
+    botonNeon("Ir a casa  >", 624, 440, 162, 40, neonMorado, false);
     dibujarLuna(646, 460, 11);
   }
 }
@@ -204,8 +204,8 @@ boolean puedeDormir() {
 }
 
 boolean clickDormir() {
-  if (scene == 1 && puedeDormir() && encima(624, 440, 162, 40)) {
-    irAFinDelDia();
+  if (scene == 1 && puedeDormir() && escenaObjetivo() != ESC_CASA && encima(624, 440, 162, 40)) {
+    irACasa(false);   // ahora se duerme en la cama de tu cuarto (Casa.pde)
     return true;
   }
   return false;
@@ -322,7 +322,7 @@ void empezarDiaNuevo() {
   relojJuego = horaMomento[0] + 30;
   guardarInicioDia();
   actualizarSofi();
-  scene = 1;
+  empezarCineDia();   // la tarjeta del dia y despiertas en tu cama (Casa.pde)
   sonar(13);
   if (dia >= 3) {
     bannerTexto = "JUEVES  -  DIA DE ELECCIONES";

@@ -20,8 +20,9 @@ String[] textosLetreros = {"BAR", "404", "NOVA", "CAFE", "IA", "HOTEL"};
 
 // AQUI VAN SUS NOMBRES! (cambien las lineas del equipo por sus nombres reales)
 String[] creditos = {
-  "CIUDAD NOVA", "", "un juego sobre rumores, redes y decisiones", "", "",
+  "STAR QUEST", "", "un juego sobre rumores, redes y decisiones en Ciudad Nova", "", "",
   "- EQUIPO -", "(Santiago Ortega)", "(Valeria Chacon)", "(David Mendoza)", "(Gabriela Bustillo)",
+  "- HISTORIA DE RED QUEST -", "Sofi, Shawn, @chismes_11B y la musica", "vienen del juego Red Quest del otro grupo", "", "",
   "- ESCENARIOS -", "Barrio Residencial", "Colegio y Cafe 404", "Alcaldia de Nova", "Parque Central", "Centro NOVA", "Nova Noticias", "Plaza de la Votacion", "", "",
   "- MINIJUEGOS -", "Verificador Express", "Atrapa Bulos", "Caza Bots", "Rastreo de Fuentes", "", "",
   "Hecho con Processing", "", "", "Gracias por jugar.", "Recuerda: en Nova, tu eres el filtro."
@@ -217,10 +218,10 @@ void dibujarMenu() {
   textAlign(CENTER, CENTER);
   textSize(66);
   fill(neonRosa, 170);
-  text("CIUDAD NOVA", width / 2 + 3 + g, 92);
+  text("STAR QUEST", width / 2 + 3 + g, 92);
   fill(neonCian, 170);
-  text("CIUDAD NOVA", width / 2 - 3 - g, 88);
-  tituloNeon("CIUDAD NOVA", width / 2, 90, 66, color(225, 250, 255));
+  text("STAR QUEST", width / 2 - 3 - g, 88);
+  tituloNeon("STAR QUEST", width / 2, 90, 66, color(225, 250, 255));
   if (glitch) {
     for (int i = 0; i < 3; i++) {
       int gy = int(random(55, 125));
@@ -290,10 +291,8 @@ void dibujarMenu() {
 void accionMenu(int i) {
   explosionConfeti(width / 2, 180 + i * 56 + 22, 25);
   if (i == 0) {
-    if (!introVista) {
-      lineaIntro = 0;
-      letrasIntro = 0;
-      scene = ESC_INTRO;
+    if (!partidaEmpezada) {   // partida nueva: la cinematica de Star Quest (Casa.pde)
+      empezarCineApertura();
     } else {
       scene = 1;
     }

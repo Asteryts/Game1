@@ -364,7 +364,7 @@ void avanzarMomentoHistoria() {
   sonar(2);
   if (momento == 3 && !avisoNoche) {
     avisoNoche = true;
-    avisar("Ya es de noche", "Cuando quieras, ve al mapa y toca \"Dormir\" para pasar al " + nombreDia[dia + 1] + ".", neonMorado);
+    avisar("Ya es de noche", "Cuando quieras, vuelve a casa y duerme en tu cama para pasar al " + nombreDia[dia + 1] + ".", neonMorado);
   }
 }
 
@@ -372,8 +372,8 @@ String textoObjetivo() {
   if (dia >= 3) return "Ve a la Plaza de la Votacion";
   int s = situacionActual();
   if (s >= 0) return "Habla con " + mensajeroSit[s] + " en " + nombreLugarSit[s];
-  for (int k = 0; k < 6; k++) if (secDisponible(k)) return nombreSec[k] + " te busca en " + nombreLugarSec[k] + "  (o duerme)";
-  return "Ya es de noche: duerme desde el mapa";
+  for (int k = 0; k < 6; k++) if (secDisponible(k)) return nombreSec[k] + " te busca en " + nombreLugarSec[k] + "  (o vuelve a casa)";
+  return "Ya es de noche: vuelve a casa a dormir";
 }
 
 // ------------------------------------- DIBUJO -------------------------------------

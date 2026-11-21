@@ -29,6 +29,14 @@ void ordenarCaminar(float mx, float my) {
   destinoX = mx - 50;
   destinoY = my - 40;
   planearRuta();
+  // si hiciste clic en una salida (una puerta o el borde con flecha), sigue derecho hasta cruzarla
+  if (esCaminable(scene)) {
+    Lugar L = lugares.get(scene);
+    if (my > height - 50 && L.salidas[2] >= 0 && L.enRango(2, mx)) rutaClic.add(new float[] {mx - 50, height});
+    else if (my < L.yMin + 52 && L.salidas[0] >= 0 && L.enRango(0, mx)) rutaClic.add(new float[] {mx - 50, L.yMin - 20});
+    else if (mx < 40 && L.salidas[3] >= 0 && L.enRango(3, my)) rutaClic.add(new float[] {-60, my - 40});
+    else if (mx > width - 40 && L.salidas[1] >= 0 && L.enRango(1, my)) rutaClic.add(new float[] {width - 20, my - 40});
+  }
   caminandoClic = true;
   framesAtascado = 0;
   ultimoAvanceX = x;

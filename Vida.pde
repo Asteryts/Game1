@@ -380,6 +380,8 @@ void vidaSetup() {
   prepararSofi();    // Sofi y los dias de la semana (Dias.pde)
   prepararHistoria(); // las situaciones de Red Quest (Situaciones.pde)
   prepararShawn();   // (Ruta.pde)
+  registrarCasa();   // tu cuarto (Casa.pde)
+  surface.setTitle("Star Quest");
   prepararDias();
   prevViral = viralidad;
   prevConf = confiabilidad;
@@ -434,6 +436,7 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_SILENCIO) dibujarSilencio();
   else if (scene == ESC_EPILOGO) dibujarEpilogo();
   else if (scene == ESC_FINAL_SECRETO) dibujarFinalSecreto();
+  else if (scene == ESC_CINE_RQ) dibujarCineRQ();          // (Casa.pde)
   else if (esCaminable(scene)) dibujarEscenaCaminable();
   else if (scene == ESC_ESTUDIO) dibujarEstudio();
   else if (scene == ESC_PLAZA) dibujarPlaza();
@@ -500,7 +503,7 @@ void vidaDespuesDeDibujar() {
   if (esExploracion(scene)) dibujarHUD();
   dibujarFlotantes(libre);
   actualizarMonedas();   // contador de NovaCoins y monedas volando (Tienda.pde)
-  dibujarBanner();
+  if (scene != ESC_CINE_RQ) dibujarBanner();   // el letrero del dia sale al despertar (Casa.pde)
   if (destello > 0) {
     noStroke();
     fill(colorDestello, destello);
@@ -512,7 +515,7 @@ void vidaDespuesDeDibujar() {
   dibujarTelefono();
   dibujarSituacion();   // (Situaciones.pde)
   if (pausaAbierta) dibujarPausa();
-  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE && scene != ESC_JUICIO && scene != ESC_SILENCIO && scene != ESC_FINAL_SECRETO) dibujarAvisos();
+  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE && scene != ESC_JUICIO && scene != ESC_SILENCIO && scene != ESC_FINAL_SECRETO && scene != ESC_CINE_RQ) dibujarAvisos();
   dibujarRevision();
   dibujarPantallaCarga();
   if (fundido > 0) {
@@ -599,6 +602,10 @@ boolean vidaKeyPressed() {
     }
     if (scene == ESC_RULETA) {
       salirRuleta();
+      return true;
+    }
+    if (scene == ESC_CINE_RQ) {
+      saltarCineRQ();   // (Casa.pde)
       return true;
     }
     if (scene == ESC_FIN_DIA || scene == ESC_FIN_GRAVE || scene == ESC_JUICIO || scene == ESC_SILENCIO || scene == ESC_FINAL_SECRETO) return true;
@@ -704,6 +711,10 @@ boolean teclaEscenaPropia() {
     teclaRuleta();
     return true;
   }
+  if (scene == ESC_CINE_RQ) {
+    teclaCineRQ();
+    return true;
+  }
   if (scene == ESC_FIN_GRAVE) {
     teclaFinGrave();
     return true;
@@ -750,6 +761,7 @@ void clickEscenaPropia() {
   else if (scene == ESC_SILENCIO) clickSilencio();
   else if (scene == ESC_EPILOGO) clickEpilogo();
   else if (scene == ESC_FINAL_SECRETO) clickFinalSecreto();
+  else if (scene == ESC_CINE_RQ) clickCineRQ();             // (Casa.pde)
 }
 
 // ------------------------------------- AYUDANTES -------------------------------------

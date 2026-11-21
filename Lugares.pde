@@ -131,6 +131,7 @@ void dibujarFondoLugarMundo(int s) {
   else if (s == ESC_SALON) fondoSalon();
   else if (s == ESC_BIBLIOTECA) fondoBiblioteca();
   else if (s == ESC_CAFETERIA) fondoCafeteria();
+  else if (s == ESC_CASA) fondoCasa();   // tu cuarto (Casa.pde)
   else background(0);
 }
 

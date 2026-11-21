@@ -27,6 +27,7 @@ int pinDeEscena(int s) {
   if (s == 46) return 4;
   if (s == 47) return 5;
   if (s == 48) return 6;
+  if (s == 78) return 1;   // tu casa queda en el barrio
   return -1;
 }
 
@@ -37,6 +38,7 @@ int escenaObjetivo() {
   if (s >= 0) return lugarSit[s];
   for (int k = 0; k < 6; k++) if (secDisponible(k)) return lugarSec[k];
   if (momento == 3 && dia <= 1 && !tieneMensajeShawn) return ESC_CALLEJON;
+  if (momento == 3) return ESC_CASA;   // a dormir (Casa.pde)
   return -1;
 }
 
@@ -53,6 +55,7 @@ String nombreEscenaCorto(int s) {
   for (int k = 0; k < lugarSec.length; k++) if (lugarSec[k] == s) return nombreLugarSec[k];
   if (s == ESC_PLAZA) return "la Plaza de la Votacion";
   if (s == ESC_CALLEJON) return "el Callejon de los murales";
+  if (s == ESC_CASA) return "tu casa";
   return "alla";
 }
 
@@ -136,7 +139,8 @@ boolean clickGuiaMapa() {
     textSize(14);
     float w = min(330, textWidth(t) + 40);
     if (encima(18, 440, w, 40)) {
-      entrarLugar(obj);
+      if (obj == ESC_CASA) irACasa(false);
+      else entrarLugar(obj);
       return true;
     }
   }
