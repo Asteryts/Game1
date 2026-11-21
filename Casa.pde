@@ -556,22 +556,8 @@ void cineSofi() {
   text("SOFI", 106 * 5, 50 + 20 * 5);
   textSize(10);
   text("CONSEJO DE JUVENTUD", 106 * 5, 50 + 28 * 5);
-  // Sofi en pixeles (pelo, cara, chaqueta y pantalon de Red Quest)
-  float b = sin(frameCount * 0.05) * 0.5;
-  fill(#4A2C1A);
-  pxc(52, 22 + b, 12, 6);
-  pxc(51, 26 + b, 3, 10);
-  pxc(62, 26 + b, 3, 10);
-  fill(#F1C9A5);
-  pxc(53, 26 + b, 10, 9);
-  fill(#101018);
-  pxc(55, 29 + b, 2, 2);
-  pxc(59, 29 + b, 2, 2);
-  fill(#E85D75);
-  pxc(51, 35 + b, 14, 12);
-  fill(#2D3A5A);
-  pxc(52, 47, 5, 9);
-  pxc(59, 47, 5, 9);
+  // Sofi en pixeles grandes, con su pelo largo y su falda (Sofi.pde)
+  sofiU(52 * 5, 50 + 22 * 5 + sin(frameCount * 0.05) * 2, 5, 1);
 }
 
 void cineCuarto() {

@@ -152,12 +152,14 @@ void pixelarPantalla() {
 // cada personaje se dibuja en un sprite chiquito (64x120 de pantalla) y se agranda
 void dibujarNPC(float cx, float pies, color ropa, color pelo, float fase, boolean marca, String nombre) {
   if (nivelPixel > 0) {   // ya estamos dentro de un fondo pixelado: se dibuja directo
-    dibujarNPCCuerpo(cx, pies, ropa, pelo, fase, marca);
+    if ("Sofi".equals(nombre)) dibujarSofiCuerpo(cx, pies, fase, marca);   // (Sofi.pde)
+    else dibujarNPCCuerpo(cx, pies, ropa, pelo, fase, marca);
     if (nombre != null && !nombre.equals("")) etiquetasPendientes.add(new Object[] {cx, pies, nombre});
     return;
   }
   empezarSprite(cx, pies);
-  dibujarNPCCuerpo(cx, pies, ropa, pelo, fase, marca);
+  if ("Sofi".equals(nombre)) dibujarSofiCuerpo(cx, pies, fase, marca);   // (Sofi.pde)
+  else dibujarNPCCuerpo(cx, pies, ropa, pelo, fase, marca);
   terminarSprite(cx, pies);
   etiquetaNPC(cx, pies, nombre);
 }

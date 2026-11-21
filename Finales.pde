@@ -161,9 +161,6 @@ void tuU(float x, float y, float u, float a) {
   personaU(x, y, u, #1E1E2E, #F1C9A5, #2A2340, #1B1B2E, a);
 }
 
-void sofiU(float x, float y, float u, float a) {
-  personaU(x, y, u, #4A2C1A, #F1C9A5, #E85D75, #2D3A5A, a);
-}
 
 // silueta oscura (gente de fondo)
 void siluetaU(float x, float y, float u, color c) {

@@ -599,7 +599,7 @@ void dibujarFinalSecreto() {
   fill(#E0CFA8);
   rect(0, 330, width, 170);
   // todos en la plaza, sin celulares
-  dibujarNPCCuerpo(330, 360, #E85D75, #4A2C1A, frameCount * 0.05, false);
+  dibujarSofiCuerpo(330, 360, frameCount * 0.05, false);   // (Sofi.pde)
   dibujarNPCCuerpo(420, 360, #3A7BD5, #1E1E1E, frameCount * 0.05 + 1, false);
   dibujarNPCCuerpo(500, 360, #FF8C3C, #141414, frameCount * 0.05 + 2, false);
   dibujarFantasma(640, 360, 0.6);
