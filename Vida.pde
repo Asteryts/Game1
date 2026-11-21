@@ -437,6 +437,8 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_EPILOGO) dibujarEpilogo();
   else if (scene == ESC_FINAL_SECRETO) dibujarFinalSecreto();
   else if (scene == ESC_CINE_RQ) dibujarCineRQ();          // (Casa.pde)
+  else if (scene == ESC_ANIM_FINAL) dibujarAnimFinal();    // (Finales.pde)
+  else if (scene == ESC_GALERIA) dibujarGaleria();
   else if (esCaminable(scene)) dibujarEscenaCaminable();
   else if (scene == ESC_ESTUDIO) dibujarEstudio();
   else if (scene == ESC_PLAZA) dibujarPlaza();
@@ -516,7 +518,7 @@ void vidaDespuesDeDibujar() {
   dibujarTelefono();
   dibujarSituacion();   // (Situaciones.pde)
   if (pausaAbierta) dibujarPausa();
-  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE && scene != ESC_JUICIO && scene != ESC_SILENCIO && scene != ESC_FINAL_SECRETO && scene != ESC_CINE_RQ) dibujarAvisos();
+  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE && scene != ESC_JUICIO && scene != ESC_SILENCIO && scene != ESC_FINAL_SECRETO && scene != ESC_CINE_RQ && scene != ESC_ANIM_FINAL && scene != ESC_GALERIA) dibujarAvisos();
   dibujarRevision();
   dibujarPantallaCarga();
   if (fundido > 0) {
@@ -603,6 +605,14 @@ boolean vidaKeyPressed() {
     }
     if (scene == ESC_RULETA) {
       salirRuleta();
+      return true;
+    }
+    if (scene == ESC_ANIM_FINAL) {   // ESC adelanta la animacion del final (Finales.pde)
+      clickAnimFinal();
+      return true;
+    }
+    if (scene == ESC_GALERIA) {
+      scene = 0;
       return true;
     }
     if (scene == ESC_CINE_RQ) {
@@ -714,6 +724,10 @@ boolean teclaEscenaPropia() {
     teclaRuleta();
     return true;
   }
+  if (scene == ESC_ANIM_FINAL) {   // (Finales.pde)
+    teclaAnimFinal();
+    return true;
+  }
   if (scene == ESC_CINE_RQ) {
     teclaCineRQ();
     return true;
@@ -765,6 +779,8 @@ void clickEscenaPropia() {
   else if (scene == ESC_EPILOGO) clickEpilogo();
   else if (scene == ESC_FINAL_SECRETO) clickFinalSecreto();
   else if (scene == ESC_CINE_RQ) clickCineRQ();             // (Casa.pde)
+  else if (scene == ESC_ANIM_FINAL) clickAnimFinal();       // (Finales.pde)
+  else if (scene == ESC_GALERIA) clickGaleria();
 }
 
 // ------------------------------------- AYUDANTES -------------------------------------

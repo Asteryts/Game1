@@ -124,6 +124,8 @@ int nivelAmbiente() {
 int musicaDeseada() {
   if (!musicaActiva) return -1;
   if (scene == ESC_CINE_RQ) return musicaCineRQ();   // (Casa.pde)
+  if (scene == ESC_ANIM_FINAL) return musicaAnimFinal();   // (Finales.pde)
+  if (scene == ESC_GALERIA) return 1;
   if (scene == ESC_INTRO || scene == ESC_FIN_DIA) return 3;
   if (scene == ESC_FIN_GRAVE || scene == ESC_JUICIO || scene == ESC_SILENCIO) return 0;
   if (scene == ESC_FINAL_SECRETO) return 2;

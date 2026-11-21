@@ -504,7 +504,7 @@ boolean desviarFinal() {
   }
   if (!finalSecretoElegido && esSilencio() && !vistoSilencio) {
     tEscenaFinal = 0;
-    scene = ESC_SILENCIO;
+    empezarAnimFinal(3, ESC_SILENCIO);   // (Finales.pde)
     return true;
   }
   if (!finalSecretoElegido && indiceFinalRQ() == 0 && !vistoJuicio) {

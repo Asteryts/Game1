@@ -3,9 +3,9 @@
 // =====================================================================================
 
 PGraphics cieloMenu, capaLejos, capaMedia, capaCerca;
-String[] botonesMenu = {"JUGAR", "MINIJUEGOS", "COMO JUGAR", "CREDITOS", "SALIR"};
+String[] botonesMenu = {"JUGAR", "MINIJUEGOS", "COMO JUGAR", "CREDITOS", "FINALES", "SALIR"};
 int seleccionMenu = 0;
-float[] brilloBotones = new float[5];
+float[] brilloBotones = new float[6];
 int regresoAyuda = 0;
 float scrollCreditos = 500;
 int lineaIntro = 0;
@@ -239,7 +239,7 @@ void dibujarMenu() {
 
   // botones
   for (int i = 0; i < botonesMenu.length; i++) {
-    float bx = width / 2 - 140, by = 180 + i * 56, bw = 280, bh = 44;
+    float bx = width / 2 - 140, by = 176 + i * 48, bw = 280, bh = 40;
     if (encima(bx, by, bw, bh) && (mouseX != pmouseX || mouseY != pmouseY) && seleccionMenu != i) {
       seleccionMenu = i;
       chispas(bx + 10, by + bh / 2, neonCian, 8);
@@ -247,7 +247,7 @@ void dibujarMenu() {
     boolean sel = seleccionMenu == i;
     brilloBotones[i] = lerp(brilloBotones[i], sel ? 1 : 0, 0.2);
     float br = brilloBotones[i];
-    color c = i == 4 ? neonRosa : neonCian;
+    color c = i == 5 ? neonRosa : (i == 4 ? #FFC846 : neonCian);
     float desp = br * 10;
     noStroke();
     for (int k = 4; k >= 1; k--) {
@@ -289,7 +289,7 @@ void dibujarMenu() {
 }
 
 void accionMenu(int i) {
-  explosionConfeti(width / 2, 180 + i * 56 + 22, 25);
+  explosionConfeti(width / 2, 176 + i * 48 + 20, 25);
   if (i == 0) {
     if (!partidaEmpezada) {   // partida nueva: la cinematica de Star Quest (Casa.pde)
       empezarCineApertura();
@@ -305,7 +305,9 @@ void accionMenu(int i) {
   } else if (i == 3) {
     scrollCreditos = height;
     scene = 2;
-  } else if (i == 4) {
+  } else if (i == 4) {   // la galeria de finales (Finales.pde)
+    abrirGaleria();
+  } else if (i == 5) {
     guardarDatos();
     exit();
   }
@@ -313,7 +315,7 @@ void accionMenu(int i) {
 
 void clickMenu() {
   for (int i = 0; i < botonesMenu.length; i++) {
-    if (encima(width / 2 - 140, 180 + i * 56, 280, 44)) {
+    if (encima(width / 2 - 140, 176 + i * 48, 280, 40)) {
       accionMenu(i);
       return;
     }

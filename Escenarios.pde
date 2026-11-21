@@ -1334,7 +1334,7 @@ void irAlFinal() {
   }
   for (int i = 0; i < 4; i++) votosFinal[i] = votosFinal[i] * 100 / total;
   tFinal = 0;
-  scene = ESC_FINAL;
+  empezarAnimFinal(4 + finalTipo, ESC_FINAL);   // la animacion del final (Finales.pde)
   desbloquear(9);
 }
 
@@ -1415,7 +1415,7 @@ void clickFinal() {
     scene = 0;
   } else if (encima(510, 418, 180, 48)) {
     tEscenaFinal = 0;
-    scene = ESC_EPILOGO;   // la verdad de @chismes_11B y lo que paso con cada uno (Ruta.pde)
+    empezarAnimFinal(finalSecretoElegido ? 12 : 8 + indiceFinalRQ(), ESC_EPILOGO);   // la verdad, con su animacion (Finales.pde)
   }
 }
 

@@ -563,7 +563,7 @@ void irAFinGrave(int s) {
   tGrave = 0;
   pararMovimiento();
   cerrarCharla();
-  scene = ESC_FIN_GRAVE;
+  empezarAnimFinal(s == 2 ? 0 : (s == 4 ? 1 : 2), ESC_FIN_GRAVE);   // primero su animacion (Finales.pde)
   sonar(9);
 }
 
