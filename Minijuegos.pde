@@ -136,6 +136,7 @@ void terminarJuego() {
   }
   guardarDatos();
   explosionConfeti(width / 2, 160, nuevoRecord ? 90 : 30);
+  sonar(nuevoRecord ? 11 : 10);   // (Sonido.pde)
 }
 
 void salirJuego() {

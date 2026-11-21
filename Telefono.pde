@@ -234,7 +234,7 @@ void homeTelefono(float sx, float cy, float sw, float ch) {
   textFont(fuenteUI);
   textSize(12);
   fill(210);
-  text("Faltan " + diasElecciones() + " dias para las elecciones", sx + sw / 2, cy + 78);
+  text(diasElecciones() == 0 ? "Hoy son las elecciones!" : textoMomento() + "  -  elecciones el jueves", sx + sw / 2, cy + 78);
   for (int i = 0; i < nombresApps.length; i++) {
     float[] p = posApp(i, sx, cy);
     boolean s = encima(p[0] - 30, p[1] - 30, 60, 60);

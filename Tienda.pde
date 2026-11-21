@@ -64,6 +64,7 @@ String[] saludosOnline = {
 void ganarMonedas(int n, float dx, float dy) {
   if (n == 0) return;
   monedas = max(0, monedas + n);
+  sonar(n > 0 ? 4 : 7);
   pulsoMonedas = 1;
   ultimoCambioMonedas = n;
   float[] t = posContadorMonedas();
@@ -293,11 +294,13 @@ void comprarGadget(int i) {
   int p = precioDe(i);
   if (monedas < p) {
     sacudidaPrecio = 14;
+    sonar(7);
     fraseTendero = "Uy, te faltan " + (p - monedas) + " NovaCoins. Juega minijuegos o toma buenas decisiones para ganar mas.";
     letrasTendero = 0;
     return;
   }
   monedas -= p;
+  sonar(5);
   pulsoMonedas = 1;
   ultimoCambioMonedas = -p;
   if (i == 4) {
@@ -818,6 +821,7 @@ String mensajeRuleta = "";
 color colorMensaje = color(255);
 IntList historialRuleta = new IntList();
 int perdidasSeguidas = 0;
+int casillaSonada = -1;
 float brilloGanar = 0;
 
 void abrirRuleta(int regreso) {
@@ -886,6 +890,7 @@ void terminarGiro() {
     mensajeRuleta = (c == 2 ? "VERDE!!! x14  " : "Ganaste! x2  ") + "+" + premio + " NovaCoins";
     colorMensaje = neonVerde;
     explosionConfeti(250, 200, c == 2 ? 160 : 70);
+    sonar(13);
     brilloGanar = 1;
     perdidasSeguidas = 0;
   } else {
@@ -893,6 +898,7 @@ void terminarGiro() {
     mensajeRuleta = "Salio " + (c == 2 ? "VERDE" : (c == 0 ? "ROJO" : "NEGRO")) + ". Perdiste " + apuesta + " NovaCoins.";
     colorMensaje = neonRojo;
     sacudida = 5;
+    sonar(9);
     if (perdidasSeguidas == 3) avisar("NOVA IA", "3 perdidas seguidas. La ruleta es azar: la casa siempre gana a la larga. Quizas es hora de parar.", neonMorado);
   }
   if (apuesta > monedas) apuesta = max(1, monedas);
@@ -927,6 +933,11 @@ void dibujarRuleta() {
   if (girando && !pausaAbierta) {
     angRuleta += velRuleta;
     velRuleta *= 0.979;
+    int cas = casillaEnFlecha();
+    if (cas != casillaSonada) {
+      casillaSonada = cas;
+      sonar(14);   // el tic de la ruleta (Sonido.pde)
+    }
     if (velRuleta < 0.0015) terminarGiro();
   }
   fill(0, 120);

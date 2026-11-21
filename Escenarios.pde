@@ -96,6 +96,10 @@ void aplicarEleccionCharla(int i) {
   viralidad += e[0];
   confiabilidad += e[1];
   impacto += e[2];
+  if (e.length > 3) {   // charlas con Sofi: tambien cambia la relacion con ella (Dias.pde)
+    cambiarRelacionSofi(e[3]);
+    ultimaFueDeSofi = true;
+  }
   charlaRespuesta = charlaActiva.respuestas[i];
   charlaLetras = 0;
   charlaEligiendo = false;
@@ -112,7 +116,10 @@ void cerrarCharla() {
 void dibujarCharla() {
   if (charlaActiva == null) return;
   String t = textoCharla();
-  if (charlaLetras < t.length() && !pausaAbierta && !telefonoAbierto) charlaLetras += 1.2;
+  if (charlaLetras < t.length() && !pausaAbierta && !telefonoAbierto) {
+    charlaLetras += 1.2;
+    sonarVoz(charlaActiva.hablante);   // cada personaje tiene su vocecita (Sonido.pde)
+  }
   float bx = 30, by = 350, bw = 740, bh = 135;
   noStroke();
   fill(8, 6, 22, 238);
@@ -323,6 +330,7 @@ void interactuar(Interactivo it) {
   }
   if (it.tipo == 0 || it.tipo == 3) {
     it.hablado = true;
+    prepararCharlaSofi(it);   // el saludo de Sofi depende de como te llevas con ella (Dias.pde)
     abrirCharla(it.charla);
   } else if (it.tipo == 1) {
     abrirCharla(new Charla(it.nombre, new String[] {it.frases[int(random(it.frases.length))]}));
@@ -846,7 +854,7 @@ void dibujarMapaVivo() {
   textAlign(LEFT, TOP);
   textSize(13);
   fill(255);
-  text("Nova  -  " + textoHora() + "  -  faltan " + diasElecciones() + " dias", 22, 16);
+  text(textoMomento() + "  -  " + textoHora(), 22, 16);
   textSize(10);
   fill(neonCian);
   text("Elige un lugar   -   P telefono   -   ESC pausa", 22, 36);
@@ -855,6 +863,7 @@ void dibujarMapaVivo() {
 
 boolean clickMapaVivo() {
   if (popupAbierto) return clickPopupMapa();
+  if (clickDormir()) return true;   // de noche: pasar al dia siguiente (Dias.pde)
   if (clickEventoMapa()) return true;
   if (clickKioscosMapa()) return true;
   // (expansion) la alcaldia ahora se alcanza caminando por la Avenida Central
@@ -1165,7 +1174,7 @@ float tPlaza = 0;
 int votosContados = 0;
 
 void iniciarPlaza() {
-  estadoPlaza = decisionesTomadas < 4 ? 0 : 1;
+  estadoPlaza = dia < 3 ? 0 : 1;   // las urnas abren el jueves (Dias.pde)
   tPlaza = 0;
   votosContados = 0;
 }
@@ -1258,7 +1267,7 @@ void dibujarPlaza() {
     textSize(15);
     fill(230);
     textAlign(CENTER, TOP);
-    text("Todavia hay rumores sueltos por Nova y casi no has tomado decisiones (" + decisionesTomadas + "). Si votas ahora, la ciudad decidira con lo que hay.", 170, 195, 460, 80);
+    text("Las urnas abren el JUEVES (falta" + (diasElecciones() == 1 ? " 1 dia" : "n " + diasElecciones() + " dias") + "). Si votas ahora, Nova decidira con lo que hay y Sofi no alcanzara a terminar su campaña.", 170, 195, 460, 80);
     botonNeon("Ir a votar igual", 170, 285, 220, 46, neonRosa, false);
     botonNeon("Seguir investigando", 410, 285, 220, 46, neonCian, false);
   }
@@ -1379,7 +1388,8 @@ void dibujarFinal() {
   textSize(12);
   fill(200);
   textAlign(CENTER, CENTER);
-  text("Viralidad " + int(viralidad) + "   -   Confiabilidad " + int(confiabilidad) + "   -   Impacto " + int(impacto) + "   -   " + decisionesTomadas + " decisiones", width / 2, 392);
+  fill(colorSofi);   // lo que paso con Sofi (Dias.pde)
+  text(epilogoSofi[nivelSofi()], width / 2, 392);
   botonNeon("Ver tu historial", 110, 418, 180, 48, neonAmarillo, frameCount % 60 < 30);
   botonNeon("Nueva partida", 310, 418, 180, 48, neonRosa, false);
   botonNeon("Seguir explorando", 510, 418, 180, 48, neonCian, false);
@@ -1433,6 +1443,8 @@ void reiniciarPartida() {
   for (int i = 0; i < visitado.length; i++) visitado[i] = false;
   prepararTelefono();
   prepararEscenarios();
+  prepararSofi();   // Sofi vuelve a su lugar del lunes (Dias.pde)
+  prepararDias();   // y la semana empieza otra vez el lunes en la mañana
   cerrarCharla();
   particulas.clear();
   flotantes.clear();

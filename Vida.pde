@@ -259,6 +259,7 @@ ArrayList<Aviso> avisos = new ArrayList<Aviso>();
 
 void avisar(String titulo, String cuerpo, color c) {
   avisos.add(new Aviso(titulo, cuerpo, c));
+  sonar(titulo.startsWith("LOGRO") ? 5 : 3);
   if (avisos.size() > 3) avisos.remove(0);
 }
 
@@ -375,6 +376,9 @@ void vidaSetup() {
   prepararTelefono();
   prepararEscenarios();
   cargarDatos();
+  cargarSonidos();   // musica y efectos hechos con notas (Sonido.pde, de Red Quest)
+  prepararSofi();    // Sofi y los dias de la semana (Dias.pde)
+  prepararDias();
   prevViral = viralidad;
   prevConf = confiabilidad;
   prevImp = impacto;
@@ -421,6 +425,7 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_HISTORIAL) dibujarHistorial();
   else if (scene == ESC_TIENDA) dibujarTienda();
   else if (scene == ESC_RULETA) dibujarRuleta();
+  else if (scene == ESC_FIN_DIA) dibujarFinDelDia();
   else if (esCaminable(scene)) dibujarEscenaCaminable();
   else if (scene == ESC_ESTUDIO) dibujarEstudio();
   else if (scene == ESC_PLAZA) dibujarPlaza();
@@ -451,6 +456,7 @@ void alCambiarEscena(int de, int a) {
   revisarExplorador();
   ultimoX = -1;
   quizasPantallaCarga(de, a);   // pantalla de carga con tema (Carga.pde)
+  if (de != -999) sonar(2);
 }
 
 // se llama al final de draw(): efectos, HUD, telefono, pausa, avisos y transiciones encima de todo
@@ -458,7 +464,8 @@ void vidaDespuesDeDibujar() {
   resetMatrix();
   boolean libre = !pausaAbierta && !telefonoAbierto;
   if (libre && esExploracion(scene)) {
-    relojJuego += 0.03;
+    avanzarReloj();      // el reloj no pasa al siguiente momento sin decisiones (Dias.pde)
+    pasosAlCaminar();    // (Sonido.pde)
     estelaAlCaminar();   // gadget Estela de Luz (Tienda.pde)
     polvoAlCaminar();
     if (--proximaNotif <= 0) llegaNotificacion();
@@ -489,9 +496,11 @@ void vidaDespuesDeDibujar() {
     rect(0, 0, width, height);
     destello -= 7;
   }
+  actualizarDias();      // boton de dormir, Sofi (Dias.pde)
+  actualizarMusica();    // (Sonido.pde)
   dibujarTelefono();
   if (pausaAbierta) dibujarPausa();
-  if (scene != ESC_HISTORIAL) dibujarAvisos();
+  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA) dibujarAvisos();
   dibujarRevision();
   dibujarPantallaCarga();
   if (fundido > 0) {
@@ -578,6 +587,7 @@ boolean vidaKeyPressed() {
       salirRuleta();
       return true;
     }
+    if (scene == ESC_FIN_DIA) return true;
     if (esMinijuego(scene)) {
       salirJuego();
       return true;
@@ -621,6 +631,7 @@ void vidaKeyReleased() {
 
 boolean vidaMousePressed() {
   if (entradaDuranteCarga()) return true;
+  sonar(0);
   if (clickRevision()) return true;
   if (pausaAbierta) {
     clickPausa();
@@ -673,6 +684,10 @@ boolean teclaEscenaPropia() {
     teclaRuleta();
     return true;
   }
+  if (scene == ESC_FIN_DIA) {
+    teclaFinDelDia();
+    return true;
+  }
   if (scene == ESC_ESTUDIO) {
     teclaEstudio();
     return true;
@@ -705,6 +720,7 @@ void clickEscenaPropia() {
   else if (scene == ESC_HISTORIAL) clickHistorial();
   else if (scene == ESC_TIENDA) clickTienda();
   else if (scene == ESC_RULETA) clickRuleta();
+  else if (scene == ESC_FIN_DIA) clickFinDelDia();
 }
 
 // ------------------------------------- AYUDANTES -------------------------------------
@@ -805,9 +821,7 @@ String textoHora() {
   return nf(m / 60, 2) + ":" + nf(m % 60, 2);
 }
 
-int diasElecciones() {
-  return max(1, 7 - decisionesTomadas / 3);
-}
+// diasElecciones() ahora esta en Dias.pde (lunes a miercoles, el jueves se vota)
 
 // ------------------------------------- BOTONES Y TEXTOS NEON -------------------------------------
 void botonNeon(String t, float bx, float by, float bw, float bh, color c, boolean activo) {
@@ -1120,7 +1134,10 @@ void vigilarEstadisticas() {
     colorDestello = buena ? neonCian : neonRosa;
     destello = 60;
     chispas(width / 2, yy, buena ? neonCian : neonRosa, 40);
+    boolean cuenta = cuentaComoDecision();   // (Dias.pde) hay que preguntarlo antes de que se gaste el aviso de la tienda
+    sonar(buena ? 6 : 7);
     monedasPorDecision(dv, dc, di);   // buenas decisiones dan NovaCoins, malas quitan (Tienda.pde)
+    if (cuenta) decisionImportante(buena);   // mueve el reloj y le llega a Sofi (Dias.pde)
   }
   prevViral = viralidad;
   prevConf = confiabilidad;
@@ -1162,15 +1179,16 @@ void dibujarHUD() {
   float px = 598, py = 8;
   noStroke();
   fill(8, 6, 24, 200);
-  rect(px, py, 194, 60, 10);
+  rect(px, py, 194, 77, 10);
   stroke(neonMorado, 160);
   strokeWeight(1);
   noFill();
-  rect(px, py, 194, 60, 10);
+  rect(px, py, 194, 77, 10);
   noStroke();
   barraMini("VIR", hudV, viralidad, px + 10, py + 10, neonRosa);
   barraMini("CON", hudC, confiabilidad, px + 10, py + 27, neonCian);
   barraMini("IMP", hudI, impacto, px + 10, py + 44, neonAmarillo);
+  barraMini("SOFI", hudS, relacionSofi, px + 10, py + 61, colorSofi);   // relacion con Sofi (Dias.pde)
 
   boolean s = encima(552, 8, 40, 60);
   fill(8, 6, 24, 200);
@@ -1194,7 +1212,7 @@ void dibujarHUD() {
   textAlign(RIGHT, CENTER);
   textSize(11);
   fill(220, 220, 255, 210);
-  text(textoHora() + (esDeNoche() ? "  -  noche" : ""), 790, 78);
+  text(textoMomento() + "  -  " + textoHora(), 790, 96);
 }
 
 void dibujarBanner() {
@@ -1271,6 +1289,7 @@ void dibujarPausa() {
   fill(5, 3, 15, 205);
   rect(0, 0, width, height);
   tituloNeon("PAUSA", width / 2, 95, 54, neonCian);
+  dibujarOpcionesSonido();   // musica y efectos (Sonido.pde)
   for (int i = 0; i < opcionesPausa.length; i++) {
     botonNeon(opcionesPausa[i], width / 2 - 130, 150 + i * 56, 260, 44, i == 4 ? neonRosa : neonCian, false);
   }
@@ -1282,6 +1301,7 @@ void dibujarPausa() {
 }
 
 void clickPausa() {
+  if (clickOpcionesSonido()) return;
   for (int i = 0; i < opcionesPausa.length; i++) {
     if (encima(width / 2 - 130, 150 + i * 56, 260, 44)) {
       pausaAbierta = false;
