@@ -372,7 +372,7 @@ String textoObjetivo() {
   if (dia >= 3) return "Ve a la Plaza de la Votacion";
   int s = situacionActual();
   if (s >= 0) return "Habla con " + mensajeroSit[s] + " en " + nombreLugarSit[s];
-  for (int k = 0; k < 6; k++) if (secDisponible(k)) return nombreSec[k] + " te busca en " + nombreLugarSec[k] + "  (o vuelve a casa)";
+  for (int k = 0; k < 6; k++) if (secDisponible(k)) return nombreSec[k] + " te busca en " + nombreLugarSec[k];
   return "Ya es de noche: vuelve a casa a dormir";
 }
 

@@ -1201,61 +1201,94 @@ void llegaNotificacion() {
 }
 
 // ------------------------------------- HUD -------------------------------------
+// (HUD ligero) se ve claro cuando importa y se vuelve discreto cuando no
+float hudAlfa = 1;
+int ultimoCambioHUD = 0;
+
+// texto con una sombrita para que se lea sobre cualquier fondo
+void textoHUD(String t, float tx, float ty, color c, float a) {
+  fill(0, 150 * a);
+  text(t, tx + 1, ty + 1);
+  fill(c, 255 * a);
+  text(t, tx, ty);
+}
+
 void barraMini(String lab, float mostrado, float real, float bx, float by, color c) {
+  float a = hudAlfa;
+  noStroke();
+  fill(c, 255 * a);
+  ellipse(bx + 3, by + 1, 6, 6);
   textFont(fuenteUI);
   textSize(10);
-  fill(200);
   textAlign(LEFT, CENTER);
-  text(lab, bx, by + 3);
-  fill(40, 36, 60);
-  rect(bx + 30, by, 120, 8, 4);
-  fill(c);
-  rect(bx + 30, by, 120 * constrain(mostrado, 0, 100) / 100.0, 8, 4);
-  fill(255);
+  textoHUD(lab, bx + 10, by, color(235), a);
+  fill(255, 40 * a);
+  rect(bx + 42, by - 1, 96, 3, 2);
+  fill(c, 255 * a);
+  rect(bx + 42, by - 1, 96 * constrain(mostrado, 0, 100) / 100.0, 3, 2);
+  textSize(11);
   textAlign(RIGHT, CENTER);
-  text(int(real), bx + 176, by + 3);
+  textoHUD(str(int(real)), bx + 166, by, color(255), a);
 }
 
 void dibujarHUD() {
-  float px = 598, py = 8;
-  noStroke();
-  fill(8, 6, 24, 200);
-  rect(px, py, 194, 77, 10);
-  stroke(neonMorado, 160);
-  strokeWeight(1);
-  noFill();
-  rect(px, py, 194, 77, 10);
-  noStroke();
-  barraMini("VIR", hudV, viralidad, px + 10, py + 10, neonRosa);
-  barraMini("CON", hudC, confiabilidad, px + 10, py + 27, neonCian);
-  barraMini("IMP", hudI, impacto, px + 10, py + 44, neonAmarillo);
-  barraMini("SOFI", hudS, relacionSofi, px + 10, py + 61, colorSofi);   // relacion con Sofi (Dias.pde)
+  // cuando algo cambia, o pasas el mouse por arriba, se ve completo; si no, se aparta un poco
+  boolean cambiando = abs(hudV - viralidad) + abs(hudC - confiabilidad) + abs(hudI - impacto) + abs(hudS - relacionSofi) > 0.6;
+  if (cambiando) ultimoCambioHUD = frameCount;
+  boolean mirar = cambiando || frameCount - ultimoCambioHUD < 180 || mouseY < 76 || notifPendientes > 0 || pausaAbierta;
+  boolean tapaJugador = y < 70 && x + 50 > 440;
+  float meta = tapaJugador ? 0.3 : (mirar ? 1 : 0.62);
+  hudAlfa = lerp(hudAlfa, meta, 0.08);
+  float a = hudAlfa;
 
-  boolean s = encima(552, 8, 40, 60);
-  fill(8, 6, 24, 200);
-  rect(552, 8, 40, 60, 10);
-  stroke(s ? neonCian : neonMorado, s ? 255 : 160);
-  noFill();
-  rect(552, 8, 40, 60, 10);
+  // las barras (arriba a la derecha)
+  float px = 612, py = 8;
   noStroke();
-  iconoCelular(572, 32, 0.9, notifPendientes > 0 && frameCount % 50 < 12);
-  fill(200);
+  fill(10, 8, 24, 140 * a);
+  rect(px, py, 180, 60, 12);
+  barraMini("VIR", hudV, viralidad, px + 10, py + 11, neonRosa);
+  barraMini("CON", hudC, confiabilidad, px + 10, py + 24, neonCian);
+  barraMini("IMP", hudI, impacto, px + 10, py + 37, neonAmarillo);
+  barraMini("SOFI", hudS, relacionSofi, px + 10, py + 50, colorSofi);   // relacion con Sofi (Dias.pde)
+
+  // el celular (un boton redondo)
+  boolean s = encima(552, 8, 40, 60);
+  fill(10, 8, 24, (s ? 200 : 140) * max(a, 0.7));
+  ellipse(574, 30, 38, 38);
+  if (s) {
+    noFill();
+    stroke(neonCian, 220);
+    strokeWeight(1.5);
+    ellipse(574, 30, 38, 38);
+    noStroke();
+  }
+  iconoCelular(574, 30, 0.7, notifPendientes > 0 && frameCount % 50 < 12);
   textFont(fuenteUI);
-  textSize(10);
+  textSize(9);
   textAlign(CENTER, CENTER);
-  text("[P]", 572, 58);
+  if (s) textoHUD("tecla P", 574, 58, color(220), 1);
   if (notifPendientes > 0) {
     fill(neonRojo);
-    ellipse(590, 12, 17, 17);
+    ellipse(590, 14, 16, 16);
     fill(255);
-    text(notifPendientes, 590, 11);
+    textSize(10);
+    text(notifPendientes, 590, 13);
   }
-  textAlign(RIGHT, CENTER);
-  textSize(11);
-  fill(220, 220, 255, 210);
-  text(textoMomento() + "  -  " + textoHora(), 790, 96);
-  fill(neonAmarillo, 220);   // que sigue en la historia (Situaciones.pde)
-  text("> " + textoObjetivo(), 790, 112);
+
+  // el dia y lo que sigue (arriba a la izquierda, junto a Volver)
+  textFont(fuenteUI);
+  String l1 = textoMomento() + "   " + textoHora();
+  String l2 = "> " + textoObjetivo();
+  textSize(12);
+  if (textWidth(l2) > 320) l2 = recortar(l2, 52);
+  float w = max(textWidth(l2), textWidth(l1)) + 22;
+  fill(10, 8, 24, 130 * a);
+  rect(126, 14, w, 40, 12);
+  textAlign(LEFT, CENTER);
+  textSize(10);
+  textoHUD(l1, 137, 25, color(205, 210, 240), max(a, 0.75));
+  textSize(12);
+  textoHUD(l2, 137, 41, neonAmarillo, max(a, 0.85));
 }
 
 void dibujarBanner() {

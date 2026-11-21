@@ -118,9 +118,9 @@ void dibujarContadorMonedas(float cx, float cy) {
   textSize(15);
   float w = max(76, textWidth(t) + 50);
   noStroke();
-  fill(8, 6, 24, 215);
+  fill(8, 6, 24, 150);
   rect(cx - w / 2, cy - 14, w, 28, 14);
-  stroke(ultimoCambioMonedas < 0 && pulsoMonedas > 0.05 ? neonRojo : #FFB400, 150 + 100 * pulsoMonedas);
+  stroke(ultimoCambioMonedas < 0 && pulsoMonedas > 0.05 ? neonRojo : #FFB400, 90 + 160 * pulsoMonedas);
   strokeWeight(1.5);
   noFill();
   rect(cx - w / 2, cy - 14, w, 28, 14);
