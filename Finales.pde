@@ -368,7 +368,7 @@ void animSuspendida(float t) {
     textAlign(CENTER, CENTER);
     text("CUENTA SUSPENDIDA", 0, -2);
     popMatrix();
-    if (int(t) == 318) sonar(9);
+    if (!enMiniatura && int(t) == 318) sonar(9);
   }
 }
 
@@ -427,12 +427,12 @@ void animFiltro(float t) {
       textSize(9);
       textAlign(CENTER, CENTER);
       text("bulo", rx, ry - 1);
-    } else if (frameCount % 3 == 0 && !pausaAbierta) chispas(rx, ry, neonVerde, 2);
+    } else if (frameCount % 3 == 0 && !pausaAbierta && !enMiniatura) chispas(rx, ry, neonVerde, 2);
   }
   // la gente
   for (int i = 0; i < 9; i++) siluetaU(60 + i * 82, 300 - (i % 2) * 6, 1.6, color(#2A2448));
   // fuegos artificiales al final
-  if (t > 380 && frameCount % 25 == 0 && !pausaAbierta) explosionConfeti(random(150, 650), random(80, 200), 30);
+  if (t > 380 && frameCount % 25 == 0 && !pausaAbierta && !enMiniatura) explosionConfeti(random(150, 650), random(80, 200), 30);
   if (t > 340) {
     fill(#3CFF96, 220);
     textFont(fuenteUI);
@@ -675,7 +675,7 @@ void animViaje(float t) {
     textAlign(CENTER, CENTER);
     text("EXPUESTA", 0, -2);
     popMatrix();
-    if (int(t) == 372) sonar(13);
+    if (!enMiniatura && int(t) == 372) sonar(13);
   }
 }
 
@@ -758,66 +758,3 @@ void animDesconectado(float t) {
   }
 }
 
-// ------------------------------------- GALERIA (escena 81) -------------------------------------
-int regresoGaleria = 0;
-
-void abrirGaleria() {
-  regresoGaleria = scene;
-  scene = ESC_GALERIA;
-}
-
-float[] celdaGaleria(int i) {
-  int col = i % 4, fila = i / 4;
-  return new float[] {40 + col * 184, 96 + fila * 86, 172, 76};
-}
-
-void dibujarGaleria() {
-  background(#101018);
-  noStroke();
-  for (int i = 0; i < 50; i++) {
-    fill(255, 80 + 80 * sin(frameCount * 0.04 + i));
-    rect(hsh(i * 3.1) * width, hsh(i * 7.3) * height, 2, 2);
-  }
-  tituloNeon("FINALES", width / 2, 44, 34, #FFC846);
-  textFont(fuenteUI);
-  textSize(12);
-  fill(170);
-  textAlign(CENTER, CENTER);
-  text("Los 13 finales de Star Quest. Haz clic en uno para ver su animacion.", width / 2, 76);
-  for (int i = 0; i < tituloAnim.length; i++) {
-    float[] c = celdaGaleria(i);
-    boolean s = encima(c[0], c[1], c[2], c[3]);
-    color col = colorAnim[i];
-    fill(s ? color(red(col) * 0.2, green(col) * 0.2, blue(col) * 0.2) : color(20, 18, 34));
-    stroke(col, s ? 255 : 120);
-    strokeWeight(s ? 2.5 : 1.5);
-    rect(c[0], c[1] - (s ? 3 : 0), c[2], c[3], 12);
-    noStroke();
-    fill(col);
-    ellipse(c[0] + 22, c[1] + 38 - (s ? 3 : 0), 20, 20);
-    fill(#101018);
-    triangle(c[0] + 18, c[1] + 31 - (s ? 3 : 0), c[0] + 18, c[1] + 45 - (s ? 3 : 0), c[0] + 29, c[1] + 38 - (s ? 3 : 0));
-    textAlign(LEFT, TOP);
-    textSize(9);
-    fill(150);
-    text(tipoAnim[i].toUpperCase(), c[0] + 40, c[1] + 12 - (s ? 3 : 0));
-    textSize(11);
-    fill(235);
-    text(tituloAnim[i], c[0] + 40, c[1] + 25 - (s ? 3 : 0), c[2] - 44, 48);
-  }
-  botonVolver();
-}
-
-void clickGaleria() {
-  if (clickVolver()) {
-    scene = regresoGaleria == ESC_GALERIA || regresoGaleria == ESC_ANIM_FINAL ? 0 : regresoGaleria;
-    return;
-  }
-  for (int i = 0; i < tituloAnim.length; i++) {
-    float[] c = celdaGaleria(i);
-    if (encima(c[0], c[1], c[2], c[3])) {
-      empezarAnimFinal(i, -1);
-      return;
-    }
-  }
-}

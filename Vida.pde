@@ -724,6 +724,10 @@ boolean teclaEscenaPropia() {
     teclaRuleta();
     return true;
   }
+  if (scene == ESC_GALERIA) {   // (Galeria.pde)
+    teclaGaleria();
+    return true;
+  }
   if (scene == ESC_ANIM_FINAL) {   // (Finales.pde)
     teclaAnimFinal();
     return true;

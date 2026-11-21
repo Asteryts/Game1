@@ -70,6 +70,7 @@ void mouseWheel(MouseEvent ev) {
   if (telefonoAbierto && telApp == 4) logrosScroll += ev.getCount() * 30;
   if (telefonoAbierto && telApp == 6) mensajesScroll += ev.getCount() * 30;
   if (scene == ESC_HISTORIAL) historialScroll += ev.getCount() * 40;
+  if (scene == ESC_GALERIA) galeriaScroll += ev.getCount() * 60;   // (Galeria.pde)
 }
 
 void dibujarTelefono() {
