@@ -654,3 +654,14 @@ int musicaCineRQ() {
   if (cinePlano <= 5) return 3;   // viento
   return 1;
 }
+
+// una casita pequeña para el boton "Ir a casa" de dia
+void dibujarCasita(float cx, float cy) {
+  noStroke();
+  fill(#FFC846);
+  triangle(cx - 10, cy - 1, cx + 10, cy - 1, cx, cy - 10);
+  fill(#E8D5A3);
+  rect(cx - 7, cy - 1, 14, 10);
+  fill(#7A4E2A);
+  rect(cx - 2, cy + 3, 4, 6);
+}

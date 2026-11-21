@@ -189,13 +189,14 @@ void actualizarDias() {
   actualizarShawn();      // (Ruta.pde)
   hudS = lerp(hudS, relacionSofi, 0.08);
   actualizarSofi();
-  if (scene == 1 && puedeDormir() && escenaObjetivo() != ESC_CASA && !popupAbierto && !telefonoAbierto && !pausaAbierta) {
+  if (scene == 1 && escenaObjetivo() != ESC_CASA && !popupAbierto && !telefonoAbierto && !pausaAbierta) {
     float b = 0.5 + 0.5 * sin(frameCount * 0.08);
     noStroke();
     fill(neonMorado, 40 * b);
     rect(616, 432, 178, 56, 16);
     botonNeon("Ir a casa  >", 624, 440, 162, 40, neonMorado, false);
-    dibujarLuna(646, 460, 11);
+    if (momento == 3) dibujarLuna(646, 460, 11);
+    else dibujarCasita(646, 460);   // (Casa.pde)
   }
 }
 
@@ -204,7 +205,7 @@ boolean puedeDormir() {
 }
 
 boolean clickDormir() {
-  if (scene == 1 && puedeDormir() && escenaObjetivo() != ESC_CASA && encima(624, 440, 162, 40)) {
+  if (scene == 1 && escenaObjetivo() != ESC_CASA && encima(624, 440, 162, 40)) {
     irACasa(false);   // ahora se duerme en la cama de tu cuarto (Casa.pde)
     return true;
   }

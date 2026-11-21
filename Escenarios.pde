@@ -833,7 +833,7 @@ void dibujarMapaVivo() {
     text(t, tx + w / 2, ty + 5);
     textSize(10);
     fill(neonCian);
-    text("clic para entrar", tx + w / 2, ty + 24);
+    text(pinPermitido(sobreLugar) ? "clic para entrar" : "cerrado por ahora", tx + w / 2, ty + 24);
   }
   dibujarKioscosMapa();   // kioscos de la Tienda NOVA (Tienda.pde)
   dibujarGuiaMapa();      // candados, SIGUIENTE e "Ir a ..." (Ruta.pde)
@@ -871,6 +871,11 @@ void dibujarMapaVivo() {
 
 boolean clickMapaVivo() {
   if (popupAbierto) return clickPopupMapa();
+  if (encima(745, 6, 50, 58)) {   // el celular del mapa va primero (encima del pin del barrio)
+    abrirTelefono();
+    return true;
+  }
+
   if (clickDormir()) return true;   // de noche: pasar al dia siguiente (Dias.pde)
   if (clickGuiaMapa()) return true; // lugares cerrados e "Ir a ..." (Ruta.pde)
   if (clickEventoMapa()) return true;
@@ -879,10 +884,6 @@ boolean clickMapaVivo() {
   float[] alc = lugaresMapa[2];
   if (mouseX > alc[0] && mouseX < alc[2] && mouseY > alc[1] && mouseY < alc[3]) {
     entrarLugar(ESC_AVENIDA);
-    return true;
-  }
-  if (encima(750, 10, 40, 50)) {
-    abrirTelefono();
     return true;
   }
   for (int i = 3; i < lugaresMapa.length; i++) {

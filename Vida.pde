@@ -468,6 +468,7 @@ void alCambiarEscena(int de, int a) {
   ultimoX = -1;
   quizasPantallaCarga(de, a);   // pantalla de carga con tema (Carga.pde)
   if (de != -999) sonar(2);
+  pararClic();   // al cambiar de escena se olvida el camino del mouse (Mover.pde)
 }
 
 // se llama al final de draw(): efectos, HUD, telefono, pausa, avisos y transiciones encima de todo
@@ -668,15 +669,17 @@ boolean vidaMousePressed() {
     clickTelefono();
     return true;
   }
+  // el boton del celular del HUD (antes de mandar el clic a la escena)
+  if (esExploracion(scene) && encima(552, 8, 40, 60)) {
+    pararClic();
+    abrirTelefono();
+    return true;
+  }
   if (scene == 0 || scene == 2 || scene >= 40) {
     clickEscenaPropia();
     return true;
   }
   if (scene == 1 && clickMapaVivo()) return true;
-  if (esExploracion(scene) && encima(552, 8, 40, 60)) {
-    abrirTelefono();
-    return true;
-  }
   return false;
 }
 
@@ -1358,7 +1361,7 @@ void pistasInteraccion() {
 }
 
 // ------------------------------------- PAUSA -------------------------------------
-String[] opcionesPausa = {"Continuar", "Telefono", "Ir al mapa", "Como jugar", "Menu principal"};
+String[] opcionesPausa = {"Continuar", "Telefono", "Ir al mapa", "Ir a casa", "Como jugar", "Menu principal"};
 
 void dibujarPausa() {
   noStroke();
@@ -1367,29 +1370,32 @@ void dibujarPausa() {
   tituloNeon("PAUSA", width / 2, 95, 54, neonCian);
   dibujarOpcionesSonido();   // musica y efectos (Sonido.pde)
   for (int i = 0; i < opcionesPausa.length; i++) {
-    botonNeon(opcionesPausa[i], width / 2 - 130, 150 + i * 56, 260, 44, i == 4 ? neonRosa : neonCian, false);
+    botonNeon(opcionesPausa[i], width / 2 - 130, 150 + i * 50, 260, 42, i == 5 ? neonRosa : neonCian, false);
   }
   textFont(fuenteUI);
   textSize(12);
   fill(180);
   textAlign(CENTER, CENTER);
-  text("Viralidad " + int(viralidad) + "   -   Confiabilidad " + int(confiabilidad) + "   -   Impacto " + int(impacto) + "   -   Logros " + contarLogros() + "/" + logros.length + "   -   NovaCoins " + monedas, width / 2, 455);
+  text("Viralidad " + int(viralidad) + "   -   Confiabilidad " + int(confiabilidad) + "   -   Impacto " + int(impacto) + "   -   Logros " + contarLogros() + "/" + logros.length + "   -   NovaCoins " + monedas, width / 2, 468);
 }
 
 void clickPausa() {
   if (clickOpcionesSonido()) return;
   for (int i = 0; i < opcionesPausa.length; i++) {
-    if (encima(width / 2 - 130, 150 + i * 56, 260, 44)) {
+    if (encima(width / 2 - 130, 150 + i * 50, 260, 42)) {
       pausaAbierta = false;
       if (i == 1) abrirTelefono();
       else if (i == 2) {
         CerrarDialogo();
         cerrarCharla();
         scene = 1;
-      } else if (i == 3) {
+      } else if (i == 3) {   // tu cuarto, a cualquier hora (Casa.pde)
+        if (esJuegoCamara(scene)) apagarCamara();
+        irACasa(false);
+      } else if (i == 4) {
         regresoAyuda = scene;
         scene = ESC_COMO_JUGAR;
-      } else if (i == 4) {
+      } else if (i == 5) {
         CerrarDialogo();
         cerrarCharla();
         scene = 0;
