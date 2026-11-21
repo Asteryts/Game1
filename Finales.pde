@@ -50,6 +50,7 @@ void empezarAnimFinal(int id, int destino) {
   animT = 0;
   pararMovimiento();
   scene = ESC_ANIM_FINAL;
+  if (destino >= 0) desbloquearFinal(id);   // llegaste a este final jugando: se desbloquea en la galeria (Galeria.pde)
   sonar(12);
 }
 
@@ -90,14 +91,14 @@ void dibujarAnimFinal() {
   fill(0);
   rect(0, 0, width, 50);
   rect(0, height - 50, width, 50);
-  textFont(fuenteUI);
+  textFont(fuenteFinales());   // la tipografia Waifu (Galeria.pde)
   textAlign(CENTER, CENTER);
   textSize(10);
   fill(150);
-  text(tipoAnim[animId].toUpperCase(), width / 2, 14);
+  textoW(tipoAnim[animId].toUpperCase(), width / 2, 14);
   textSize(18);
   fill(colorAnim[animId]);
-  text(tituloAnim[animId], width / 2, 33);
+  textoW(tituloAnim[animId], width / 2, 33);
   // las tres lineas, una despues de otra
   int k = constrain(int((t - 20) / 170), 0, 2);
   String linea = lineasAnim[animId][k];
@@ -108,16 +109,16 @@ void dibujarAnimFinal() {
     rect(80, 382, 640, 56, 10);
     fill(235);
     textSize(16);
-    text(linea.substring(0, int(letras)), 100, 382, 600, 56);
+    textoW(linea.substring(0, int(letras)), 100, 382, 600, 56);
   }
   fill(120);
   textSize(11);
   textAlign(RIGHT, CENTER);
-  text(t < ANIM_FIN ? "clic / ENTER: adelantar" : "clic / ENTER: continuar", width - 14, height - 25);
+  textoW(t < ANIM_FIN ? "clic / ENTER: adelantar" : "clic / ENTER: continuar", width - 14, height - 25);
   if (t >= ANIM_FIN) {
     textAlign(CENTER, CENTER);
     fill(colorAnim[animId], 150 + 100 * sin(frameCount * 0.1));
-    text(animDestino < 0 ? "volver a la galeria" : "continuar", width / 2, height - 25);
+    textoW(animDestino < 0 ? "volver a la galeria" : "continuar", width / 2, height - 25);
   }
   // fundido de entrada y de salida
   float a = constrain(1 - t / 25.0, 0, 1);
@@ -181,7 +182,7 @@ void celularU(float x, float y, float w, float h, color pantalla) {
 }
 
 void burbujaFinal(float bx, float by, String t, color fondo, color letra, float a) {
-  textFont(fuenteUI);
+  textFont(fuenteFinales());
   textSize(13);
   float w = textWidth(t) + 22;
   noStroke();
@@ -232,7 +233,7 @@ void animCuentaRobada(float t) {
   fill(#FF5A78);
   rect(308, 82, 184, 26, 6);
   fill(255);
-  textFont(fuenteUI);
+  textFont(fuenteFinales());
   textSize(13);
   textAlign(CENTER, CENTER);
   text("Conecta", 400, 94);
@@ -264,7 +265,7 @@ void animCuentaRobada(float t) {
     int n = constrain(int(t / 10), 0, 10);
     String pass = "";
     for (int i = 0; i < n; i++) pass += "*";
-    text("contraseña: " + pass + (frameCount % 30 < 15 ? "|" : ""), 318, 197);
+    text("contrasena: " + pass + (frameCount % 30 < 15 ? "|" : ""), 318, 197);
   } else {   // publicaciones que tu no hiciste
     String[] posts = {"jajaja miren a Sofi", "Sofi no sirve para nada", "voten por cualquiera menos ella", "esto es de @tu_usuario"};
     int vis = constrain(int((t - 140) / 45), 0, 4);
@@ -323,7 +324,7 @@ void animSofiSeVa(float t) {
     fill(#2A1020, 230);
     rect(250, 130, 300, 70, 12);
     fill(#FF6E96);
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(16);
     textAlign(CENTER, CENTER);
     text("Sofi te bloqueo.", 400, 155);
@@ -342,7 +343,7 @@ void animSuspendida(float t) {
     fill(gris ? color(60) : color(#3A3A4A));
     ellipse(ax, ay, 36, 36);
     fill(gris ? color(90) : color(#8A8A98));
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(11);
     textAlign(CENTER, CENTER);
     text("x  x", ax, ay - 3);
@@ -363,7 +364,7 @@ void animSuspendida(float t) {
     rect(-190, -40, 380, 80, 8);
     noStroke();
     fill(#FF465A, 255 * e);
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(32);
     textAlign(CENTER, CENTER);
     text("CUENTA SUSPENDIDA", 0, -2);
@@ -392,7 +393,7 @@ void animSilencio(float t) {
     fill(#FF465A);
     ellipse(446, 186, 16, 16);
     fill(220);
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(12);
     textAlign(LEFT, CENTER);
     text("1 me gusta (tu)", 460, 186);
@@ -423,7 +424,7 @@ void animFiltro(float t) {
       fill(#FF465A);
       rect(rx - 14, ry - 8, 28, 16, 6);
       fill(255);
-      textFont(fuenteUI);
+      textFont(fuenteFinales());
       textSize(9);
       textAlign(CENTER, CENTER);
       text("bulo", rx, ry - 1);
@@ -435,7 +436,7 @@ void animFiltro(float t) {
   if (t > 380 && frameCount % 25 == 0 && !pausaAbierta && !enMiniatura) explosionConfeti(random(150, 650), random(80, 200), 30);
   if (t > 340) {
     fill(#3CFF96, 220);
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(14);
     textAlign(CENTER, CENTER);
     text("NOVA DECIDE CON DATOS", 400, 300);
@@ -484,7 +485,7 @@ void animConsciente(float t) {
     fill(revisado ? color(110) : color(#FF465A));
     rect(bx - 50, by - 16, 100, 32, 10);
     fill(255);
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(11);
     textAlign(CENTER, CENTER);
     text(revisado ? "sin fuente" : "URGENTE!!!", bx, by - 1);
@@ -505,7 +506,7 @@ void animConsciente(float t) {
       personaU(vx, 230, 2.8, #2B1B10, #D9A27A, i % 2 == 0 ? color(#3A7BD5) : color(#46A064), #2B2B2B, constrain((t - 300 - i * 20) / 30.0, 0, 1));
       if (t > 340 + i * 20) {
         fill(#3CFF96);
-        textFont(fuenteUI);
+        textFont(fuenteFinales());
         textSize(16);
         textAlign(CENTER, CENTER);
         text("v", vx + 16, 210);
@@ -573,7 +574,7 @@ void animLimbo(float t) {
   fill(#8A8A98);
   ellipse(470, 210 - r * 0.12, r * 0.3, r * 0.3);
   rect(470 - r * 0.22, 210 + r * 0.05, r * 0.44, r * 0.2, 6);
-  textFont(fuenteUI);
+  textFont(fuenteFinales());
   textAlign(CENTER, CENTER);
   fill(235);
   textSize(14);
@@ -592,7 +593,7 @@ void animEquilibrio(float t) {
   personaU(250, 214, 3.4, #141414, #C68E5E, #FF8C3C, #39404D, 1);   // Kevin
   // su celular: borrando la cuenta
   celularU(420, 110, 160, 220, #0C0C18);
-  textFont(fuenteUI);
+  textFont(fuenteFinales());
   textAlign(CENTER, CENTER);
   float p = constrain((t - 60) / 220.0, 0, 1);
   fill(235);
@@ -636,7 +637,7 @@ void animViaje(float t) {
     fill(#FF465A, 255 * a);
     ellipse(pos[i][0], pos[i][1] - 36, 10, 10);
     fill(40, 255 * a);
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(12);
     textAlign(CENTER, CENTER);
     text(pruebas[i], pos[i][0], pos[i][1] + 4);
@@ -654,7 +655,7 @@ void animViaje(float t) {
     rect(350, 140, 120, 140, 4);
     personaU(386, 158, 2.0, #A0522D, #F0C090, #20A39E, #333A56, a);
     fill(40, 255 * a);
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(12);
     textAlign(CENTER, CENTER);
     text("CAMILA", 410, 266);
@@ -710,7 +711,7 @@ void animRefugio(float t) {
   if (t > 160 && t < 330) burbujaFinal(470, 165, "Fui yo...", #FF6E96, color(255), constrain((t - 160) / 15.0, 0, 1));
   if (t > 340) {   // el logo en su pantalla
     fill(#FF465A, 200);
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textSize(12);
     textAlign(CENTER, CENTER);
     text("@chismes_11B", 459, 182);
@@ -750,7 +751,7 @@ void animDesconectado(float t) {
     dibujarFantasma(755, 330, a);
     if (t > 300 && t < 440) {
       fill(220, 235, 255, 255 * a);
-      textFont(fuenteUI);
+      textFont(fuenteFinales());
       textSize(11);
       textAlign(CENTER, CENTER);
       text("(se despide)", 755, 236);

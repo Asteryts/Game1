@@ -349,6 +349,7 @@ void cargarDatos() {
     if (l.length > 1) for (int i = 0; i < min(l[1].length(), logros.length); i++) logros[i] = l[1].charAt(i) == '1';
     if (l.length > 2) introVista = trim(l[2]).equals("1");
     if (l.length > 3) cargarGuardadoTienda(l[3]);   // NovaCoins y gadgets (Tienda.pde)
+    if (l.length > 4) cargarFinalesVistos(l[4]);   // los finales que ya desbloqueaste (Galeria.pde)
   }
   catch (Exception e) {
     println("No se pudieron cargar los datos: " + e);
@@ -359,7 +360,7 @@ void guardarDatos() {
   try {
     String lg = "";
     for (boolean b : logros) lg += b ? "1" : "0";
-    String[] l = {join(nf(records, 0), ","), lg, introVista ? "1" : "0", textoGuardadoTienda()};
+    String[] l = {join(nf(records, 0), ","), lg, introVista ? "1" : "0", textoGuardadoTienda(), textoFinalesVistos()};   // + finales desbloqueados (Galeria.pde)
     saveStrings(sketchPath("datos_nova.txt"), l);
   }
   catch (Exception e) {

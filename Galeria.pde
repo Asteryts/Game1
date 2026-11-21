@@ -102,58 +102,150 @@ void miniaturaFinal(int id, float x, float y, float w, float h) {
   noClip();
 }
 
+// ------------------------------------- DESBLOQUEO -------------------------------------
+// cada final se desbloquea la primera vez que llegas a el jugando, y queda guardado
+boolean[] finalVisto = new boolean[13];
+float sacudidaGaleria = 0;
+int tarjetaSacudida = -1;
+
+void desbloquearFinal(int id) {
+  if (id < 0 || id >= finalVisto.length || finalVisto[id]) return;
+  finalVisto[id] = true;
+  avisar("Final desbloqueado", tituloAnim[id] + " ya esta en la galeria FINALES del menu.", #FFC846);
+  guardarDatos();
+}
+
+int contarFinalesVistos() {
+  int n = 0;
+  for (boolean b : finalVisto) if (b) n++;
+  return n;
+}
+
+String textoFinalesVistos() {
+  String t = "";
+  for (boolean b : finalVisto) t += b ? "1" : "0";
+  return t;
+}
+
+void cargarFinalesVistos(String l) {
+  l = trim(l);
+  for (int i = 0; i < min(l.length(), finalVisto.length); i++) finalVisto[i] = l.charAt(i) == '1';
+}
+
+// ------------------------------------- TIPOGRAFIA WAIFU -------------------------------------
+// la galeria y las animaciones de los finales usan la fuente CyberpunkWaifus del juego.
+// Esa fuente no trae ñ ni tildes: se cambian por la letra sin tilde para que no salgan cuadritos.
+PFont fuenteFinales() {
+  return fuente != null ? fuente : fuenteUI;
+}
+
+String sinTildes(String s) {
+  String a = "ñÑáéíóúÁÉÍÓÚü", b = "nNaeiouAEIOUu";
+  StringBuilder r = new StringBuilder();
+  for (int i = 0; i < s.length(); i++) {
+    int k = a.indexOf(s.charAt(i));
+    r.append(k >= 0 ? b.charAt(k) : s.charAt(i));
+  }
+  return r.toString();
+}
+
+void textoW(String s, float x, float y) {
+  text(sinTildes(s), x, y);
+}
+
+void textoW(String s, float x, float y, float w, float h) {
+  text(sinTildes(s), x, y, w, h);
+}
+
+// la miniatura de un final que todavia no has visto: estatica y un candado
+void miniaturaBloqueada(int id, float x, float y, float w, float h) {
+  clip(x, y, w, h);
+  noStroke();
+  fill(#0B0B12);
+  rect(x, y, w, h);
+  for (int i = 0; i < 90; i++) {
+    float sx = x + hsh(i * 3.7 + (frameCount / 6) * 1.3) * w, sy = y + hsh(i * 5.9 + (frameCount / 6) * 0.7) * h;
+    fill(60 + hsh(i * 1.1) * 60, 120);
+    rect(sx, sy, 3, 2);
+  }
+  float cx = x + w / 2, cy = y + h / 2;
+  fill(#2A2A40);
+  rect(cx - 16, cy - 4, 32, 24, 4);
+  noFill();
+  stroke(#2A2A40);
+  strokeWeight(5);
+  arc(cx, cy - 4, 20, 24, PI, TWO_PI);
+  noStroke();
+  fill(#9A9AB4);
+  ellipse(cx, cy + 6, 6, 6);
+  rect(cx - 1.5, cy + 6, 3, 7);
+  noClip();
+}
+
+// ------------------------------------- DIBUJO DE LA GALERIA -------------------------------------
 void dibujarGaleria() {
   background(#101018);
   galeriaScroll = constrain(galeriaScroll, 0, maxScrollGaleria());
   galeriaScrollVista = lerp(galeriaScrollVista, galeriaScroll, 0.25);
+  if (sacudidaGaleria > 0) sacudidaGaleria *= 0.85;
   float oy = GAL_TOP - galeriaScrollVista;
-  textFont(fuenteUI);
+  textFont(fuenteFinales());
   // contenido que se desplaza
   clip(0, GAL_TOP, width, height - GAL_TOP);
   float yy = oy;
   for (int s = 0; s < seccionFinales.length; s++) {
     fill(#E6E6F0);
     textAlign(LEFT, TOP);
-    textSize(16);
-    text(seccionTitulo[s], GAL_X, yy + 8);
+    textSize(17);
+    textoW(seccionTitulo[s], GAL_X, yy + 6);
     fill(#9A9AB4);
     textSize(10);
-    text(seccionTexto[s], GAL_X, yy + 30, 752, 20);
+    textoW(seccionTexto[s], GAL_X, yy + 30, 752, 22);
     yy += 54 + ceil(seccionFinales[s].length / 3.0) * (CARD_H + CARD_GAP) + 10;
   }
   for (int id = 0; id < tituloAnim.length; id++) {
     float[] p = posTarjeta(id);
     float cx = p[0], cy = oy + p[1];
     if (cy > height || cy + CARD_H < GAL_TOP) continue;   // fuera de la vista
+    boolean visto = finalVisto[id];
     boolean s = mouseY > GAL_TOP && encima(cx, cy, CARD_W, CARD_H);
-    color c = colorAnim[id];
+    if (id == tarjetaSacudida && sacudidaGaleria > 0.3) cx += random(-sacudidaGaleria, sacudidaGaleria);
+    color c = visto ? colorAnim[id] : color(#5A5A72);
     noStroke();
     fill(#181827);
     rect(cx, cy, CARD_W, CARD_H, 12);
-    miniaturaFinal(id, cx, cy, CARD_W, THUMB_H);
+    if (visto) miniaturaFinal(id, cx, cy, CARD_W, THUMB_H);
+    else miniaturaBloqueada(id, cx, cy, CARD_W, THUMB_H);
     clip(0, GAL_TOP, width, height - GAL_TOP);
-    // boton de play encima de la miniatura
-    noStroke();
-    fill(0, s ? 150 : 90);
-    ellipse(cx + CARD_W / 2, cy + THUMB_H / 2, 40, 40);
-    fill(s ? c : color(255, 220));
-    triangle(cx + CARD_W / 2 - 6, cy + THUMB_H / 2 - 10, cx + CARD_W / 2 - 6, cy + THUMB_H / 2 + 10, cx + CARD_W / 2 + 11, cy + THUMB_H / 2);
+    if (visto) {   // boton de play
+      noStroke();
+      fill(0, s ? 150 : 90);
+      ellipse(cx + CARD_W / 2, cy + THUMB_H / 2, 40, 40);
+      fill(s ? c : color(255, 220));
+      triangle(cx + CARD_W / 2 - 6, cy + THUMB_H / 2 - 10, cx + CARD_W / 2 - 6, cy + THUMB_H / 2 + 10, cx + CARD_W / 2 + 11, cy + THUMB_H / 2);
+    }
     // textos
     float ix = cx + 14, iy = cy + THUMB_H + 10;
-    textFont(fuenteUI);
+    textFont(fuenteFinales());
     textAlign(LEFT, TOP);
     textSize(9);
     fill(#9A9AB4);
-    text(tipoAnim[id].toUpperCase(), ix, iy);
-    textSize(14);
+    textoW(tipoAnim[id].toUpperCase(), ix, iy);
+    textSize(15);
     fill(c);
-    text(tituloAnim[id], ix, iy + 14);
+    textoW(visto ? tituloAnim[id] : "? ? ?", ix, iy + 14);
     textSize(10);
-    for (int k = 0; k < 3; k++) {
-      fill(c);
-      text(">", ix, iy + 38 + k * 26);
-      fill(#E6E6F0);
-      text(lineasAnim[id][k], ix + 10, iy + 38 + k * 26, CARD_W - 38, 26);
+    if (visto) {
+      for (int k = 0; k < 3; k++) {
+        fill(c);
+        textoW(">", ix, iy + 40 + k * 25);
+        fill(#E6E6F0);
+        textoW(lineasAnim[id][k], ix + 12, iy + 40 + k * 25, CARD_W - 40, 26);
+      }
+    } else {
+      fill(#9A9AB4);
+      textoW("Final bloqueado.", ix, iy + 40);
+      textoW("Llega a este final jugando para verlo aqui.", ix, iy + 60, CARD_W - 28, 30);
     }
     stroke(#2A2A40);
     strokeWeight(1);
@@ -161,7 +253,7 @@ void dibujarGaleria() {
     noStroke();
     fill(#9A9AB4);
     textSize(9);
-    text("Como llegas: " + comoLlegas[id], ix, iy + 124, CARD_W - 28, 34);
+    textoW((visto ? "Como llegas: " : "Pista: ") + comoLlegas[id], ix, iy + 124, CARD_W - 28, 34);
     // borde
     noFill();
     stroke(s ? c : color(#2A2A40), s ? 255 : 200);
@@ -173,12 +265,15 @@ void dibujarGaleria() {
   // encabezado fijo
   fill(#101018);
   rect(0, 0, width, GAL_TOP);
-  tituloNeon("STAR QUEST - FINALES", width / 2 + 30, 26, 22, #FFC846);
-  textFont(fuenteUI);
-  textSize(10);
-  fill(#9A9AB4);
+  tituloNeon("STAR QUEST - FINALES", width / 2 + 30, 24, 22, #FFC846);
+  textFont(fuenteFinales());
+  textSize(11);
+  fill(#E6E6F0);
   textAlign(CENTER, CENTER);
-  text("Al terminar el jueves:  Juicio o Silencio (si vas mal)  >  Final de Nova + resultados  >  Epilogo: la verdad", width / 2 + 30, 54);
+  textoW("Desbloqueados: " + contarFinalesVistos() + " / " + finalVisto.length, width / 2 + 30, 47);
+  textSize(9);
+  fill(#9A9AB4);
+  textoW("Al terminar el jueves:  Juicio o Silencio  >  Final de Nova + resultados  >  Epilogo: la verdad", width / 2 + 30, 63);
   stroke(#2A2A40);
   strokeWeight(1);
   line(0, GAL_TOP - 1, width, GAL_TOP - 1);
@@ -196,9 +291,10 @@ void dibujarGaleria() {
   }
   if (galeriaScroll < 10) {
     fill(#9A9AB4, 150 + 100 * sin(frameCount * 0.08));
-    textSize(10);
+    textFont(fuenteFinales());
+    textSize(9);
     textAlign(RIGHT, CENTER);
-    text("rueda del mouse o flechas para ver mas", width - 18, height - 10);
+    textoW("rueda del mouse o flechas para ver mas", width - 18, height - 10);
   }
 }
 
@@ -212,7 +308,12 @@ void clickGaleria() {
   for (int id = 0; id < tituloAnim.length; id++) {
     float[] p = posTarjeta(id);
     if (encima(p[0], oy + p[1], CARD_W, CARD_H)) {
-      empezarAnimFinal(id, -1);
+      if (finalVisto[id]) empezarAnimFinal(id, -1);
+      else {   // bloqueado: la tarjeta tiembla
+        tarjetaSacudida = id;
+        sacudidaGaleria = 8;
+        sonar(7);
+      }
       return;
     }
   }
@@ -223,3 +324,4 @@ void teclaGaleria() {
   if (key == CODED && keyCode == UP) galeriaScroll -= 80;
   galeriaScroll = constrain(galeriaScroll, 0, maxScrollGaleria());
 }
+
