@@ -124,6 +124,7 @@ int nivelAmbiente() {
 int musicaDeseada() {
   if (!musicaActiva) return -1;
   if (scene == ESC_INTRO || scene == ESC_FIN_DIA) return 3;
+  if (scene == ESC_FIN_GRAVE) return 0;
   if (scene == 0 || scene == 2 || scene == ESC_COMO_JUGAR || scene == ESC_HISTORIAL) return 1;
   if (scene == ESC_MINIJUEGOS || esMinijuego(scene) || scene == ESC_RULETA || scene == ESC_TIENDA) return 2;
   if (scene == ESC_FINAL) return (finalTipo == 0 || finalTipo == 2) ? 2 : 0;

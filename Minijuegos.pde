@@ -99,6 +99,7 @@ void terminarJuego() {
   }
   boolean premioNuevo = puntaje >= umbralPremio[idx] && !premiado[idx];
   pagarMinijuego(idx, premioNuevo);   // NovaCoins segun tu rendimiento (Tienda.pde)
+  revisarPruebaPorJuego(idx);         // algunas metas te dan una prueba (Situaciones.pde)
   if (premioNuevo) {
     premiado[idx] = true;
     confiabilidad += 5;
@@ -528,7 +529,7 @@ String[][] titulares = {
   {"Cientificos dicen que mirar el celular 5 minutos borra la memoria", "@datocurioso_xD  -  imagen con letras rojas", "F", "Titular exagerado, sin estudio ni cientificos con nombre."},
   {"La Biblioteca de Nova lanza un taller gratuito para detectar noticias falsas", "Biblioteca Publica Nova  -  pagina oficial", "V", "Institucion real con inscripcion y horario."},
   {"Gonzalo Gonzales prohibira los carros en toda la ciudad", "meme editado  -  sin fuente", "F", "Su propuesta real es una ciclorruta, no prohibir carros."},
-  {"Cierran la calle principal el domingo por la jornada electoral", "Transito Nova  -  cuenta verificada", "V", "Aviso oficial y logico para el dia de elecciones."},
+  {"Cierran la calle principal el jueves por la jornada electoral", "Transito Nova  -  cuenta verificada", "V", "Aviso oficial y logico para el dia de elecciones."},
   {"Encuesta secreta: un candidato ya gano con 99% de los votos", "@encuestas_reales_100  -  creada hoy", "F", "Nadie gana con 99%. Cuenta nueva y numero imposible."}
 };
 

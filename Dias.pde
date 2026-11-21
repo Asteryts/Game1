@@ -32,7 +32,7 @@ float relacionSofi = 50;   // 0 a 100
 float hudS = 50;
 final color colorSofi = #FF6E96;
 Interactivo[] sofiPorDia = new Interactivo[3];
-String[] lugarSofi = {"el pasillo del colegio", "el Paseo de Campaña", "el Parque Central"};
+String[] lugarSofi = {"el salon 10B", "el Paseo de Campaña", "el Parque Central"};
 
 String[] saludoSofi = {
   "Sofi: ...Hola. No tengo mucho que decirte. Ya vi lo que has andado compartiendo.",
@@ -91,14 +91,14 @@ Interactivo crearSofi(int d) {
     {"Sofi: Tienes razon! Subi las fotos de los borradores con fecha... y ya hay gente pidiendo disculpas.", "Sofi: Lo subi... y ahora dicen que soy agresiva. Creo que eso no ayudo.", "Sofi: Ok... pero el rumor sigue creciendo. Ojala tengas razon."},
     {"Sofi: Gracias! Voy a poner los datos de inscripcion oficiales en mi discurso.", "Sofi: ...Ojala te equivoques.", "Sofi: Eso es justo lo que necesitaba escuchar."}
   };
-  float[][] pos = {{430, 300}, {400, 330}, {470, 430}};
+  float[][] pos = {{690, 300}, {400, 330}, {470, 430}};
   Charla ch = new Charla("Sofi (candidata)", lineas[d]).con(ops[d], ef[d], resp[d], "Sofi: Nos vemos por Nova. Y cuidado con lo que compartes, eh.");
   Interactivo it = persona(pos[d][0], pos[d][1], "Sofi", #E85D75, #4A2C1A, ch);
   return it;
 }
 
 void prepararSofi() {
-  int[] dondeEsta = {ESC_PASILLO, ESC_PASEO, ESC_PARQUE};
+  int[] dondeEsta = {ESC_SALON, ESC_PASEO, ESC_PARQUE};
   for (int d = 0; d < 3; d++) {
     sofiPorDia[d] = crearSofi(d);
     Lugar L = lugares.get(dondeEsta[d]);
@@ -164,26 +164,13 @@ void decisionImportante(boolean buena) {
   // como actuas tambien le llega a Sofi (un poquito)
   if (!ultimaFueDeSofi) cambiarRelacionSofi(buena ? 2 : -3);
   ultimaFueDeSofi = false;
-  if (momento >= 3) return;
-  decisionesMomento++;
-  if (decisionesMomento >= DECISIONES_POR_MOMENTO) {
-    decisionesMomento = 0;
-    momento++;
-    relojJuego = max(relojJuego, horaMomento[momento]);
-    bannerTexto = nombreDia[dia] + "  -  " + nombreMomento[momento];
-    bannerVida = 170;
-    sonar(2);
-    if (momento == 3 && !avisoNoche) {
-      avisoNoche = true;
-      avisar("Ya es de noche", "Cuando quieras, ve al mapa y toca \"Dormir\" para pasar al " + nombreDia[dia + 1] + ".", neonMorado);
-    }
-  }
+  // (fase 2) el reloj ya no avanza con cualquier decision: solo con las situaciones de Conecta (Situaciones.pde)
 }
 boolean ultimaFueDeSofi = false;
 
 // decide si un cambio de barras cuenta como decision (no: mapa, minijuegos, tienda, gadgets...)
 boolean cuentaComoDecision() {
-  return !sinMonedasPorCambio && scene != 0 && scene != 1 && !esMinijuego(scene) && scene != ESC_TIENDA && scene != ESC_RULETA && scene != ESC_FIN_DIA && scene != ESC_FINAL;
+  return !sinMonedasPorCambio && scene != 0 && scene != 1 && !esMinijuego(scene) && scene != ESC_TIENDA && scene != ESC_RULETA && scene != ESC_FIN_DIA && scene != ESC_FINAL && scene != ESC_FIN_GRAVE;
 }
 
 String textoMomento() {
@@ -197,6 +184,7 @@ int diasElecciones() {
 
 // se llama cada cuadro desde vidaDespuesDeDibujar
 void actualizarDias() {
+  actualizarHistoria();   // quien aparece hoy (Situaciones.pde)
   hudS = lerp(hudS, relacionSofi, 0.08);
   actualizarSofi();
   if (scene == 1 && puedeDormir() && !popupAbierto && !telefonoAbierto && !pausaAbierta) {
@@ -317,6 +305,7 @@ void empezarDiaNuevo() {
   dia++;
   momento = 0;
   decisionesMomento = 0;
+  situacionesHoy = 0;
   avisoNoche = false;
   relojJuego = horaMomento[0] + 30;
   guardarInicioDia();

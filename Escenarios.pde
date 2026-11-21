@@ -104,6 +104,7 @@ void aplicarEleccionCharla(int i) {
   charlaLetras = 0;
   charlaEligiendo = false;
   charlaActiva.terminada = true;
+  alElegirCharlaHistoria(charlaActiva, i);   // insignias y pruebas (Situaciones.pde)
   anotarDecision(charlaActiva.hablante, charlaActiva.eleccion[i], e[1] > 0, e[0] >= 10 && e[1] < 0, charlaActiva.respuestas[i]);
 }
 
@@ -323,6 +324,7 @@ int charlasNuevasHabladas() {
 }
 
 void interactuar(Interactivo it) {
+  if (interactuarHistoria(it)) return;   // situaciones y secundarios de Red Quest (Situaciones.pde)
   Charla segunRecuerdos = charlaSegunRecuerdos(it);   // algunos cuentan lo que paso por lo que hiciste
   if (segunRecuerdos != null) {
     abrirCharla(segunRecuerdos);
@@ -378,7 +380,7 @@ void dibujarJugador() {
 void dibujarEscenaCaminable() {
   Lugar L = lugares.get(scene);
   dibujarFondoLugar(scene);
-  if (charlaActiva == null && !pausaAbierta && !telefonoAbierto) {
+  if (charlaActiva == null && !pausaAbierta && !telefonoAbierto && !situacionAbierta()) {
     float nx = x, ny = y;
     if (moverArriba) ny -= velocidad;
     if (moverAbajo) ny += velocidad;
@@ -435,7 +437,7 @@ void dibujarEscenaCaminable() {
       jugadorListo = true;
     }
     if (it.oculto || it.ausente) continue;
-    if (it.tipo == 0) dibujarNPC(it.ix, it.iy, it.ropa, it.pelo, it.fase, !it.hablado && it.charla.eleccion != null, it.nombre);
+    if (it.tipo == 0) dibujarNPC(it.ix, it.iy, it.ropa, it.pelo, it.fase, (!it.hablado && it.charla.eleccion != null) || tieneAlgoImportante(it), it.nombre);
     else if (it.tipo == 3) dibujarRobot(it.ix, it.iy, it.fase, it.nombre);
     else if (it.tipo == 4) dibujarKiosco(it.ix, it.iy, it.destino == ESC_RULETA);
     else destelloObj(it.ix, it.iy - 50);
@@ -849,7 +851,7 @@ void dibujarMapaVivo() {
   }
   // cartel de informacion
   fill(8, 6, 22, 200);
-  rect(10, 10, 250, 46, 10);
+  rect(10, 10, 330, 64, 10);
   textFont(fuenteUI);
   textAlign(LEFT, TOP);
   textSize(13);
@@ -858,6 +860,8 @@ void dibujarMapaVivo() {
   textSize(10);
   fill(neonCian);
   text("Elige un lugar   -   P telefono   -   ESC pausa", 22, 36);
+  fill(neonAmarillo);   // que sigue en la historia (Situaciones.pde)
+  text("> " + textoObjetivo(), 22, 53);
   dibujarPopupMapa();
 }
 
@@ -1444,6 +1448,8 @@ void reiniciarPartida() {
   prepararTelefono();
   prepararEscenarios();
   prepararSofi();   // Sofi vuelve a su lugar del lunes (Dias.pde)
+  reiniciarHistoria();   // situaciones, pruebas e insignias (Situaciones.pde)
+  prepararHistoria();
   prepararDias();   // y la semana empieza otra vez el lunes en la mañana
   cerrarCharla();
   particulas.clear();

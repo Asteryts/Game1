@@ -274,7 +274,7 @@ String[][] dialogosNpc = {
 
   // 4. Calle: Ciudadano/votante indignado
   {
-    "Esto es el colmo! Faltan siete dias para las elecciones y mire lo que me acaba de salir en Conecta.",
+    "Esto es el colmo! Las elecciones son este jueves y mire lo que me acaba de salir en Conecta.",
     "El titular dice clarito: \"URGENTE: el candidato Ramirez quiere cerrar el colegio\" para vender el lote.",
     "Dicen que el alcalde Benito Camelo ya firmo el permiso en secreto. Me lo mando un tio por mensaje.",
     "El enlace viene de una pagina creada ayer y sin autor, pero con tanta gente brava debe ser verdad.",
@@ -286,7 +286,7 @@ String[][] dialogosNpc = {
     "Hola! Reparto volantes de Clemencia, aunque Patroclo y Eltransmilenio tambien andan buscando votos.",
     "Con el escandalo del colegio y el parque, la campaña de Ramirez cayo diez puntos en un par de horas.",
     "No me consta si la noticia es real o un montaje, pero en politica el que pega primero gana tendencia.",
-    "Si impulsamos la etiqueta contra Ramirez ahora mismo, barremos el domingo. ¿Nos das un empujoncito?"
+    "Si impulsamos la etiqueta contra Ramirez ahora mismo, barremos el jueves. ¿Nos das un empujoncito?"
   },
 
   // 6. Antes del bartender: Camila, estudiante

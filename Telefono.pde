@@ -20,7 +20,7 @@ String[][] feed = {
   {"@NovaVerdad24", "URGENTE: Ramirez quiere cerrar el colegio para vender el lote!! Difundan antes de que lo borren", "F", "Pagina creada ayer, sin autor ni documentos."},
   {"Junta Vecinal Nova", "Este sabado: jornada 'Recuperemos el parque'. Trae guantes y buena energia. 8:00 a.m.", "V", "Publicacion oficial de la Junta con fecha y lugar."},
   {"@chismenova", "Lo que Dani escondia en su casillero... (foto) #escandalo #colegio", "F", "Foto tomada sin permiso. Era una maqueta de geografia."},
-  {"Alcaldia de Nova", "Recuerda: las mesas de votacion abren a las 8:00 a.m. el domingo. Lleva tu documento.", "V", "Cuenta oficial verificada."},
+  {"Alcaldia de Nova", "Recuerda: las mesas de votacion abren a las 8:00 a.m. el jueves. Lleva tu documento.", "V", "Cuenta oficial verificada."},
   {"@ladenuncia", "VIDEO: Clemencia comprando votos. No lo veras en los medios!!!", "F", "Clip de 9 segundos sin fecha, lugar ni fuente."},
   {"Cafe 404", "Hoy 2x1 en capuchinos para quien venga a conversar (no a pelear) de elecciones.", "V", "Cuenta del negocio desde 2018, nada sospechoso."},
   {"@tia_marta_oficial", "Reenvien: el agua del parque esta contaminada. Me lo dijo la vecina de mi prima.", "F", "El acueducto no ha emitido ninguna alerta."},
@@ -41,8 +41,8 @@ String[] consejosNova = {
   "Que mucha gente lo comparta no lo vuelve verdad. Mil reenvios de un rumor siguen siendo un rumor."
 };
 
-String[] nombresApps = {"Conecta", "Stats", "Juegos", "Logros", "NOVA IA", "Mensajes", "Mapa", "NovaShop"};
-color[] coloresApps = {#FF3CC8, #00F0FF, #3CFF96, #FFDC3C, #9650FF, #50B4FF, #FF8C3C, #FFB400};
+String[] nombresApps = {"Conecta", "Stats", "Juegos", "Logros", "NOVA IA", "Mensajes", "Mapa", "NovaShop", "Pruebas"};
+color[] coloresApps = {#FF3CC8, #00F0FF, #3CFF96, #FFDC3C, #9650FF, #50B4FF, #FF8C3C, #FFB400, #46DC64};
 
 void prepararTelefono() {
   estadoFeed = new int[feed.length];
@@ -113,6 +113,7 @@ void dibujarTelefono() {
   else if (telApp == 4) appLogros(sx, cy, sw, ch);
   else if (telApp == 5) appNova(sx, cy, sw, ch);
   else if (telApp == 6) appMensajes(sx, cy, sw, ch);
+  else if (telApp == 9) appPruebas(sx, cy, sw, ch);   // (Situaciones.pde)
   // barra de estado
   fill(0, 120);
   rect(sx, sy, sw, 26);
@@ -217,6 +218,17 @@ void iconoApp(int i, float cx, float cy, float s) {
     arc(cx, cy - 6, 14, 16, PI, TWO_PI);
     noStroke();
     dibujarMoneda(cx + 11, cy + 10, 14, false);
+  } else if (i == 8) {
+    // una carpeta con una lupa (las pruebas)
+    noStroke();
+    rect(cx - 15, cy - 10, 14, 6, 2);
+    rect(cx - 15, cy - 6, 28, 19, 3);
+    noFill();
+    stroke(c);
+    strokeWeight(3);
+    ellipse(cx + 4, cy + 3, 13, 13);
+    line(cx + 9, cy + 8, cx + 14, cy + 13);
+    noStroke();
   }
   noStroke();
 }

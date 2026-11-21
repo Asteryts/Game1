@@ -28,7 +28,7 @@ String[] creditos = {
 };
 
 String[] lineasIntro = {
-  "Ciudad Nova. Faltan 7 dias para las elecciones.",
+  "Ciudad Nova. Las elecciones son el jueves.",
   "Conecta, la red social de la ciudad, arde con rumores, videos cortados y titulares falsos.",
   "Cada vez que alguien comparte sin pensar, el rumor crece. Cada vez que alguien verifica, la ciudad respira.",
   "Tus decisiones mueven tres cosas: VIRALIDAD, CONFIABILIDAD e IMPACTO.",

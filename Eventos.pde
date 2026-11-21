@@ -129,7 +129,7 @@ String[] hashtags = {"#Escandalo", "#NovaDecide", "#YLaFuente?", "#FueraBulos", 
 // texto del rumor, que pasa si lo repites, que pasa si preguntas
 String[][] rumoresMapa = {
   {"Alguien grita en la esquina: 'Van a cobrar por entrar al parque desde mañana!'", "La gente deja de ir al parque... y no era cierto.", "Le preguntas de donde lo saco: 'Me lo dijo alguien en un bus'. Nadie lo confirma. Rumor frenado."},
-  {"Un señor en la parada del bus: 'Dicen que las votaciones se pasan para el lunes!'", "Varias personas casi no van a votar el domingo.", "Revisas la Registraduria: las votaciones siguen siendo el domingo."},
+  {"Un señor en la parada del bus: 'Dicen que las votaciones se pasan para el viernes!'", "Varias personas casi no van a votar el jueves.", "Revisas la Registraduria: las votaciones siguen siendo el jueves."},
   {"Un grupo de chicos: 'El Cafe 404 lo van a cerrar porque vende cafe con IA'", "El cafe pierde clientes por un chiste mal entendido.", "Le escribes al cafe: era un meme. Ellos mismos lo aclaran con humor."},
   {"Un audio en el grupo del barrio: 'Se cayo un puente en la avenida, no salgan!'", "El panico llena el grupo. El puente esta perfecto.", "Miras las camaras de Transito: el puente esta bien. Avisas al grupo."},
   {"Una cuenta sin foto: 'Gonzalo tiene 14 carros, por eso quiere la ciclorruta... ironia'", "El chiste se vuelve 'noticia' y nadie entiende nada.", "Buscas la declaracion de bienes oficial: Gonzalo tiene una bicicleta."},

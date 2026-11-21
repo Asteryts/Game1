@@ -210,7 +210,7 @@ void registrarLugares() {
   }, new String[] {"Mandalo, mejor prevenir", "Revisemos la cuenta oficial de Transito Nova"},
     new float[][] {{10, -8, -6}, {-3, 10, 6}},
     new String[] {"Tono: Listo... uy, ahora nadie quiere hacer domicilios mañana y los restaurantes estan perdiendo pedidos.",
-    "Tono: Mira: solo la cierran el domingo de 6 a 2 por la votacion. Menos mal no mande eso!"},
+    "Tono: Mira: solo la cierran el jueves de 6 a 2 por la votacion. Menos mal no mande eso!"},
     "Tono: Si necesitas un domicilio, ya sabes. Rapidito y verificado!")));
   av.agregar(persona(440, 430, "Señora Carmen", #A05AC8, #8C8C8C, charla("Señora Carmen", new String[] {
     "Voy a la protesta de la Alcaldia! Hice esta pancarta: 'CLEMENCIA COMPRA VOTOS'.",

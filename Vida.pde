@@ -378,6 +378,7 @@ void vidaSetup() {
   cargarDatos();
   cargarSonidos();   // musica y efectos hechos con notas (Sonido.pde, de Red Quest)
   prepararSofi();    // Sofi y los dias de la semana (Dias.pde)
+  prepararHistoria(); // las situaciones de Red Quest (Situaciones.pde)
   prepararDias();
   prevViral = viralidad;
   prevConf = confiabilidad;
@@ -426,6 +427,7 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_TIENDA) dibujarTienda();
   else if (scene == ESC_RULETA) dibujarRuleta();
   else if (scene == ESC_FIN_DIA) dibujarFinDelDia();
+  else if (scene == ESC_FIN_GRAVE) dibujarFinGrave();
   else if (esCaminable(scene)) dibujarEscenaCaminable();
   else if (scene == ESC_ESTUDIO) dibujarEstudio();
   else if (scene == ESC_PLAZA) dibujarPlaza();
@@ -499,8 +501,9 @@ void vidaDespuesDeDibujar() {
   actualizarDias();      // boton de dormir, Sofi (Dias.pde)
   actualizarMusica();    // (Sonido.pde)
   dibujarTelefono();
+  dibujarSituacion();   // (Situaciones.pde)
   if (pausaAbierta) dibujarPausa();
-  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA) dibujarAvisos();
+  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE) dibujarAvisos();
   dibujarRevision();
   dibujarPantallaCarga();
   if (fundido > 0) {
@@ -548,6 +551,7 @@ boolean vidaKeyPressed() {
     return true;
   }
   if (teclaRevision()) return true;   // la pausa antes de compartir (Responsable.pde)
+  if (teclaSituacion()) return true;  // Conecta con una situacion abierta (Situaciones.pde)
   if (key == ESC) {
     key = 0;   // para que Processing no cierre el juego con ESC
     if (telefonoAbierto) {
@@ -587,7 +591,7 @@ boolean vidaKeyPressed() {
       salirRuleta();
       return true;
     }
-    if (scene == ESC_FIN_DIA) return true;
+    if (scene == ESC_FIN_DIA || scene == ESC_FIN_GRAVE) return true;
     if (esMinijuego(scene)) {
       salirJuego();
       return true;
@@ -633,6 +637,7 @@ boolean vidaMousePressed() {
   if (entradaDuranteCarga()) return true;
   sonar(0);
   if (clickRevision()) return true;
+  if (clickSituacion()) return true;   // Conecta con una situacion abierta (Situaciones.pde)
   if (pausaAbierta) {
     clickPausa();
     return true;
@@ -684,6 +689,10 @@ boolean teclaEscenaPropia() {
     teclaRuleta();
     return true;
   }
+  if (scene == ESC_FIN_GRAVE) {
+    teclaFinGrave();
+    return true;
+  }
   if (scene == ESC_FIN_DIA) {
     teclaFinDelDia();
     return true;
@@ -721,6 +730,7 @@ void clickEscenaPropia() {
   else if (scene == ESC_TIENDA) clickTienda();
   else if (scene == ESC_RULETA) clickRuleta();
   else if (scene == ESC_FIN_DIA) clickFinDelDia();
+  else if (scene == ESC_FIN_GRAVE) clickFinGrave();
 }
 
 // ------------------------------------- AYUDANTES -------------------------------------
@@ -1213,6 +1223,8 @@ void dibujarHUD() {
   textSize(11);
   fill(220, 220, 255, 210);
   text(textoMomento() + "  -  " + textoHora(), 790, 96);
+  fill(neonAmarillo, 220);   // que sigue en la historia (Situaciones.pde)
+  text("> " + textoObjetivo(), 790, 112);
 }
 
 void dibujarBanner() {
