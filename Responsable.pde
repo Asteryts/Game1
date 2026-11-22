@@ -327,25 +327,26 @@ void dibujarDifusiones() {
       noStroke();
     }
   }
-  // contador abajo a la izquierda
+  // contador abajo a la izquierda (sube si esta el boton "Ir a ..." para no taparlo)
   if (difusiones.size() == 0) return;
   int activos = rumoresActivos();
+  float py = guiaMapaVisible() ? height - 124 : height - 62;
   float b = 0.6 + 0.4 * sin(frameCount * 0.08);
   fill(8, 6, 22, 220);
-  rect(10, height - 62, 300, 50, 10);
+  rect(10, py, 300, 50, 10);
   stroke(activos > 0 ? neonRosa : neonVerde, 200 * b);
   strokeWeight(1.5);
   noFill();
-  rect(10, height - 62, 300, 50, 10);
+  rect(10, py, 300, 50, 10);
   noStroke();
   textFont(fuenteUI);
   textAlign(LEFT, TOP);
   textSize(12);
   fill(activos > 0 ? neonRosa : neonVerde);
-  text(activos > 0 ? "Tus rumores circulando: " + activos : "Tus rumores ya se apagaron", 22, height - 56);
+  text(activos > 0 ? "Tus rumores circulando: " + activos : "Tus rumores ya se apagaron", 22, py + 6);
   fill(230);
   textSize(11);
-  text("Personas alcanzadas por lo que compartiste: " + nf(personasAlcanzadas(), 0), 22, height - 36);
+  text("Personas alcanzadas por lo que compartiste: " + nf(personasAlcanzadas(), 0), 22, py + 26);
 }
 
 float[] pinAlAzar() {

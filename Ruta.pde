@@ -119,7 +119,7 @@ void dibujarGuiaMapa() {
     text(t, tx + 10, ty + 11);
   }
   // ir directo a donde sigue la historia
-  if (obj >= 0 && !popupAbierto && !telefonoAbierto && !pausaAbierta) {
+  if (guiaMapaVisible()) {
     String t = textoIrA(obj);
     textFont(fuenteUI);
     textSize(14);
@@ -130,6 +130,11 @@ void dibujarGuiaMapa() {
     rect(10, 432, w + 16, 56, 16);
     botonNeon(t, 18, 440, w, 40, neonAmarillo, false);
   }
+}
+
+// el boton "Ir a ..." de abajo a la izquierda esta en pantalla
+boolean guiaMapaVisible() {
+  return escenaObjetivo() >= 0 && !popupAbierto && !telefonoAbierto && !pausaAbierta;
 }
 
 boolean clickGuiaMapa() {

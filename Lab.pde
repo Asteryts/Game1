@@ -597,48 +597,28 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
 
         switch(pD1) {
         case 1:
-          textoDialogo = "NPC: Oye! Estas buscando algo o tienes algun problema con la basura de Nova?\nPorque, si buscas algo de valor, \ncreo que llegaste un poquito tarde.";
+          textoDialogo = "NPC: Oye! Buscas algo en la basura de Nova?\nSi es algo de valor, llegaste tarde.";
           pD1 = 2;
           break;
         case 2:
-          textoDialogo = "T/N: Jaja, muy gracioso. \nPerdi la llave que necesito para entrar a la ciudad. \nEs plateada y tiene un llavero azul.\nCreo que la tire aqui por accidente.";
+          textoDialogo = "T/N: Jaja, muy gracioso. Perdi la llave para entrar a la ciudad.\nEs plateada, con un llavero azul. Creo que la tire aqui.";
           pD1 = 3;
           break;
         case 3:
-          textoDialogo = "NPC: Tu llave? que descuidado. \nBueno, eso sí es un problema. Sin ella no te van a dejar pasar por la entrada principal.\nY no te recomiendo intentar saltarte la puerta. \nLos guardias no son precisamente amables.";
+          textoDialogo = "NPC: Sin ella no te dejan pasar, y los guardias no son amables.\nHace un rato un trabajador recogio cosas de aqui... Espera, voy a mirar.";
           pD1 = 4;
           break;
         case 4:
-          textoDialogo = "T/N: Gracias por el consejo... Eso creo. \nNo habrás visto una por aquí?\nNpc: Ahora que lo dices, hace un rato vi a un trabajador recogiendo algunas cosas de estos contenedores. \nPuede que todavia no se haya llevado todo. Espera, voy a mirar.";
+          textoDialogo = "NPC: Es esta? Tiene un llavero azul.\nT/N: Si, esa es! Me salvaste la tarde.";
+          tLl = true;
           pD1 = 5;
           break;
         case 5:
-          textoDialogo = "NPC: Es esta? Tiene un llavero azul, así que supongo que tienes suerte.";
-          tLl = true;
+          textoDialogo = "NPC: Si te quedas en Nova, preparate. Todos pelean por las elecciones:\nacusaciones, videos, capturas... y la gente comparte todo\nsin preguntarse de donde salio.";
           pD1 = 6;
           break;
         case 6:
-          textoDialogo = "T/N: Si!, esa es! No sabes el favor que me acabas de hacer. \nPense que tendria que pasarme toda la tarde buscando.";
-          pD1 = 7;
-          break;
-        case 7:
-          textoDialogo = "NPC: No hay de que. Aunque, si vas a quedarte en Nova, te recomiendo que te prepares.\nUltimamente la ciudad está bastante... peculiar.";
-          pD1 = 8;
-          break;
-        case 8:
-          textoDialogo = "T/N: Peculiar en que sentido?\nNPC: En el sentido de que todo el mundo esta discutiendo por las elecciones. \nAbres el telefono y encuentras acusaciones, videos, capturas de pantalla \ny personas peleando con desconocidos como si se conocieran de toda la vida. \nYa ni siquiera sé qué creer.";
-          pD1 = 9;
-          break;
-        case 9:
-          textoDialogo = "T/N: Tan grave es la situacion?\nNPC: No se si grave, pero si bastante extraña. Ayer vi una publicacion que acusaba a uno de \nlos candidatos de hacer algo ilegal. \nHoy vi otra que decia exactamente lo contrario. Y lo peor es que la gente comparte todo sin preguntarse de donde salio.";
-          pD1 = 10;
-          break;
-        case 10:
-          textoDialogo = "T/N: Tal vez solo sea una discusion politica mas.\nNPC: Eso pense al principio. \nPero cuando un rumor llega a todos los grupos de whatsapp, \ndeja de ser una simple discusion. Puede terminar afectando a personas que ni siquiera tienen \noportunidad de defenderse.";
-          pD1 = 11;
-          break;
-        case 11:
-          textoDialogo = "NPC: Hablando de eso, acaban de mandar algo nuevo al grupo vecinal. \nParece que esta vez el asunto involucra directamente a una de las candidatas.\nT/N: Y que dice?\nSolomeo: Todavía no lo he visto bien. Entra a Nova y revisa el grupo. \nSeguro que para cuando llegues ya habra veinte versiones distintas de la misma historia.";
+          textoDialogo = "NPC: Y acaban de mandar algo nuevo al grupo vecinal sobre una de las candidatas.\nEntra a Nova y revisalo. Para cuando llegues ya habra veinte versiones.";
           pD1 = 12;
           llEnt = true;
           a1 = true;
@@ -650,9 +630,9 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
       } else if (enZonaBasuraPrincipal) {
         mostrarDialogo = true;
         if (!tLl) {
-          textoDialogo = "Revisas la basura, pero no encuentras la llave por tu cuenta. Prueba hablar con Solomeo.";
+          textoDialogo = "Revisas la basura, pero no encuentras la llave por tu cuenta. Prueba hablar con Salomeo.";
         } else {
-          textoDialogo = "Ya revisaste aqui y NPC encontro la llave por ti.";
+          textoDialogo = "Ya revisaste aqui y Salomeo encontro la llave por ti.";
         }
       } else if (enZonaBasuraSecundaria) {
         mostrarDialogo = true;
@@ -666,7 +646,7 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
           y = height - 80;
         } else {
           mostrarDialogo = true;
-          textoDialogo = "La puerta esta cerrada. Necesitas hablar con Solomeo para obtener la llave.";
+          textoDialogo = "La puerta esta cerrada. Necesitas hablar con Salomeo para obtener la llave.";
         }
       }
     }
