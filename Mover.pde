@@ -17,6 +17,65 @@ color marcaColor = #3CFF96;
 float ultimoAvanceX, ultimoAvanceY;
 int framesAtascado = 0;
 final int CELDA = 20;
+final boolean[] teclasCaminar = new boolean[8];
+boolean teclaCorrerPulsada;
+int ultimaDireccionTeclado = -1;
+
+// El estado físico de las teclas sobrevive al cambio de sala; las rutas del ratón son locales.
+void registrarTeclaCaminar(boolean pulsada) {
+  if (keyCode == SHIFT) {
+    teclaCorrerPulsada = pulsada;
+    return;
+  }
+  int indice = -1;
+  if (key == CODED) {
+    if (keyCode == UP) indice = 4;
+    else if (keyCode == DOWN) indice = 5;
+    else if (keyCode == LEFT) indice = 6;
+    else if (keyCode == RIGHT) indice = 7;
+  } else indice = "wsad".indexOf(Character.toLowerCase(key));
+  if (indice < 0) return;
+  if (pulsada && !teclasCaminar[indice]) ultimaDireccionTeclado = indice % 4;
+  teclasCaminar[indice] = pulsada;
+}
+
+boolean teclaDireccionPulsada(int direccion) {
+  return teclasCaminar[direccion] || teclasCaminar[direccion + 4];
+}
+
+void actualizarMovimientoTeclado() {
+  if (!esExploracion(scene)) return;
+  if (cargaActiva || pausaAbierta || telefonoAbierto || charlaActiva != null || situacionAbierta()
+      || revisionActiva != null || (esColegio(scene) && mostrarDialogo)
+      || ((scene == 8 || scene == 24) && hablando)) {
+    pararMovimiento();
+    return;
+  }
+  velocidad = teclaCorrerPulsada ? 7 : velocidadBase;
+  if (caminandoClic) return;
+  moverArriba = teclaDireccionPulsada(0) && !teclaDireccionPulsada(1);
+  moverAbajo = teclaDireccionPulsada(1) && !teclaDireccionPulsada(0);
+  moverIzquierda = teclaDireccionPulsada(2) && !teclaDireccionPulsada(3);
+  moverDerecha = teclaDireccionPulsada(3) && !teclaDireccionPulsada(2);
+  int dir = ultimaDireccionTeclado;
+  if (dir == 0 && moverArriba) actual = arriba;
+  else if (dir == 1 && moverAbajo) actual = abajo;
+  else if (dir == 2 && moverIzquierda) actual = izquierda;
+  else if (dir == 3 && moverDerecha) actual = derecha;
+  else if (moverDerecha) actual = derecha;
+  else if (moverIzquierda) actual = izquierda;
+  else if (moverAbajo) actual = abajo;
+  else if (moverArriba) actual = arriba;
+}
+
+void continuarClicAlEntrar() {
+  float dx = actual == derecha ? 44 : actual == izquierda ? -44 : 0;
+  float dy = actual == abajo ? 44 : actual == arriba ? -44 : 0;
+  if (dx != 0 || dy != 0) {
+    ordenarCaminar(x + 50 + dx, y + 40 + dy);
+    marcaT = 0;
+  }
+}
 
 // ------------------------------------- ORDENES -------------------------------------
 // clic en un punto del piso: (mx, my) es donde deberian quedar los pies

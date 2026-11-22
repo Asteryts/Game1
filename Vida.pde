@@ -350,6 +350,7 @@ void cargarDatos() {
     if (l.length > 2) introVista = trim(l[2]).equals("1");
     if (l.length > 3) cargarGuardadoTienda(l[3]);   // NovaCoins y gadgets (Tienda.pde)
     if (l.length > 4) cargarFinalesVistos(l[4]);   // los finales que ya desbloqueaste (Galeria.pde)
+    if (l.length > 5) estiloPixelActivo = !trim(l[5]).equals("estilo-pixel=0");
   }
   catch (Exception e) {
     println("No se pudieron cargar los datos: " + e);
@@ -360,7 +361,8 @@ void guardarDatos() {
   try {
     String lg = "";
     for (boolean b : logros) lg += b ? "1" : "0";
-    String[] l = {join(nf(records, 0), ","), lg, introVista ? "1" : "0", textoGuardadoTienda(), textoFinalesVistos()};   // + finales desbloqueados (Galeria.pde)
+    String[] l = {join(nf(records, 0), ","), lg, introVista ? "1" : "0",
+      textoGuardadoTienda(), textoFinalesVistos(), "estilo-pixel=" + (estiloPixelActivo ? "1" : "0")};
     saveStrings(sketchPath("datos_nova.txt"), l);
   }
   catch (Exception e) {
@@ -371,6 +373,7 @@ void guardarDatos() {
 // ------------------------------------- GANCHOS QUE LLAMA Lab.pde -------------------------------------
 void vidaSetup() {
   fuenteUI = createFont("Arial", 18, true);
+  prepararEstiloEscenarios();
   crearVineta();
   prepararPixel();
   prepararMenu();
@@ -396,6 +399,7 @@ boolean vidaAntesDeDibujar() {
     alCambiarEscena(escenaAnterior, scene);
     escenaAnterior = scene;
   }
+  actualizarMovimientoTeclado();
   actualizarMovimientoClic();   // el clic para caminar se vuelve "teclas" (Mover.pde)
   if (sacudida > 0.4) {
     translate(random(-sacudida, sacudida), random(-sacudida, sacudida));
@@ -415,6 +419,7 @@ boolean vidaAntesDeDibujar() {
 }
 
 void dibujarEscenaPropia() {
+  int escenaDibujada = scene;
   if (scene == 0) dibujarMenu();
   else if (scene == 2) dibujarCreditos();
   else if (scene == ESC_MINIJUEGOS) dibujarSalaArcade();
@@ -447,10 +452,13 @@ void dibujarEscenaPropia() {
   else if (scene == ESC_COMO_JUGAR) dibujarComoJugar();
   else if (scene == ESC_INTRO) dibujarIntro();
   else background(0);
+  aplicarEstiloPantalla(escenaDibujada);
 }
 
 void alCambiarEscena(int de, int a) {
-  fundido = (de == -999) ? 255 : 210;
+  boolean cruzando = esExploracion(de) && esExploracion(a);
+  boolean continuarClic = cruzando && caminandoClic && (moverArriba || moverAbajo || moverIzquierda || moverDerecha);
+  fundido = de == -999 ? 255 : cruzando ? 90 : 210;
   // la lluvia, las hojas, el humo y los cantos son de cada lugar: no se pasan a la escena nueva
   for (int i = particulas.size() - 1; i >= 0; i--) {
     int t = particulas.get(i).tipo;
@@ -472,6 +480,7 @@ void alCambiarEscena(int de, int a) {
   quizasPantallaCarga(de, a);   // pantalla de carga con tema (Carga.pde)
   if (de != -999) sonar(2);
   pararClic();   // al cambiar de escena se olvida el camino del mouse (Mover.pde)
+  if (continuarClic && !cargaActiva) continuarClicAlEntrar();
 }
 
 // se llama al final de draw(): efectos, HUD, telefono, pausa, avisos y transiciones encima de todo
@@ -502,6 +511,7 @@ void vidaDespuesDeDibujar() {
   if (esExploracion(scene)) tinteHora();
   pistasInteraccion();
   dibujarAtmosfera();   // culpa: Nova sombria o brillante, murmullos y Shawn (Ruta.pde)
+  dibujarCiudadFinal(); // como quedo Nova despues de la eleccion (PostJuego.pde)
   dibujarGuiaLugar();   // el anillo amarillo debajo de quien sigue (Ruta.pde)
   dibujarMarcaClic();   // el marcador del clic (Mover.pde)
   if (esExploracion(scene)) dibujarHUD();
@@ -565,6 +575,10 @@ boolean vidaKeyPressed() {
   teclaCancelaClic();   // las teclas cancelan el camino del mouse (Mover.pde)
   if (entradaDuranteCarga()) {
     if (key == ESC) key = 0;
+    return true;
+  }
+  if (key == CODED && keyCode == java.awt.event.KeyEvent.VK_F4) {
+    alternarEstiloEscenarios();
     return true;
   }
   if (teclaRevision()) return true;   // la pausa antes de compartir (Responsable.pde)
@@ -647,23 +661,7 @@ boolean vidaKeyPressed() {
     return true;
   }
   if (scene == 0 || scene == 2 || scene >= 40) return teclaEscenaPropia();
-  // flechas del teclado tambien mueven al personaje en todas las escenas
-  if (key == CODED && esExploracion(scene)) {
-    if (keyCode == UP) { moverArriba = true; actual = arriba; }
-    if (keyCode == DOWN) { moverAbajo = true; actual = abajo; }
-    if (keyCode == LEFT) { moverIzquierda = true; actual = izquierda; }
-    if (keyCode == RIGHT) { moverDerecha = true; actual = derecha; }
-  }
   return false;
-}
-
-void vidaKeyReleased() {
-  if (key == CODED) {
-    if (keyCode == UP) moverArriba = false;
-    if (keyCode == DOWN) moverAbajo = false;
-    if (keyCode == LEFT) moverIzquierda = false;
-    if (keyCode == RIGHT) moverDerecha = false;
-  }
 }
 
 boolean vidaMousePressed() {
@@ -1184,6 +1182,7 @@ void generarAmbiente() {
 }
 
 void vigilarEstadisticas() {
+  congelarEstadisticas();   // despues del final, las barras ya no se mueven (PostJuego.pde)
   viralidad = constrain(viralidad, 0, 100);
   confiabilidad = constrain(confiabilidad, 0, 100);
   impacto = constrain(impacto, 0, 100);
@@ -1390,6 +1389,8 @@ void dibujarPausa() {
   rect(0, 0, width, height);
   tituloNeon("PAUSA", width / 2, 95, 54, neonCian);
   dibujarOpcionesSonido();   // musica y efectos (Sonido.pde)
+  botonNeon(rotuloEstiloEscenarios(), 10, 20, 186, 30,
+    estiloPixelActivo ? neonCian : color(150), false);
   for (int i = 0; i < opcionesPausa.length; i++) {
     botonNeon(opcionesPausa[i], width / 2 - 130, 150 + i * 50, 260, 42, i == 5 ? neonRosa : neonCian, false);
   }
@@ -1401,6 +1402,10 @@ void dibujarPausa() {
 }
 
 void clickPausa() {
+  if (encima(10, 20, 186, 30)) {
+    alternarEstiloEscenarios();
+    return;
+  }
   if (clickOpcionesSonido()) return;
   for (int i = 0; i < opcionesPausa.length; i++) {
     if (encima(width / 2 - 130, 150 + i * 50, 260, 42)) {

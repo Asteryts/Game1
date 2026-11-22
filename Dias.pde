@@ -111,6 +111,7 @@ void prepararSofi() {
 // Sofi solo esta en su lugar el dia que le toca
 void actualizarSofi() {
   for (int d = 0; d < 3; d++) if (sofiPorDia[d] != null) sofiPorDia[d].ausente = d != dia;
+  actualizarPostJuego();   // despues del final manda quien esta en Nova (PostJuego.pde)
 }
 
 // el saludo cambia segun como te llevas con ella

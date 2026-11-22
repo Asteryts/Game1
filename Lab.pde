@@ -449,6 +449,7 @@ void setup(){                                                                   
   abajo = loadImage("down.png");
   izquierda = loadImage("left.png");
   derecha = loadImage("right.png");
+  prepararSpritesNova();
   
   
   
@@ -525,26 +526,8 @@ boolean estaEnZona(float px, float py, float[] zona) {
 
 
 void keyPressed() {                                                          //movimiento del personaje
+  registrarTeclaCaminar(true);
   if (vidaKeyPressed()) return;   // (v2.0) pausa, telefono, menu, minijuegos y escenas nuevas
-  if (key == 'w' || key == 'W') {
-    moverArriba = true;
-    actual = arriba;
-  }
-  if (key == 's' || key == 'S') {
-    moverAbajo = true;
-    actual = abajo;
-  }
-  if (key == 'a' || key == 'A') {
-    moverIzquierda = true;
-    actual = izquierda;
-  }
-  if (key == 'd' || key == 'D') {
-    moverDerecha = true;
-    actual = derecha;
-  }
-  if (keyCode == SHIFT) {
-    velocidad = 7.0;
-  }
   
   // ------------------ ALCALDIA (escena 24 y 8) ------------------
   if ((key == 'e' || key == 'E') && scene == 24) {
@@ -871,14 +854,14 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
 }
 
 void keyReleased() {                                                          // controlar el movimiento
-  vidaKeyReleased();   // (v2.0) las flechas tambien sueltan el movimiento
-  if (key == 'w' || key == 'W') moverArriba = false;
-  if (key == 's' || key == 'S') moverAbajo = false;
-  if (key == 'a' || key == 'A') moverIzquierda = false;
-  if (key == 'd' || key == 'D') moverDerecha = false;
-  if (keyCode == SHIFT) {
-    velocidad = velocidadBase;
-  }
+  registrarTeclaCaminar(false);
+}
+
+void focusLost() {
+  java.util.Arrays.fill(teclasCaminar, false);
+  teclaCorrerPulsada = false;
+  pararClic();
+  pararMovimiento();
 }
 
 void mouseMoved() {
@@ -912,6 +895,13 @@ void DnpcDialog() {
 
   // caja de texto
   if (mostrarDialogo && !paginter && npcHablando != -1 && npcs[npcHablando][4] == scene) {
+    if (npcs[npcHablando][1] + npcs[npcHablando][3] > 380) {
+      String nombre = nombresNpc[npcHablando];
+      dibujarSpriteNova(nombre, 82, 374, 0.82, modoSpriteNova(nombre), 0);
+    }
+    if (npcHablando == 4 && paginaActual == 0) {
+      dibujarSpriteNova("Eltransmilenio", 674, 373, 0.78, SPRITE_ESPERA, 0);
+    }
     fill(0);
     stroke(255);
     strokeWeight(4);
@@ -973,6 +963,7 @@ void CerrarDialogo() {
 void elegirOpcion(int opcion) {
     // npcHablando = quién habla, opcion = 0 (izquierda) o 1 (derecha)
 
+  reaccionSpriteNova(nombresNpc[npcHablando]);
   if (npcHablando == 0) {              // Mateo
     if (opcion == 0) {                 // "Compartir la foto"
       viralidad += 15;
@@ -1064,6 +1055,7 @@ void elegirOpcion(int opcion) {
 //este es un bucle infinito que dibuja una pantalla de cuadro obviamente, ni modo que draw sea volar
 void draw() {       //esta es una funcion que se ejecuta en buble
 
+actualizarRelojSpritesNova();
 npcCerca = -1;
 if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas nuevas (menu, minijuegos, parque...)
 
@@ -1106,7 +1098,7 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
   if (scene == 0){                                                                            //si la escena es 0 no se requieren mas elementos extras
   } else if (scene == 1){                                                                  //si la escena es 1 (que es la ciudad)
     if (mapaImg != null) {                                                                //y si la imagen de mapa existe
-      image(mapaImg, 0, 0, width, height);      //se dibuja, este if tambien evita en parte que se trabe el juego como pasaba mucho antes
+      image(mapaImg, 0, 0, width, height);
     }
     if (mensajeMapa != "") {//esto va a servir mas adelante
       fill(255, 100, 100);
@@ -1992,8 +1984,8 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
   // Personaje y NPCs
   dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
   noStroke();
-  if (empleado != null) image(empleado, 350, 215, 40, 60); else dibujarNPC(370, 275, #3C5AA0, #282828, 3, false, "Empleado");   // (v2.0) sin la imagen el juego se cerraba
-  if (candidatos != null) image(candidatos, 347, 145, 120, 60); else dibujarCandidatos();   // (v2.0)
+  dibujarEmpleadoAlcaldia();
+  dibujarCandidatos();
   rectMode(CORNER);
 
   if (hablando) {
@@ -2113,8 +2105,8 @@ if (vidaAntesDeDibujar()) return;   // (v2.0) transiciones, sacudidas y escenas 
   // Personaje y NPCs (el personaje se queda quieto mientras decides)
   dibujarJugadorConRopa();   // (Ruta.pde) el personaje con su ropa
   noStroke();
-  if (empleado != null) image(empleado, 350, 215, 40, 60); else dibujarNPC(370, 275, #3C5AA0, #282828, 3, false, "Empleado");   // (v2.0) sin la imagen el juego se cerraba
-  if (candidatos != null) image(candidatos, 347, 145, 120, 60); else dibujarCandidatos();   // (v2.0)
+  dibujarEmpleadoAlcaldia();
+  dibujarCandidatos();
   rectMode(CORNER);
 
   // Cuadro de diálogo
@@ -2283,7 +2275,7 @@ text("Volver", 50, 40);
       fondoAlcaldia();   // (v2.0)
     }
     noStroke();
-    if (empleado != null) image(empleado, 350, 215, 40, 60); else dibujarNPC(370, 275, #3C5AA0, #282828, 3, false, "Empleado");   // (v2.0) sin la imagen el juego se cerraba
+    dibujarEmpleadoAlcaldia();
 
   float nuevaX = x;
   float nuevaY = y;

@@ -86,6 +86,7 @@ void dibujarAnimFinal() {
   case 11: animRefugio(t); break;
   case 12: animDesconectado(t); break;
   }
+  aplicarEstiloEscenario(g, "final-" + animId, false);
   // franjas de cine con el titulo
   noStroke();
   fill(0);

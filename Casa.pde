@@ -275,7 +275,7 @@ void usarVentana() {
       clicsVentana = 0;
       hablarConShawn(npcShawn);   // el mismo encuentro del Callejon (Ruta.pde)
     } else {
-      decirCasa("Ventana", clicsVentana == 1 ? "Esta oscuro afuera. Por un segundo crees ver a alguien parado en la calle..." : "Ahi esta otra vez. Palido, quieto, mirando hacia tu ventana.");
+      decirCasa("Ventana", clicsVentana == 1 ? "Esta oscuro afuera. Por un segundo crees ver a alguien parado en la calle..." : "Ahi esta otra vez. Una figura encapuchada flota frente a tu ventana.");
     }
     return;
   }
@@ -418,6 +418,9 @@ void dibujarCineRQ() {
   case 7:
     cineTarjetaDia();
     break;
+  }
+  if (cinePlano >= 0 && cinePlano < planosEstiloCine.length) {
+    aplicarEstiloEscenario(g, planosEstiloCine[cinePlano], cinePlano != 0 && cinePlano != 5);
   }
   // franjas de cine
   fill(0);

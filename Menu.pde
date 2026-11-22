@@ -101,7 +101,7 @@ PGraphics crearCapa(int nivel) {
 void dibujarFondoCiudad() {
   empezarFondoPixel();
   dibujarFondoCiudadMundo();
-  terminarFondoPixel();
+  terminarFondoPixel("menu");
 }
 
 void dibujarFondoCiudadMundo() {
@@ -324,6 +324,8 @@ void dibujarMenu() {
   text("Logros " + contarLogros() + "/" + logros.length + "   -   Finales " + contarFinalesVistos() + "/13", 14, height - 12);
   textAlign(RIGHT, CENTER);
   text("W/S o flechas + ENTER", width - 14, height - 12);
+  botonNeon(rotuloEstiloEscenarios(), width / 2 - 100, 471, 200, 24,
+    estiloPixelActivo ? neonCian : color(150), false);
   if (random(1) < 0.2) {
     agregarParticula(new Particula(random(width), height + 5, random(-0.3, 0.3), random(-1.4, -0.5), random(120, 220), random(2, 3), random(1) < 0.5 ? color(#FFC846) : color(#FF5A78), 6));
   }
@@ -348,6 +350,29 @@ void nodoMenu(int n) {
   strokeWeight(2.5);
   ellipse(cx, cy, 64, 64);
   noStroke();
+  boolean conSprite;
+  if (n == 0) {
+    int direccion = (relojSpriteNova / 1600) % caminataJugadorNova.length;
+    int tiempo = relojSpriteNova % 1600;
+    int cuadro = tiempo < 220 ? 0 : cuadroCaminataJugadorNova(tiempo - 220, false);
+    conSprite = dibujarCaminataJugadorNova(direccion, cuadro, cx, cy + 23, 1.06);
+    if (!conSprite) conSprite = dibujarSpriteNova(nodoMNombre[n], cx, cy + 23, 0.76, SPRITE_ESPERA, 0);
+  } else {
+    conSprite = dibujarSpriteNova(nodoMNombre[n], cx, cy + 23, 0.76, SPRITE_ESPERA, n * 230);
+  }
+  if (!conSprite) dibujarNodoMenuOriginal(n, cx, cy);
+  if (!principal) {
+    fill(#191926, conSprite ? 42 : 110);
+    ellipse(cx, cy, 60, 60);
+  }
+  textFont(fuenteUI);
+  textSize(10);
+  fill(190);
+  textAlign(CENTER, CENTER);
+  text(nodoMNombre[n], cx, cy + 42);
+}
+
+void dibujarNodoMenuOriginal(int n, float cx, float cy) {
   float u = 1.55, px = cx - 6 * u, py = cy - 14 * u;
   float b = sin(frameCount * 0.05 + n) * 1;
   if (n == 0) tuU(px, py + b, u, 1);
@@ -362,15 +387,6 @@ void nodoMenu(int n) {
     dibujarFantasma(0, 0, 0.8);
     popMatrix();
   }
-  if (!principal) {   // los que no son Tu ni Sofi se ven mas apagados
-    fill(#191926, 110);
-    ellipse(cx, cy, 60, 60);
-  }
-  textFont(fuenteUI);
-  textSize(10);
-  fill(190);
-  textAlign(CENTER, CENTER);
-  text(nodoMNombre[n], cx, principal ? cy + 42 : cy + 42);
 }
 
 void tituloBloques(int tm, float corrido, boolean sombra) {
@@ -419,6 +435,10 @@ void accionMenu(int i) {
 }
 
 void clickMenu() {
+  if (encima(width / 2 - 100, 471, 200, 24)) {
+    alternarEstiloEscenarios();
+    return;
+  }
   for (int i = 0; i < botonesMenu.length; i++) {
     if (encima(width / 2 - 140, 176 + i * 48, 280, 40)) {
       accionMenu(i);

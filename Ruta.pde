@@ -33,6 +33,7 @@ int pinDeEscena(int s) {
 
 // a donde lleva la historia ahora (escena caminable), o -1
 int escenaObjetivo() {
+  if (postJuego) return -1;   // despues del final no hay a donde ir: se explora libre (PostJuego.pde)
   if (dia >= 3) return ESC_PLAZA;
   int s = situacionActual();
   if (s >= 0) return lugarSit[s];
@@ -254,22 +255,24 @@ void dibujarAtmosfera() {
   }
 }
 
-// un fantasma palido que flota
+// La capucha esconde el rostro incluso cuando Shawn habla.
 void dibujarFantasma(float fx, float pies, float a) {
+  pushStyle();
+  tint(255, 255 * constrain(a, 0, 1));
+  boolean dibujado = dibujarPersonaNova("Shawn", fx, pies, 0);
+  popStyle();
+  if (dibujado) return;
   float b = sin(frameCount * 0.06) * 4;
   noStroke();
-  fill(200, 215, 255, 40 * a);
-  ellipse(fx, pies - 30 + b, 70, 90);
-  fill(225, 232, 250, 190 * a);
-  ellipse(fx, pies - 62 + b, 26, 28);
+  fill(57, 47, 101, 220 * a);
+  ellipse(fx, pies - 73 + b, 37, 38);
   beginShape();
-  vertex(fx - 16, pies - 50 + b);
-  vertex(fx + 16, pies - 50 + b);
-  for (int k = 0; k <= 4; k++) vertex(fx + 16 - k * 8, pies - 6 + b + (k % 2 == 0 ? 0 : -6) + sin(frameCount * 0.1 + k) * 2);
+  vertex(fx - 22, pies - 63 + b);
+  vertex(fx + 22, pies - 63 + b);
+  for (int k = 0; k <= 4; k++) vertex(fx + 28 - k * 14, pies - 9 + b + (k % 2 == 0 ? 0 : -8));
   endShape(CLOSE);
-  fill(40, 40, 70, 220 * a);
-  ellipse(fx - 5, pies - 63 + b, 4, 6);
-  ellipse(fx + 5, pies - 63 + b, 4, 6);
+  fill(10, 8, 21, 235 * a);
+  quad(fx, pies - 88 + b, fx + 13, pies - 74 + b, fx, pies - 61 + b, fx - 13, pies - 74 + b);
 }
 
 // ------------------------------------- 3. SHAWN -------------------------------------
@@ -669,7 +672,10 @@ void clickEpilogo() {
   } else if (encima(310, 418, 180, 48)) {
     reiniciarPartida();
     scene = 0;
-  } else if (encima(510, 418, 180, 48)) scene = 1;
+  } else if (encima(510, 418, 180, 48)) {
+    empezarPostJuego();   // Nova despues de la eleccion (PostJuego.pde)
+    scene = 1;
+  }
 }
 
 // opcion secreta del miercoles (situacion 8): "Apagar el celular"
@@ -842,6 +848,7 @@ boolean clickRopaTienda() {
 
 // el personaje con su ropa (reemplaza image(actual, ...) en todas las escenas)
 void dibujarJugadorConRopa() {
+  actualizarPasoJugadorNova();
   float cx = x + anchoPersonaje / 2;
   float ondea = sin(frameCount * 0.1) * 2;
   if (ropaPuesta == 3) {   // la capa: una parte detras...
@@ -849,7 +856,7 @@ void dibujarJugadorConRopa() {
     fill(#DDE6F5, 170);
     quad(cx - 12, y + 10, cx + 12, y + 10, cx + 22 + ondea, y + 48, cx - 22 - ondea, y + 48);
   }
-  image(actual, x, y, anchoPersonaje, altoPersonaje);
+  dibujarBaseJugadorNova();
   if (ropaPuesta == 3) {   // ...y las puntas que se ven a los lados, brillando un poco
     fill(#DDE6F5, 140 + 50 * sin(frameCount * 0.08));
     triangle(cx - 12, y + 12, cx - 22 - ondea, y + 48, cx - 13, y + 48);
@@ -859,7 +866,7 @@ void dibujarJugadorConRopa() {
   }
   if (ropaPuesta == 1 || ropaPuesta == 2 || ropaPuesta == 4) {
     tint(colorRopa[ropaPuesta], 110);
-    image(actual, x, y, anchoPersonaje, altoPersonaje);
+    dibujarBaseJugadorNova();
     noTint();
   }
   if (ropaPuesta == 0) {
@@ -894,6 +901,8 @@ void reiniciarRuta() {
   vistoJuicio = vistoSilencio = vistoSecreto = false;
   vecesApagoCelular = 0;
   diasRepetidos = 0;
+  postJuego = false;   // (PostJuego.pde)
+  grietasListas = false;
 }
 
 String textoIrA(int obj) {

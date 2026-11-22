@@ -411,6 +411,7 @@ void dibujarManotazo() {
     rect(0, 0, width, height);
   } else {
     fondoArcade(coloresJuegos[8]);
+    aplicarEstiloEscenario(g, "arcade-" + ESC_MANOTAZO, false);
   }
   cabeceraJuego(8);
   textFont(fuenteUI);

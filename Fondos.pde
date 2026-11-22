@@ -80,7 +80,7 @@ void flechaSalida(float fx, float fy, int dir, String t) {
 void fondoBarrio(int s) {
   empezarFondoPixel();
   fondoBarrioMundo(s);
-  terminarFondoPixel();
+  terminarFondoPixel("barrio-" + s);
   salidasBarrio(s);
 }
 
@@ -362,7 +362,7 @@ void letreroJunta() {
 void fondoEntrada() {
   empezarFondoPixel();
   fondoEntradaMundo();
-  terminarFondoPixel();
+  terminarFondoPixel("entrada");
 }
 
 void fondoEntradaMundo() {
@@ -446,7 +446,7 @@ String[] textosPancarta = {"VERDAD", "FUERA", "FAKE?", "#Nova", "FUENTE?", "NO +
 void fondoAlcaldia() {
   empezarFondoPixel();
   fondoAlcaldiaMundo();
-  terminarFondoPixel();
+  terminarFondoPixel("alcaldia");
 }
 
 void fondoAlcaldiaMundo() {
@@ -566,8 +566,27 @@ void dibujarCandidatos() {
   rect(340, 196, 134, 12, 4);
   fill(255, 220, 120);
   rect(340, 196, 134, 3);
-  dibujarNPC(358, 198, #DC6E8C, #3C2814, 1, false, "");
-  dibujarNPC(390, 198, #3C78C8, #141414, 2, false, "");
-  dibujarNPC(422, 198, #46A064, #8C5A3C, 3, false, "");
-  dibujarNPC(454, 198, #505050, #CCCCCC, 4, false, "");
+  String[] nombres = {"Clemencia", "Patroclo", "Gonzalo", "Benito"};
+  color[] ropa = {#DC6E8C, #3C78C8, #46A064, #505050};
+  color[] pelo = {#3C2814, #141414, #8C5A3C, #CCCCCC};
+  if (atlasNova[SPRITE_ESPERA] == null && candidatos != null) {
+    image(candidatos, 347, 145, 120, 60);
+    return;
+  }
+  for (int i = 0; i < nombres.length; i++) {
+    float cx = 358 + 32 * i;
+    if (!dibujarSpriteNova(nombres[i], cx, 198, 0.76, modoSpriteNova(nombres[i]), 180 * i)) {
+      dibujarNPC(cx, 198, ropa[i], pelo[i], i + 1, false, "");
+    }
+  }
+}
+
+void dibujarEmpleadoAlcaldia() {
+  if (dibujarPersonaNova("Empleado", 370, 275, 3)) {
+    etiquetaNPC(370, 275, "Empleado");
+  } else if (empleado != null) {
+    image(empleado, 350, 215, 40, 60);
+  } else {
+    dibujarNPC(370, 275, #3C5AA0, #282828, 3, false, "Empleado");
+  }
 }

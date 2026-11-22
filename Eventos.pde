@@ -444,6 +444,7 @@ void aplicarDilema(int i) {
   popupTexto = s[3 + i];
   popupFase = 1;
   if (eventoPopup.tipo == 9) {   // el musico es solo para divertirse
+    reaccionSpriteNova("Músico callejero");
     chispas(width / 2, 220, coloresEvento[9], 30);
     return;
   }
@@ -464,7 +465,10 @@ void dibujarPopupMapa() {
   textSize(15);
   fill(235);
   textAlign(CENTER, TOP);
-  text(popupTexto, 160, 188, 480, 100);
+  String personaje = eventoPopup.tipo == 3 ? "Gato callejero" : eventoPopup.tipo == 9 ? "Músico callejero" : "";
+  int modo = popupFase == 0 ? SPRITE_HABLA : modoSpriteNova(personaje);
+  boolean conSprite = !personaje.isEmpty() && dibujarSpriteNova(personaje, 196, 274, 1.12, modo, 0);
+  text(popupTexto, conSprite ? 236 : 160, 188, conSprite ? 392 : 480, 100);
   String[] bs = botonesPopup();
   for (int i = 0; i < bs.length; i++) {
     float[] b = botonPopup(i, bs.length);
@@ -495,6 +499,7 @@ boolean clickPopupMapa() {
       popupAbierto = false;
       if (i == 0) lanzarJuego(escenasJuegos[eventoPopup.variante % escenasJuegos.length], false);
     } else if (eventoPopup.tipo == 3) {
+      reaccionSpriteNova("Gato callejero");
       popupTexto = respuestasGato[i];
       popupFase = 1;
       gatosVistos++;

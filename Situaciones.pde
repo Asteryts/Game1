@@ -253,6 +253,7 @@ boolean interactuarHistoria(Interactivo it) {
 void alElegirCharlaHistoria(Charla c, int i) {
   for (int k = 0; k < 6; k++) {
     if (c != charlaSec[k]) continue;
+    if (k == 3 && i == 0) reaccionSpriteNova("Luna");
     secHecho[k] = true;
     secBien[k] = i == 0;
     if (i != 0) sumarCulpa();   // (Ruta.pde)
@@ -369,6 +370,7 @@ void avanzarMomentoHistoria() {
 }
 
 String textoObjetivo() {
+  if (postJuego) return textoObjetivoPost();   // (PostJuego.pde)
   if (dia >= 3) return "Ve a la Plaza de la Votacion";
   int s = situacionActual();
   if (s >= 0) return "Habla con " + mensajeroSit[s] + " en " + nombreLugarSit[s];

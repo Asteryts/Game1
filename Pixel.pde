@@ -46,10 +46,15 @@ void empezarFondoPixel() {
 }
 
 void terminarFondoPixel() {
+  terminarFondoPixel(null);
+}
+
+void terminarFondoPixel(String vista) {
   lienzoFondo.endDraw();
   g = gGuardado;
   nivelPixel--;
   agrandar(lienzoFondo, grandeFondo, true);
+  aplicarEstiloEscenario(grandeFondo, vista, false);
   imageMode(CORNER);
   image(grandeFondo, 0, 0);
   // los letreros se dibujan nitidos encima del dibujo pixelado, para que se puedan leer
@@ -151,6 +156,12 @@ void pixelarPantalla() {
 // ------------------------------------- PERSONAJES -------------------------------------
 // cada personaje se dibuja en un sprite chiquito (64x120 de pantalla) y se agranda
 void dibujarNPC(float cx, float pies, color ropa, color pelo, float fase, boolean marca, String nombre) {
+  if (dibujarPersonaNova(nombre, cx, pies, fase)) {
+    if (marca) marcaSpriteNova(cx, pies, fase);
+    if (nivelPixel > 0) etiquetasPendientes.add(new Object[] {cx, pies, nombre});
+    else etiquetaNPC(cx, pies, nombre);
+    return;
+  }
   if (nivelPixel > 0) {   // ya estamos dentro de un fondo pixelado: se dibuja directo
     if ("Sofi".equals(nombre)) dibujarSofiCuerpo(cx, pies, fase, marca);   // (Sofi.pde)
     else dibujarNPCCuerpo(cx, pies, ropa, pelo, fase, marca);
@@ -165,6 +176,12 @@ void dibujarNPC(float cx, float pies, color ropa, color pelo, float fase, boolea
 }
 
 void dibujarRobot(float cx, float pies, float fase, String nombre) {
+  int modo = nombre != null && nombre.startsWith("BYTE") && letrasTendero < fraseTendero.length()
+    ? SPRITE_HABLA : modoSpriteNova(nombre);
+  if (dibujarSpriteNova(nombre, cx, pies, 1, modo, round(fase * 210))) {
+    if (nivelPixel == 0) etiquetaNPC(cx, pies, nombre);
+    return;
+  }
   if (nivelPixel > 0) {
     dibujarRobotCuerpo(cx, pies, fase);
     return;

@@ -111,15 +111,18 @@ void dibujarSalto() {
       ellipse(o.ox + 18, o.oy - 7 + b, 18, 4);
     }
   }
-  terminarFondoPixel();
-  // ---- el corredor (tu sprite de siempre) ----
+  terminarFondoPixel("arcade-" + ESC_SALTO);
+  // ---- el corredor ----
   boolean parpadea = invencibleS > 0 && frameCount % 8 < 4;
   if (!parpadea) {
     noStroke();
     fill(0, 90);
     ellipse(180, SUELO_S + 6, 50 - (SUELO_S - corredorY) * 0.1, 10);
-    float rebote = enElSuelo() ? abs(sin(distanciaS * 0.08)) * 3 : 0;
-    image(derecha, 130, corredorY - altoPersonaje - rebote, anchoPersonaje, altoPersonaje);
+    int cuadro = enElSuelo() ? cuadroCaminataJugadorNova(relojSpriteNova, true) : 2;
+    if (!dibujarCaminataJugadorNova(JUGADOR_DERECHA, cuadro, 180, corredorY - 4, 1)) {
+      float rebote = enElSuelo() ? abs(sin(distanciaS * 0.08)) * 3 : 0;
+      image(derecha, 130, corredorY - altoPersonaje - rebote, anchoPersonaje, altoPersonaje);
+    }
   }
   cabeceraJuego(9);
   textFont(fuenteUI);

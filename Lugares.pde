@@ -116,7 +116,7 @@ void irAEscena(int dest, int dir) {
 void dibujarFondoLugar(int s) {
   empezarFondoPixel();   // (pixel art) ver Pixel.pde
   dibujarFondoLugarMundo(s);
-  terminarFondoPixel();
+  terminarFondoPixel("lugar-" + s);
 }
 
 void dibujarFondoLugarMundo(int s) {
@@ -841,6 +841,7 @@ void fondoPaseo() {
   text("FOTO", 690, 436);
   // el dron de Tomas
   float dx = 290 + sin(frameCount * 0.03) * 40, dy = 370 + cos(frameCount * 0.05) * 10;
+  if (dibujarSpriteNova("Pixel", dx, dy + 23, 0.72, SPRITE_MOVIMIENTO, 0)) return;
   fill(60);
   rect(dx - 12, dy - 3, 24, 6, 3);
   stroke(60);
@@ -1036,6 +1037,7 @@ void fondoCancha() {
     float t = frameCount * 0.012 + i * 1.6;
     float nx = 400 + cos(t) * (220 - i * 20), ny = 300 + sin(t * 1.3) * 110;
     if (dist(nx, ny, x + 50, y + 40) < 50) continue;
+    if (dist(nx, ny + 20, 230, 210) < 44 || dist(nx, ny + 20, 600, 430) < 44) continue;
     pushMatrix();
     translate(nx, ny + 20);
     scale(0.8);

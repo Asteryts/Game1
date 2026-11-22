@@ -92,6 +92,7 @@ void elegirCharla(final int i) {
 }
 
 void aplicarEleccionCharla(int i) {
+  reaccionSpriteNova(charlaActiva.hablante.equals("Lu y Caro") ? "Lu" : charlaActiva.hablante);
   float[] e = charlaActiva.efectos[i];
   viralidad += e[0];
   confiabilidad += e[1];
@@ -122,6 +123,11 @@ void dibujarCharla() {
     sonarVoz(charlaActiva.hablante);   // cada personaje tiene su vocecita (Sonido.pde)
   }
   float bx = 30, by = 350, bw = 740, bh = 135;
+  if (cercano != null && cercano.iy > by && cercano.charla == charlaActiva) {
+    String retrato = charlaActiva.hablante;
+    if (retrato.equals("Lu y Caro")) retrato = t.startsWith("Caro:") ? "Caro" : "Lu";
+    dibujarSpriteNova(retrato, bx + 56, by - 16, 0.86, modoSpriteNova(retrato), 0);
+  }
   noStroke();
   fill(8, 6, 22, 238);
   rect(bx, by, bw, bh, 12);
@@ -138,6 +144,9 @@ void dibujarCharla() {
   fill(10);
   textAlign(LEFT, CENTER);
   text(charlaActiva.hablante, bx + 35, by - 1);
+  if (charlaActiva == charlaSec[3]) {
+    dibujarSpriteNova("Luna", bx + bw - 52, by - 7, 1, modoSpriteNova("Luna"), 0);
+  }
   if (charlaEligiendo) {
     fill(neonAmarillo);
     textSize(15);
@@ -325,6 +334,7 @@ int charlasNuevasHabladas() {
 
 void interactuar(Interactivo it) {
   if (interactuarCasa(it)) return;       // cama, armario, ventana... (Casa.pde)
+  if (interactuarPostJuego(it)) return;  // despues de la eleccion, la gente habla distinto (PostJuego.pde)
   if (hablarConShawn(it)) return;        // el fantasma de Shawn (Ruta.pde)
   if (interactuarHistoria(it)) return;   // situaciones y secundarios de Red Quest (Situaciones.pde)
   Charla segunRecuerdos = charlaSegunRecuerdos(it);   // algunos cuentan lo que paso por lo que hiciste
@@ -439,6 +449,9 @@ void dibujarEscenaCaminable() {
       jugadorListo = true;
     }
     if (it.oculto || it.ausente) continue;
+    if (scene == ESC_CANCHA && it.nombre.equals("Valentina") && secHecho[3] && secBien[3]) {
+      dibujarPersonaNova("Luna", it.ix + 37, it.iy - 3, 3);
+    }
     if (it.tipo == 0) dibujarNPC(it.ix, it.iy, it.ropa, it.pelo, it.fase, (!it.hablado && it.charla.eleccion != null) || tieneAlgoImportante(it), it.nombre);
     else if (it.tipo == 3) dibujarRobot(it.ix, it.iy, it.fase, it.nombre);
     else if (it.tipo == 4) dibujarKiosco(it.ix, it.iy, it.destino == ESC_RULETA);
@@ -448,7 +461,7 @@ void dibujarEscenaCaminable() {
   if (!jugadorListo) dibujarJugador();
   dibujarFrenteLugar(scene, true);
   if (cercano != null && charlaActiva == null) {
-    float ky = cercano.tipo == 0 ? cercano.iy - 92 : cercano.tipo == 3 ? cercano.iy - 112 : cercano.tipo == 4 ? cercano.iy - 124 : cercano.iy - 76;
+    float ky = cercano.tipo == 0 ? cercano.iy - 92 : cercano.tipo == 3 || cercano.tipo == 5 ? cercano.iy - 112 : cercano.tipo == 4 ? cercano.iy - 124 : cercano.iy - 76;
     teclaFlotante("E", cercano.ix, ky);
     if (cercano.tipo == 1 || cercano.tipo == 2 || cercano.tipo == 4) {
       textFont(fuenteUI);
@@ -476,13 +489,7 @@ boolean teclaCaminable() {
     elegirCharla(key - '1');
     return true;
   }
-  if (key == CODED) {
-    if (keyCode == UP) { moverArriba = true; actual = arriba; }
-    if (keyCode == DOWN) { moverAbajo = true; actual = abajo; }
-    if (keyCode == LEFT) { moverIzquierda = true; actual = izquierda; }
-    if (keyCode == RIGHT) { moverDerecha = true; actual = derecha; }
-  }
-  return false;   // WASD y SHIFT siguen al keyPressed original
+  return false;   // el movimiento por teclado se lee en Mover.pde
 }
 
 // ------------------------------------- FONDO: PARQUE CENTRAL -------------------------------------
@@ -706,6 +713,14 @@ void orbeNova(float cx, float cy) {
   ellipse(cx, cy + 52, 110, 30);
   fill(neonCian, 18);
   triangle(cx - 40, cy + 50, cx + 40, cy + 50, cx, cy - 30);
+  if (dibujarSpriteNova("NOVA", cx, cy + 43, 1.35, modoSpriteNova("NOVA"), 0)) {
+    textFont(fuente);
+    textSize(16);
+    textAlign(CENTER, CENTER);
+    fill(neonCian);
+    text("NOVA", cx, cy - 52 + f);
+    return;
+  }
   for (int i = 6; i >= 1; i--) {
     fill(neonMorado, 14);
     ellipse(cx, cy + f, 30 + i * 14, 30 + i * 14);
@@ -973,11 +988,18 @@ void dibujarEstudio() {
   textAlign(LEFT, CENTER);
   text("EN VIVO", 42, 70);
   // presentadora
-  pushMatrix();
-  translate(100, 330);
-  scale(1.6);
-  dibujarNPC(0, 0, #DC3C78, #3C2814, 1.5, false, "");
-  popMatrix();
+  String dice = "";
+  if (estadoTV == 0) dice = introTV[lineaTV];
+  else if (estadoTV == 2) dice = elegidaTV == int(preguntasTV[preguntaTV][5]) ? "Correcto! El publico enloquece!" : (elegidaTV == -1 ? "Se acabo el tiempo!" : "Uy, no! Esa no era...");
+  int modoVero = modoSpriteNova("Vero Cidad");
+  if (modoVero == SPRITE_ESPERA && letrasTV < dice.length()) modoVero = SPRITE_HABLA;
+  if (!dibujarSpriteNova("Vero Cidad", 100, 330, 1.45, modoVero, 0)) {
+    pushMatrix();
+    translate(100, 330);
+    scale(1.6);
+    dibujarNPC(0, 0, #DC3C78, #3C2814, 1.5, false, "");
+    popMatrix();
+  }
   fill(0, 160);
   rect(40, 340, 120, 20, 10);
   fill(255);
@@ -985,18 +1007,15 @@ void dibujarEstudio() {
   textSize(11);
   text("Vero Cidad", 100, 349);
   // burbuja de la presentadora
-  String dice = "";
-  if (estadoTV == 0) dice = introTV[lineaTV];
-  else if (estadoTV == 2) dice = elegidaTV == int(preguntasTV[preguntaTV][5]) ? "Correcto! El publico enloquece!" : (elegidaTV == -1 ? "Se acabo el tiempo!" : "Uy, no! Esa no era...");
   if (!dice.equals("")) {
     if (letrasTV < dice.length() && !pausaAbierta) letrasTV += 1.1;
     fill(255);
-    rect(20, 214, 330, 64, 12);
-    triangle(80, 278, 100, 278, 88, 292);
+    rect(150, 214, 211, 76, 12);
+    triangle(150, 240, 150, 255, 128, 261);
     fill(30);
     textSize(13);
     textAlign(LEFT, TOP);
-    text(dice.substring(0, min(dice.length(), int(letrasTV))), 32, 222, 306, 54);
+    text(dice.substring(0, min(dice.length(), int(letrasTV))), 162, 224, 187, 56);
   }
   // opciones
   if (estadoTV == 1 || estadoTV == 2) {
@@ -1075,6 +1094,7 @@ void dibujarEstudio() {
 
 void responderTV(int i) {
   if (estadoTV != 1) return;
+  reaccionSpriteNova("Vero Cidad");
   elegidaTV = i;
   letrasTV = 0;
   estadoTV = 2;
@@ -1378,10 +1398,11 @@ void dibujarFinal() {
   prog = 1 - pow(1 - prog, 3);
   for (int i = 0; i < 4; i++) {
     float by = 224 + i * 36;
+    boolean retrato = dibujarSpriteNova(candidatosFinal[i], 140, by + 23, 0.42, SPRITE_ESPERA, i * 250);
     fill(235);
     textSize(13);
     textAlign(LEFT, CENTER);
-    text(candidatosFinal[i], 132, by + 9);
+    text(candidatosFinal[i], retrato ? 158 : 132, by + 9);
     fill(40, 36, 60);
     rect(240, by, 380, 18, 9);
     fill(coloresCandidatos[i]);

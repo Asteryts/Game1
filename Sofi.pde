@@ -15,6 +15,10 @@ final color SOFI_PINZA = #FFC846;
 
 // ------------------------------------- EN LOS LUGARES -------------------------------------
 void dibujarSofiCuerpo(float cx, float pies, float fase, boolean marca) {
+  if (dibujarPersonaNova("Sofi", cx, pies, fase)) {
+    if (marca) marcaSpriteNova(cx, pies, fase);
+    return;
+  }
   pushStyle();
   float t = frameCount * 0.06 + fase;
   float bob = sin(t) * 1.5;
@@ -130,6 +134,12 @@ void estrellaChica(float x, float y, float r) {
 // ------------------------------------- EN LAS CINEMATICAS (pixeles grandes) -------------------------------------
 // mismo alto que personaU (31 pixeles). (x, y) = la esquina de arriba de la cabeza
 void sofiU(float x, float y, float u, float a) {
+  pushStyle();
+  tint(255, 255 * constrain(a, 0, 1));
+  boolean dibujado = dibujarSpriteNova("Sofi", x + 6 * u, y + 31 * u, u / 2,
+    modoSpriteNova("Sofi"), 0);
+  popStyle();
+  if (dibujado) return;
   noStroke();
   // pelo largo de atras
   fill(SOFI_PELO, 255 * a);
