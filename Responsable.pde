@@ -559,9 +559,7 @@ boolean revisarClickOriginal() {
     if (mx < 35 || mx > 765) return false;
     int op = my >= 340 && my <= 378 ? 0 : my >= 385 && my <= 423 ? 1 : my >= 430 && my <= 468 ? 2 : -1;
     if (op < 0) return false;
-    String[][] textos = {{"Compartir noticia urgente", "Verificar informacion oficial", "Ignorar la situacion"},
-      {"Difundir rumor de protestas", "Investigar en la plaza principal", "Ignorar reportes vecinales"},
-      {"Apoyar postura de asamblea", "Actuar como mediador", "Retirarse del lugar"}};
+    String[][] textos = opcionesBarrio;   // (Vida.pde)
     int menu = scene == 19 ? 0 : scene == 21 ? 1 : 2;
     quien = menu == 0 ? "Junta Vecinal" : menu == 1 ? "Debora" : "Asamblea (Benito)";
     que = textos[menu][op];

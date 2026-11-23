@@ -15,6 +15,7 @@ class Charla {
   float[][] efectos;
   String despedida;
   boolean terminada = false;
+  int elegida = -1;   // la opcion que tomaste (no se puede cambiar)
 
   Charla(String hablante, String[] lineas) {
     this.hablante = hablante;
@@ -43,6 +44,7 @@ void abrirCharla(Charla c) {
   charlaEligiendo = false;
   charlaRespuesta = null;
   if (c.terminada && c.despedida != null) charlaRespuesta = c.despedida;
+  else if (c.terminada && c.elegida >= 0) charlaRespuesta = c.respuestas[c.elegida];   // ya decidiste: no se repite la charla
   pararMovimiento();
 }
 
@@ -105,6 +107,7 @@ void aplicarEleccionCharla(int i) {
   charlaLetras = 0;
   charlaEligiendo = false;
   charlaActiva.terminada = true;
+  charlaActiva.elegida = i;
   alElegirCharlaHistoria(charlaActiva, i);   // insignias y pruebas (Situaciones.pde)
   anotarDecision(charlaActiva.hablante, charlaActiva.eleccion[i], e[1] > 0, e[0] >= 10 && e[1] < 0, charlaActiva.respuestas[i]);
 }
@@ -1467,6 +1470,7 @@ void reiniciarPartida() {
   CerrarDialogo();
   mostrarDialogo = true;
   for (int i = 0; i < npcHablado.length; i++) npcHablado[i] = false;
+  reiniciarElecciones();   // partida nueva: se puede decidir otra vez (Vida.pde)
   decisionesTomadas = 0;
   relojJuego = 17 * 60;
   notifPendientes = 0;

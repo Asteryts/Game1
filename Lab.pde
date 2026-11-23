@@ -553,14 +553,17 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
     mostrarDialogo = true;
     npcHablando = npcCerca;
     paginaActual = 0;
+    npcRecuerdo = npcEleccion[npcCerca] >= 0;   // ya decidiste con el: solo te lo recuerda (Vida.pde)
   }
-  
 
-  
+
+
   // Avanzar diálogo
   // (se agrego npcHablando != -1 porque "mostrarDialogo" tambien lo usa el barrio y sin esto el juego se caia al dar Enter)
   if (key == ENTER || key == RETURN) {
-    if (mostrarDialogo && !paginter && npcHablando != -1) {
+    if (mostrarDialogo && npcRecuerdo && npcHablando != -1) {
+      CerrarDialogo();                            // el recordatorio es una sola pagina
+    } else if (mostrarDialogo && !paginter && npcHablando != -1) {
       paginaActual++;
       if (paginaActual == paginaOpciones[npcHablando]) {
         paginter = true;                          // llegó la página de elegir
@@ -750,7 +753,10 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
       float distJunta = dist(x, y, width/2, height/2);
       if (distJunta < 80) {
         a3 = true;
-        md1 = true;
+        if (eleccionBarrio[0] >= 0) {   // ya decidiste con la Junta
+          mostrarDialogo = true;
+          textoDialogo = textoRecuerdoBarrio(0);
+        } else md1 = true;
       } else if (enZonaPapeles) {
         mostrarDialogo = true;
         textoDialogo = "Hay notas en el suelo: Son actas firmadas por los vecinos del sector.";
@@ -785,7 +791,10 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
       float distDebora = dist(x, y, width/2, height/2);
       if (distDebora < 80) {
         b3 = true;
-        md2 = true;
+        if (eleccionBarrio[1] >= 0) {   // ya decidiste con Debora
+          mostrarDialogo = true;
+          textoDialogo = textoRecuerdoBarrio(1);
+        } else md2 = true;
       } else if (enObjetoDebora) {
         mostrarDialogo = true;
         textoDialogo = "Encontraste una carpeta tirada: Contiene reportes detallados del vecindario.";
@@ -824,7 +833,10 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
 
       if (distBenito < 80) {
         c3 = true;
-        md3 = true;
+        if (eleccionBarrio[2] >= 0) {   // ya decidiste en la Asamblea
+          mostrarDialogo = true;
+          textoDialogo = textoRecuerdoBarrio(2);
+        } else md3 = true;
       } else if (enObjetoBenito) {
         mostrarDialogo = true;
         textoDialogo = "Prueba";
@@ -890,7 +902,7 @@ void DnpcDialog() {
     fill(255);
     textAlign(LEFT, TOP);
     textSize(18);
-    text(dialogosNpc[npcHablando][paginaActual], 60, 415, 680, 60);
+    text(npcRecuerdo ? textoRecuerdoNpc(npcHablando) : dialogosNpc[npcHablando][paginaActual], 60, 415, 680, 60);
     textAlign(RIGHT, BOTTOM);
     textSize(12);
     text("Enter para continuar", 740, 470);
@@ -938,12 +950,14 @@ void CerrarDialogo() {
   paginter = false;           // ya no es la página de opciones
   paginaActual = 0;          // el próximo diálogo empieza desde el primer texto
   npcHablando = -1;         // ya no hablas con nadie
+  npcRecuerdo = false;
 }
 
 void elegirOpcion(int opcion) {
     // npcHablando = quién habla, opcion = 0 (izquierda) o 1 (derecha)
 
   reaccionSpriteNova(nombresNpc[npcHablando]);
+  npcEleccion[npcHablando] = opcion;   // queda decidido: no se puede volver a elegir (Vida.pde)
   if (npcHablando == 0) {              // Mateo
     if (opcion == 0) {                 // "Compartir la foto"
       viralidad += 15;
@@ -2915,6 +2929,11 @@ void mousePressed() {
   }
 
   //desisiones
+  // las decisiones del barrio quedan guardadas para no repetirlas (Vida.pde)
+  if ((scene == 19 && md1) || (scene == 21 && md2) || (scene == 23 && md3)) {
+    int opB = mouseX < 35 || mouseX > 765 ? -1 : mouseY >= 340 && mouseY <= 378 ? 0 : mouseY >= 385 && mouseY <= 423 ? 1 : mouseY >= 430 && mouseY <= 468 ? 2 : -1;
+    if (opB >= 0) eleccionBarrio[scene == 19 ? 0 : scene == 21 ? 1 : 2] = opB;
+  }
   if (scene == 19 && md1) siguienteBarrio = 15;   // (v2.0) despues de la Junta sigue la Calle del Chisme
   if (scene == 21 && md2) siguienteBarrio = 16;   // (v2.0) despues de Debora sigue la Zona en obra
   if (scene == 19 && md1) {

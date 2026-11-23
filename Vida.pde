@@ -70,6 +70,30 @@ int proximaNotif = 1200;
 float ultimoX = -1, ultimoY = -1;
 boolean[] visitado = new boolean[80];
 boolean[] npcHablado = new boolean[8];   // personajes del colegio con los que ya hablaste
+// las decisiones no se repiten: lo que elegiste con cada personaje (-1 = todavia no)
+int[] npcEleccion = {-1, -1, -1, -1, -1, -1, -1, -1};   // colegio y cafe (Lab.pde)
+int[] eleccionBarrio = {-1, -1, -1};                    // Junta Vecinal, Debora, Asamblea
+boolean npcRecuerdo = false;                            // la caja muestra "ya decidiste" en vez del dialogo
+String[][] opcionesBarrio = {{"Compartir noticia urgente", "Verificar informacion oficial", "Ignorar la situacion"},
+  {"Difundir rumor de protestas", "Investigar en la plaza principal", "Ignorar reportes vecinales"},
+  {"Apoyar postura de asamblea", "Actuar como mediador", "Retirarse del lugar"}};
+
+String textoRecuerdoNpc(int i) {
+  String n = nombresNpc[i];
+  if (n.indexOf(" (") > 0) n = n.substring(0, n.indexOf(" ("));   // "Mateo (10°B)" -> "Mateo" (la fuente no tiene °)
+  return n + ": Ya me dijiste lo que pensabas: \"" + opcionesNpc[i][npcEleccion[i]] + "\". Eso ya esta hecho.";
+}
+
+String textoRecuerdoBarrio(int k) {
+  String[] quien = {"Junta Vecinal", "Debora", "Benito"};
+  return quien[k] + ": Ya tomaste tu decision: \"" + opcionesBarrio[k][eleccionBarrio[k]] + "\". No hay vuelta atras.";
+}
+
+void reiniciarElecciones() {
+  for (int i = 0; i < npcEleccion.length; i++) npcEleccion[i] = -1;
+  for (int k = 0; k < eleccionBarrio.length; k++) eleccionBarrio[k] = -1;
+  npcRecuerdo = false;
+}
 int siguienteBarrio = 15;                // a que parte del barrio lleva "Continuar" en la escena 33
 
 // colores de ropa/pelo de los personajes del colegio (mismo orden que nombresNpc)
