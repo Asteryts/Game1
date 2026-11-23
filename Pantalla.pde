@@ -23,6 +23,7 @@ boolean escalaEntera = true;      // true = pixeles nitidos (x2, x3...), false =
 void settings() {
   if (PANTALLA_COMPLETA) fullScreen();
   else size(ANCHO_JUEGO, ALTO_JUEGO);
+  pixelDensity(1);   // Processing 4.5.7+ usa densidad 2 por defecto en pantallas HiDPI: descuadra el escalado, el mouse y el modo pixel
 }
 
 // se llama al principio de setup()
