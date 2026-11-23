@@ -21,7 +21,7 @@ String[] textosLetreros = {"BAR", "404", "NOVA", "CAFE", "IA", "HOTEL"};
 // AQUI VAN SUS NOMBRES! (cambien las lineas del equipo por sus nombres reales)
 String[] creditos = {
   "STAR QUEST", "", "un juego sobre rumores, redes y decisiones en Ciudad Nova", "", "",
-  "- EQUIPO -", "(Santiago Ortega)", "(Valeria Chacon)", "(David Mendoza)", "(Gabriela Bustillo)",
+  "- EQUIPO -", "(Santiago Ortega)", "(Valeria Chacon)", "(David Mendoza)", "(Gabriela Bustillo)", "(David Serrano)", "(Samuel Orozco)",
   "- HISTORIA DE RED QUEST -", "Sofi, Shawn, @chismes_11B y la musica", "vienen del juego Red Quest del otro grupo", "", "",
   "- ESCENARIOS -", "Barrio Residencial", "Colegio y Cafe 404", "Alcaldia de Nova", "Parque Central", "Centro NOVA", "Nova Noticias", "Plaza de la Votacion", "", "",
   "- MINIJUEGOS -", "Verificador Express", "Atrapa Bulos", "Caza Bots", "Rastreo de Fuentes", "", "",
