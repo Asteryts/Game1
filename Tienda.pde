@@ -170,11 +170,11 @@ void actualizarMonedas() {
 }
 
 // monedas por terminar un minijuego (segun que tan cerca quedaste de la meta)
-int monedasPorJuego(int idx, int pts, boolean premioNuevo, boolean record) {
+int monedasPorJuego(int idx, int pts, boolean premioNuevo, boolean esRecord) {
   if (pts <= 0) return 0;
   float rendimiento = constrain(pts / (float) umbralPremio[idx], 0, 1.5);
   int n = max(1, round(rendimiento * 20));
-  if (record) n += 5;
+  if (esRecord) n += 5;
   if (premioNuevo) n += 10;
   return n;
 }
