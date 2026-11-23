@@ -7,6 +7,8 @@ final int SPRITE_PIES = 83;
 final int JUGADOR_ABAJO = 0, JUGADOR_IZQUIERDA = 1, JUGADOR_DERECHA = 2, JUGADOR_ARRIBA = 3;
 final int CELDA_JUGADOR = 56, PIES_JUGADOR = 51, POSES_JUGADOR = 5;
 final PImage[][] caminataJugadorNova = new PImage[4][POSES_JUGADOR];
+final PImage[][] caminataJugadoraNova = new PImage[4][POSES_JUGADOR];
+PImage hablaJugadoraNova, sorpresaJugadoraNova;
 final int ANCHO_SHAWN = 72, ALTO_SHAWN = 80, ANCLA_SHAWN = 77;
 final PImage[] cuadrosShawnNova = new PImage[4];
 final int[] vueloShawnNova = {0, 1, 0, 2, 3, 2};
@@ -57,14 +59,28 @@ void prepararShawnNova() {
 }
 
 void prepararCaminataJugadorNova() {
-  String archivo = "jugador-caminata.png";
+  cargarCaminataJugadorNova("jugador-caminata.png", caminataJugadorNova);
+  cargarCaminataJugadorNova("jugadora-caminata.png", caminataJugadoraNova);
+  PImage frente = caminataJugadoraNova[JUGADOR_ABAJO][0];
+  if (frente != null) {
+    // Dos gestos sobre los píxeles de la boca de la pose frontal.
+    hablaJugadoraNova = frente.get();
+    hablaJugadoraNova.set(26, 25, #592F46);
+    hablaJugadoraNova.set(27, 25, #76384D);
+    sorpresaJugadoraNova = hablaJugadoraNova.get();
+    sorpresaJugadoraNova.set(26, 24, #592F46);
+    sorpresaJugadoraNova.set(27, 24, #592F46);
+  }
+}
+
+void cargarCaminataJugadorNova(String archivo, PImage[][] poses) {
   if (!new java.io.File(dataPath(archivo)).isFile()) return;
   PImage atlas = loadImage(archivo);
   if (atlas == null || atlas.width != CELDA_JUGADOR * POSES_JUGADOR
-      || atlas.height != CELDA_JUGADOR * caminataJugadorNova.length) return;
-  for (int dir = 0; dir < caminataJugadorNova.length; dir++) {
+      || atlas.height != CELDA_JUGADOR * poses.length) return;
+  for (int dir = 0; dir < poses.length; dir++) {
     for (int cuadro = 0; cuadro < POSES_JUGADOR; cuadro++) {
-      caminataJugadorNova[dir][cuadro] = atlas.get(cuadro * CELDA_JUGADOR, dir * CELDA_JUGADOR,
+      poses[dir][cuadro] = atlas.get(cuadro * CELDA_JUGADOR, dir * CELDA_JUGADOR,
         CELDA_JUGADOR, CELDA_JUGADOR);
     }
   }
@@ -149,6 +165,9 @@ int cuadroSpriteNova(int modo, int fase) {
 boolean dibujarSpriteNova(String nombre, float cx, float pies, float escala, int modo, int fase) {
   String clave = claveSpriteNova(nombre);
   if (clave.equals("shawn")) return dibujarShawnNova(cx, pies, escala, modo, fase);
+  if (clave.equals("t/n") && generoPersonaje == PERSONAJE_FEMENINO) {
+    if (dibujarGestoJugadoraNova(cx, pies, escala / 0.72, modo, fase)) return true;
+  }
   Integer id = idsSpriteNova.get(clave);
   if (id == null) return false;
   if (atlasNova[modo] == null) modo = SPRITE_ESPERA;
@@ -256,11 +275,35 @@ int cuadroCaminataJugadorNova(int tiempo, boolean corre) {
 }
 
 boolean dibujarCaminataJugadorNova(int direccion, int cuadro, float cx, float pies, float escala) {
-  PImage sprite = caminataJugadorNova[direccion][cuadro];
+  return dibujarPoseJugadorNova(generoPersonaje, direccion, cuadro, cx, pies, escala);
+}
+
+boolean dibujarPoseJugadorNova(int genero, int direccion, int cuadro, float cx, float pies, float escala) {
+  PImage[][] poses = genero == PERSONAJE_FEMENINO ? caminataJugadoraNova : caminataJugadorNova;
+  return pintarPoseJugadorNova(poses[direccion][cuadro], cx, pies, escala);
+}
+
+boolean pintarPoseJugadorNova(PImage sprite, float cx, float pies, float escala) {
   if (sprite == null) return false;
   pintarSpriteNova(sprite, cx - CELDA_JUGADOR * escala / 2, pies - PIES_JUGADOR * escala,
     CELDA_JUGADOR * escala, CELDA_JUGADOR * escala);
   return true;
+}
+
+boolean dibujarGestoJugadoraNova(float cx, float pies, float escala, int modo, int fase) {
+  if (modo == SPRITE_MOVIMIENTO) {
+    return dibujarPoseJugadorNova(PERSONAJE_FEMENINO, JUGADOR_ABAJO,
+      cuadroCaminataJugadorNova(relojSpriteNova + fase, false), cx, pies, escala);
+  }
+  PImage sprite = caminataJugadoraNova[JUGADOR_ABAJO][0];
+  float salto = 0;
+  int cuadro = cuadroSpriteNova(modo, fase);
+  if (modo == SPRITE_HABLA && cuadro % 3 != 0) sprite = hablaJugadoraNova;
+  else if (modo == SPRITE_SORPRESA) {
+    if (cuadro >= 2 && cuadro <= 8) sprite = sorpresaJugadoraNova;
+    salto = round(sin(cuadro / 11.0 * PI) * 5);
+  } else if (modo == SPRITE_ESPERA && cuadro == 1) salto = 1;
+  return pintarPoseJugadorNova(sprite, cx, pies - salto * escala, escala);
 }
 
 void dibujarBaseJugadorNova() {

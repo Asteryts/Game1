@@ -50,7 +50,7 @@ String[] frasesJuegos = {
 void quizasPantallaCarga(int de, int a) {
   int idxJ = esMinijuego(a) ? idxJuego(a) : -1;
   boolean lugarGrande = (de == 1 && (a == 5 || a == 7 || a == ESC_AVENIDA || a == ESC_PARQUE || a == ESC_CENTRO || a == ESC_ESTUDIO || a == ESC_PLAZA))
-    || ((de == 0 || de == ESC_INTRO) && a == 1)
+    || ((de == 0 || de == ESC_INTRO || de == ESC_ELEGIR_PERSONAJE || de == ESC_SLOTS) && a == 1)
     || a == ESC_FINAL
     || (a == ESC_MINIJUEGOS && de == 0);
   if (idxJ < 0 && !lugarGrande) return;

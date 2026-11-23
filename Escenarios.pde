@@ -49,8 +49,8 @@ void abrirCharla(Charla c) {
 }
 
 String textoCharla() {
-  if (charlaRespuesta != null) return charlaRespuesta;
-  return charlaActiva.lineas[charlaLinea];
+  if (charlaRespuesta != null) return textoGenero(charlaRespuesta);   // ya resuelto, para que la maquina de escribir cuente bien
+  return textoGenero(charlaActiva.lineas[charlaLinea]);
 }
 
 void avanzarCharla() {
@@ -264,13 +264,13 @@ void prepararEscenarios() {
     "Kevin: 'Como detectar un deepfake'? Suena raro... pero a mis seguidores les encanto. Eres un crack!"},
     "Kevin: No olvides darle like y suscribirte! Jajaja.")));
   interParque.add(persona(160, 314, "Abuela Rosa", #B4648C, #DCDCDC, new Charla("Abuela Rosa", new String[] {
-    "Ay, mijo, que bueno verte. Sientate un ratico conmigo en esta banca.",
+    "Ay, mij{o|a}, que bueno verte. Sientate un ratico conmigo en esta banca.",
     "Me llego una cadena al celular: dice que el agua de la fuente del parque esta contaminada.",
     "Dice 'compartelo antes de que lo borren'. Yo no se mucho de esto... la mando al grupo de la familia?"
   }).con(new String[] {"Reenviarla al grupo familiar", "Buscar primero el comunicado del acueducto"},
     new float[][] {{12, -10, -8}, {-4, 12, 8}},
     new String[] {"Rosa: Listo, enviada! ...Ay, ya me respondieron 14 personas asustadas. Y tu prima cancelo el picnic.",
-    "Rosa: Mira, el acueducto dice que el agua esta perfecta. Esa cadena era puro cuento! Gracias, mijo."},
+    "Rosa: Mira, el acueducto dice que el agua esta perfecta. Esa cadena era puro cuento! Gracias, mij{o|a}."},
     "Rosa: Cuidate mucho. Y abrigate, que en Nova refresca de noche.")));
   interParque.add(persona(255, 440, "Profe Ines", #46A064, #5A3214, new Charla("Profe Ines", new String[] {
     "Hola. Soy la profe Ines, doy Ciencias Sociales en el colegio. Vengo a leer un rato al parque.",
@@ -303,7 +303,7 @@ void prepararEscenarios() {
     "B-07: BZZT. ESTOY EN MODO AHORRO DE ENERGIA.");
   interCentro.add(robot);
   interCentro.add(persona(520, 446, "Ingeniera Ada", #505064, #141414, new Charla("Ingeniera Ada", new String[] {
-    "Bienvenido al Centro NOVA. Soy Ada, del equipo que entreno a la IA de la ciudad.",
+    "Bienvenid{o|a} al Centro NOVA. Soy Ada, del equipo que entreno a la IA de la ciudad.",
     "NOVA rastreo todo: la foto de Dani, el rumor del parque y el titular de Ramirez nacieron de la misma bola de nieve.",
     "El concejo nos pide una decision: podemos hacer que NOVA borre automaticamente todo lo que parezca rumor...",
     "...o que NOVA solo agregue etiquetas con contexto y fuentes, y que la gente decida. Tu que recomiendas?"
@@ -1491,4 +1491,5 @@ void reiniciarPartida() {
   cerrarCharla();
   particulas.clear();
   flotantes.clear();
+  guardarSlotActivo();   // "Nueva partida" empieza otra vez este slot desde el lunes (Slots.pde)
 }

@@ -314,9 +314,9 @@ void dibujarAvisos() {
 }
 
 // ------------------------------------- LOGROS -------------------------------------
-String[] logroNombre = {"Bienvenido a Nova", "Ojo critico", "Agente del caos", "Jugador arcade", "Maestro verificador", "Cazabots",
+String[] logroNombre = {"Bienvenid{o|a} a Nova", "Ojo critico", "Agente del caos", "Jugador{|a} arcade", "Maestr{o|a} verificador{|a}", "Cazabots",
   "Memoria de elefante", "Explorador urbano", "En vivo y en directo", "Fin de la historia", "Lengua suelta", "Atrapabulos",
-  "Oido fino", "Goleador", "Ojo de halcon", "Dedos veloces", "Amigo de los gatos", "Mano de NOVA", "Saltarin", "Pensar antes de compartir"};
+  "Oido fino", "Goleador", "Ojo de halcon", "Dedos veloces", "Amig{o|a} de los gatos", "Mano de NOVA", "Saltarin", "Pensar antes de compartir"};
 String[] logroDesc = {"Llega al mapa de la ciudad", "Alcanza 50 de confiabilidad", "Llega a 70 de viralidad", "Juega cualquier minijuego",
   "8 aciertos o mas en el Verificador", "Elimina 15 bots en una ronda", "Completa el Rastreo de Fuentes", "Visita todos los lugares de Nova",
   "Termina el programa de Nova Noticias", "Descubre un final", "Habla con 10 personajes", "300 puntos en Atrapa Bulos",
@@ -375,6 +375,7 @@ void cargarDatos() {
     if (l.length > 3) cargarGuardadoTienda(l[3]);   // NovaCoins y gadgets (Tienda.pde)
     if (l.length > 4) cargarFinalesVistos(l[4]);   // los finales que ya desbloqueaste (Galeria.pde)
     if (l.length > 5) estiloPixelActivo = !trim(l[5]).equals("estilo-pixel=0");
+    if (l.length > 6) generoPersonaje = trim(l[6]).equals("genero=femenino") ? PERSONAJE_FEMENINO : PERSONAJE_MASCULINO;
   }
   catch (Exception e) {
     println("No se pudieron cargar los datos: " + e);
@@ -386,7 +387,8 @@ void guardarDatos() {
     String lg = "";
     for (boolean b : logros) lg += b ? "1" : "0";
     String[] l = {join(nf(records, 0), ","), lg, introVista ? "1" : "0",
-      textoGuardadoTienda(), textoFinalesVistos(), "estilo-pixel=" + (estiloPixelActivo ? "1" : "0")};
+      textoGuardadoTienda(), textoFinalesVistos(), "estilo-pixel=" + (estiloPixelActivo ? "1" : "0"),
+      generoPersonaje == PERSONAJE_FEMENINO ? "genero=femenino" : "genero=masculino"};
     saveStrings(sketchPath("datos_nova.txt"), l);
   }
   catch (Exception e) {
@@ -403,7 +405,9 @@ void vidaSetup() {
   prepararMenu();
   prepararTelefono();
   prepararEscenarios();
+  tiendaInicial = textoGuardadoTienda();   // monedas y gadgets de una partida nueva (Slots.pde)
   cargarDatos();
+  leerSlots();
   cargarSonidos();   // musica y efectos hechos con notas (Sonido.pde, de Red Quest)
   prepararSofi();    // Sofi y los dias de la semana (Dias.pde)
   prepararHistoria(); // las situaciones de Red Quest (Situaciones.pde)
@@ -445,6 +449,8 @@ boolean vidaAntesDeDibujar() {
 void dibujarEscenaPropia() {
   int escenaDibujada = scene;
   if (scene == 0) dibujarMenu();
+  else if (scene == ESC_ELEGIR_PERSONAJE) dibujarSeleccionPersonaje();
+  else if (scene == ESC_SLOTS) dibujarSlots();   // (Slots.pde)
   else if (scene == 2) dibujarCreditos();
   else if (scene == ESC_MINIJUEGOS) dibujarSalaArcade();
   else if (scene == ESC_VERIFICADOR) dibujarVerificador();
@@ -618,6 +624,15 @@ boolean vidaKeyPressed() {
       return true;
     }
     if (scene == 0) return true;
+    if (scene == ESC_ELEGIR_PERSONAJE) {
+      abrirSlots();   // vuelve a las partidas (Slots.pde)
+      return true;
+    }
+    if (scene == ESC_SLOTS) {
+      if (slotBorrando >= 0) slotBorrando = -1;
+      else scene = 0;
+      return true;
+    }
     if (scene == 2) {
       scene = 0;
       return true;
@@ -722,6 +737,14 @@ boolean teclaEscenaPropia() {
     teclaMenu();
     return true;
   }
+  if (scene == ESC_ELEGIR_PERSONAJE) {
+    teclaSeleccionPersonaje();
+    return true;
+  }
+  if (scene == ESC_SLOTS) {
+    teclaSlots();   // (Slots.pde)
+    return true;
+  }
   if (scene == 2) {
     if (enter || key == ' ') scene = 0;
     return true;
@@ -780,6 +803,8 @@ boolean teclaEscenaPropia() {
 
 void clickEscenaPropia() {
   if (scene == 0) clickMenu();
+  else if (scene == ESC_ELEGIR_PERSONAJE) clickSeleccionPersonaje();
+  else if (scene == ESC_SLOTS) clickSlots();   // (Slots.pde)
   else if (scene == 2) scene = 0;
   else if (scene == ESC_COMO_JUGAR) {
     if (clickVolver()) scene = regresoAyuda;

@@ -17,7 +17,7 @@ String[][] datosDecisiones = {
     "Kevin", "Mi video explicando los deepfakes ya tiene 80 mil vistas. Gracias por la idea!",
     "Un influencer que quiere vistas", "Hoy, inventado ahora mismo", "Ninguna: es un filtro de cara"},
   {"Abuela Rosa", "Las cadenas que piden urgencia casi nunca son ciertas: busca la fuente oficial.",
-    "Abuela Rosa", "Mijo, el agua estaba bien... y tu prima cancelo el cumpleaños del niño por esa cadena.",
+    "Abuela Rosa", "Mij{o|a}, el agua estaba bien... y tu prima cancelo el cumpleaños del niño por esa cadena.",
     "Abuela Rosa", "Ya le enseñe a todo el grupo de la familia a buscar el comunicado. Gracias!",
     "Una cadena sin autor", "Sin fecha", "Ninguna: 'me lo dijo la vecina'"},
   {"Ingeniera Ada", "Borrar todo lo dudoso tambien hace daño: el contexto y las fuentes ayudan mas que la censura.",

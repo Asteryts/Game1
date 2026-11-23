@@ -159,6 +159,14 @@ void personaU(float x, float y, float u, color pelo, color piel, color ropa, col
 }
 
 void tuU(float x, float y, float u, float a) {
+  if (generoPersonaje == PERSONAJE_FEMENINO) {
+    pushStyle();
+    tint(255, 255 * a);
+    boolean dibujada = dibujarPoseJugadorNova(generoPersonaje, JUGADOR_ABAJO, 0,
+      x + 6 * u, y + 31 * u, 31 * u / 43);
+    popStyle();
+    if (dibujada) return;
+  }
   personaU(x, y, u, #1E1E2E, #F1C9A5, #2A2340, #1B1B2E, a);
 }
 

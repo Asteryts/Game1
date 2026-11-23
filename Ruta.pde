@@ -194,7 +194,7 @@ String[][] fraseGente = {
 String[][] susurroShawn = {
   {"Lo viste? Yo tambien lo vi... y me calle.", "Todavia estas a tiempo.", "Mirame. Asi termine."},
   {"Te estas pareciendo a ellos.", "Cada vez que compartes, alguien deja de venir.", "No hagas lo que yo no hice."},
-  {"Ya casi no te reconozco.", "Al final te vas a quedar solo con la pantalla.", "Nadie va a decir nada. Como conmigo."}
+  {"Ya casi no te reconozco.", "Al final te vas a quedar sol{o|a} con la pantalla.", "Nadie va a decir nada. Como conmigo."}
 };
 
 void sumarCulpa() {
@@ -288,7 +288,7 @@ void prepararShawn() {
   npcShawn = new Interactivo(450, 330, "Shawn", 5);
   npcShawn.charla = new Charla("Shawn", new String[] {
     "Shawn: ...Tu puedes verme? Hace dos años que nadie me ve.",
-    "Shawn: No te quedes callado como yo. Vi lo que le hacian a alguien en Conecta, y despues me lo hicieron a mi. Nadie dijo nada.",
+    "Shawn: No te quedes callad{o|a} como yo. Vi lo que le hacian a alguien en Conecta, y despues me lo hicieron a mi. Nadie dijo nada.",
     "Shawn: Guarda este mensaje. Al final sabras que hacer."
   });
   Lugar L = lugares.get(ESC_CALLEJON);
@@ -304,7 +304,7 @@ boolean hablarConShawn(Interactivo it) {
   abrirCharla(npcShawn.charla);
   if (!tieneMensajeShawn) {
     tieneMensajeShawn = true;
-    avisar("Mensaje de Shawn", "\"No te quedes callado como yo.\" (Se desbloqueo la Capa de Shawn en la tienda)", color(200, 215, 255));
+    avisar("Mensaje de Shawn", "\"No te quedes callad{o|a} como yo.\" (Se desbloqueo la Capa de Shawn en la tienda)", color(200, 215, 255));
   }
   return true;
 }

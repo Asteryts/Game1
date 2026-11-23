@@ -86,13 +86,20 @@ ArrayList<TextoNitido> textosPendientes = new ArrayList<TextoNitido>();
 
 // text() de Processing, pero si se esta dibujando un fondo pixelado guarda el texto para despues
 public void text(String str, float tx, float ty) {
+  str = textoGenero(str);   // {o|a} segun el personaje (Slots.pde)
   if (nivelPixel > 0 && g == lienzoFondo) guardarTexto(str, tx, ty, 0, 0);
   else super.text(str, tx, ty);
 }
 
 public void text(String str, float tx, float ty, float tw, float th) {
+  str = textoGenero(str);   // {o|a} segun el personaje (Slots.pde)
   if (nivelPixel > 0 && g == lienzoFondo) guardarTexto(str, tx, ty, tw, th);
   else super.text(str, tx, ty, tw, th);
+}
+
+// el ancho tambien se mide con el texto ya resuelto ({o|a})
+public float textWidth(String str) {
+  return super.textWidth(textoGenero(str));
 }
 
 void guardarTexto(String str, float tx, float ty, float tw, float th) {

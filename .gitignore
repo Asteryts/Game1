@@ -7,3 +7,6 @@ windows-*/
 linux-*/
 macos-*/
 out/
+
+# Partidas guardadas (slots)
+partida_slot*.txt

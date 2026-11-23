@@ -335,4 +335,5 @@ void empezarDiaNuevo() {
   }
   bannerVida = 170;
   mensajeSofi(mananaSofi[min(dia, 3)][nivelSofi()], 400);
+  guardarSlotActivo();   // se guarda la partida al empezar cada dia (Slots.pde)
 }

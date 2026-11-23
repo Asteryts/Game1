@@ -412,11 +412,7 @@ void tituloBloques(int tm, float corrido, boolean sombra) {
 void accionMenu(int i) {
   explosionConfeti(width / 2, 176 + i * 48 + 20, 25);
   if (i == 0) {
-    if (!partidaEmpezada) {   // partida nueva: la cinematica de Star Quest (Casa.pde)
-      empezarCineApertura();
-    } else {
-      scene = 1;
-    }
+    abrirSlots();   // las 3 partidas guardadas (Slots.pde)
   } else if (i == 1) {
     regresoSala = 0;
     scene = ESC_MINIJUEGOS;
@@ -573,7 +569,7 @@ void dibujarComoJugar() {
   fill(200);
   textSize(12);
   textAlign(LEFT, TOP);
-  text("Cuando estes listo, ve a la Plaza de la Votacion para ver tu final. Hay 4 finales distintos!", 437, 400, 305, 50);
+  text("Cuando estes list{o|a}, ve a la Plaza de la Votacion para ver tu final. Hay 4 finales distintos!", 437, 400, 305, 50);
   botonVolver();
 }
 

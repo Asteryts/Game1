@@ -299,7 +299,7 @@ String[][] dialogosNpc = {
 
   // 7. Café 404: Recepcionista/bartender
   {
-    "Bienvenido al Cafe 404. Toma asiento, te veo agitado. ¿Que pasa alla afuera que todos miran el celular?",
+    "Bienvenid{o|a} al Cafe 404. Toma asiento, te veo agitad{o|a}. ¿Que pasa alla afuera que todos miran el celular?",
     "A ver si te sigo el hilo: me cuentas que todo empezo con una foto de Dani en el recreo sin su permiso.",
     "Y que al cruzar la calle ese chisme ya era un plan para tumbar el parque y cerrar el colegio con Ramirez.",
     "Me resumiste el caos de media ciudad en un minuto. Con todo eso que me cuentas, ¿tu que crees que paso?",
@@ -671,7 +671,7 @@ if ((key == 'e' || key == 'E') && scene == 8 && hablando) {
 
         switch(pD18) {
         case 0:
-          textoDialogo = "Armando: Buenos días. Bienvenido a Nova. Soy Armando Esteban Quito, \ndirector de la junta vecinal. ¿En qué puedo ayudarte?";
+          textoDialogo = "Armando: Buenos días. Bienvenid{o|a} a Nova. Soy Armando Esteban Quito, \ndirector de la junta vecinal. ¿En qué puedo ayudarte?";
           pD18 = 1;
           break;
         case 1:

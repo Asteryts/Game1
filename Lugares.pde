@@ -261,7 +261,7 @@ void registrarLugares() {
     "Pili: Gracias! No tienes que votar por el, solo queriamos que decidieras con informacion real."},
     "Pili: Lee las propuestas de TODOS los candidatos. Eso es lo justo.")));
   pa.agregar(persona(300, 140, "Guardia Ortiz", #283C50, #141414, new Charla("Guardia Ortiz", new String[] {
-    "Alto ahi... ah, no, tranquilo, solo estoy de turno. Soy el guardia Ortiz.",
+    "Alto ahi... ah, no, tranquil{o|a}, solo estoy de turno. Soy el guardia Ortiz.",
     "Adentro de la Alcaldia hay una protesta enorme. Todo empezo por un video que nadie ha verificado.",
     "Sigue derecho por la alfombra y habla con el empleado de la entrada. Y no empujes a nadie, por favor."
   })));
@@ -354,7 +354,7 @@ void registrarLugares() {
   cj.agregar(persona(510, 190, "El Filtrador", #282832, #141414, charla("El Filtrador", new String[] {
     "Psst... tu. Si, tu. Me dicen 'El Filtrador'. Tengo una USB con 'documentos secretos' de la Alcaldia.",
     "No te puedo decir de donde salieron. Tampoco si son reales. Pero son bombasticos!",
-    "Te la regalo. Publicalos y seras famoso. Trato?"
+    "Te la regalo. Publicalos y seras famos{o|a}. Trato?"
   }, new String[] {"Publicar los documentos ya", "Llevarlos a Nova Noticias para que los verifiquen"},
     new float[][] {{20, -16, -10}, {2, 12, 10}},
     new String[] {"(Horas despues se descubre que eran documentos falsos hechos con IA. Tu nombre esta en todas partes.)",
@@ -404,7 +404,7 @@ void registrarLugares() {
   sa.interior = true;
   sa.obs = new float[][] {{115, 268, 90, 26}, {285, 268, 90, 26}, {455, 268, 90, 26}, {115, 378, 90, 26}, {285, 378, 90, 26}, {455, 378, 90, 26}, {600, 150, 150, 34}};
   sa.agregar(persona(400, 185, "Profe Hernan", #505A78, #CCCCCC, charla("Profe Hernan (Etica)", new String[] {
-    "Bienvenido a Etica. Hoy el tema es: 'Somos responsables de lo que compartimos?'",
+    "Bienvenid{o|a} a Etica. Hoy el tema es: 'Somos responsables de lo que compartimos?'",
     "Mateo dice que no, que si el no invento el rumor, no es su culpa. Camila dice que cada reenvio cuenta.",
     "Quiero tu opinion antes de terminar la clase. Quien tiene razon?"
   }, new String[] {"Mateo: el culpable es solo quien lo inventa", "Camila: cada persona que lo comparte es responsable"},
@@ -432,7 +432,7 @@ void registrarLugares() {
   bi.clima = 3;
   bi.obs = new float[][] {{220, 300, 180, 40}, {500, 165, 200, 40}, {620, 390, 110, 30}};
   bi.agregar(npcRocio = persona(600, 168, "Bibliotecaria Rocio", #B48C50, #3C2814, new Charla("Bibliotecaria Rocio", new String[] {
-    "Bienvenido a la biblioteca. Soy Rocio. Aqui hablamos bajito... y verificamos fuerte.",
+    "Bienvenid{o|a} a la biblioteca. Soy Rocio. Aqui hablamos bajito... y verificamos fuerte.",
     "Sabias que puedes saber si una foto es vieja? Se llama busqueda inversa de imagenes.",
     "Subes la foto y te muestra donde aparecio antes. La foto del 'incendio en el colegio' era de otro pais, de hace 5 años.",
     "El computador del fondo tiene un juego para entrenar el ojo con fotos trucadas. Pruebalo!"
@@ -460,12 +460,12 @@ void registrarLugares() {
   cf.interior = true;
   cf.obs = new float[][] {{250, 130, 300, 46}, {560, 395, 120, 26}, {140, 445, 120, 26}};
   cf.agregar(npcTere = persona(400, 150, "Doña Tere", #F0F0F0, #8C8C8C, charla("Doña Tere (cafeteria)", new String[] {
-    "Siguiente! Ah, hola mijo. Que te sirvo? Hoy hay arroz con pollo... que, por cierto, NO tiene gusanos.",
+    "Siguiente! Ah, hola mij{o|a}. Que te sirvo? Hoy hay arroz con pollo... que, por cierto, NO tiene gusanos.",
     "Alguien subio un video diciendo que habia gusanos en la comida. Era un video de otra ciudad, de hace años!",
     "Los estudiantes ya no quieren almorzar. Me ayudas a que la gente sepa la verdad?"
   }, new String[] {"Mejor no meterse", "Buscar el video original y compartir la aclaracion"},
     new float[][] {{0, -4, -8}, {4, 10, 12}},
-    new String[] {"Tere: Bueno, mijo... (La cafeteria sigue vacia y se bota mucha comida.)",
+    new String[] {"Tere: Bueno, mij{o|a}... (La cafeteria sigue vacia y se bota mucha comida.)",
     "Tere: Bendito seas! Ya se lleno la fila. Toma, un postre gratis."},
     "Tere: Come bien, que pensar gasta energia!")));
   cf.agregar(persona(200, 390, "Camilo", #DCA032, #141414, charla("Camilo", new String[] {

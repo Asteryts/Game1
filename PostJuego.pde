@@ -87,12 +87,12 @@ String lineaPostPara(Interactivo it) {
   if (n.equals("Kevin")) return t == 2 ? "Kevin: 5.000 seguidores y ninguno me saluda. Esto se puso feo." : (verdadFinal == 1 ? "Kevin: Que? Yo no se nada de ninguna cuenta. (Sonrie un poco de mas.)" : "Kevin: Ya no compro seguidores. Prefiero amigos que existan.");
   if (n.equals("Camila")) return verdadFinal == 2 ? "Camila: ...No tengo nada que decirte. Ya todos saben lo que hice." : "Camila: Mi articulo sobre noticias falsas salio ayer. " + (t == 2 ? "Nadie lo leyo." : "Lo leyo medio colegio.");
   if (n.equals("Andres")) return t == 2 ? "Andres: La foto de Sofi la siguen pasando. Ya ni me sorprende." : "Andres: Despues de todo esto, deje de seguir a @chismes_11B. Y no fui el unico.";
-  if (n.equals("Doña Marta")) return t == 2 ? "Doña Marta: El parque nunca lo iban a cerrar, mijo. Pero la pelea entre vecinos si quedo." : "Doña Marta: Ahora antes de creerle a Conecta, le pregunto a la junta. Asi me enseño usted.";
+  if (n.equals("Doña Marta")) return t == 2 ? "Doña Marta: El parque nunca lo iban a cerrar, mij{o|a}. Pero la pelea entre vecinos si quedo." : "Doña Marta: Ahora antes de creerle a Conecta, le pregunto a la junta. Asi me enseño usted.";
   if (n.equals("Mateo")) return t == 2 ? "Mateo: Todo el barrio sabe lo de Sofi. Y todos saben quien lo conto." : "Mateo: Lo de Sofi no era mio para contarlo. Gracias por frenarme.";
   if (n.equals("Luis")) return t == 0 || t == 3 ? "Luis: El torneo fue de todas las cuadras. El proximo lo hacemos aun mas grande!" : "Luis: El torneo quedo para los de siempre. Que aburrido.";
   if (n.equals("Asesor rival")) return t == 2 ? "Asesor rival: Te dije que se ganaba como fuera. (Sonrie.)" : "Asesor rival: ...Esta bien. Ganar asi no valia la pena.";
   for (int k = 0; k < 6; k++) if (n.equals(nombreSec[k])) return nombreSec[k] + ": " + (secBien[k] ? epilogoBien[k] : epilogoMal[k]);
-  if (n.equals("Shawn")) return "Shawn: " + (t == 2 ? "Te dije que pasaria esto. Ahora eres como yo." : "Ya no tienes que quedarte callado. Yo tampoco.");
+  if (n.equals("Shawn")) return "Shawn: " + (t == 2 ? "Te dije que pasaria esto. Ahora eres como yo." : "Ya no tienes que quedarte callad{o|a}. Yo tampoco.");
   String[] pool = gentePost[t];
   return it.nombre + ": " + pool[abs(it.nombre.hashCode()) % pool.length];
 }

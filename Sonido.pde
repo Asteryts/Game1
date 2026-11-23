@@ -130,7 +130,7 @@ int musicaDeseada() {
   if (scene == ESC_FIN_GRAVE || scene == ESC_JUICIO || scene == ESC_SILENCIO) return 0;
   if (scene == ESC_FINAL_SECRETO) return 2;
   if (scene == ESC_EPILOGO) return finalSecretoElegido ? 2 : min(2, indiceFinalRQ());
-  if (scene == 0 || scene == 2 || scene == ESC_COMO_JUGAR || scene == ESC_HISTORIAL) return 1;
+  if (scene == 0 || scene == 2 || scene == ESC_ELEGIR_PERSONAJE || scene == ESC_SLOTS || scene == ESC_COMO_JUGAR || scene == ESC_HISTORIAL) return 1;
   if (scene == ESC_MINIJUEGOS || esMinijuego(scene) || scene == ESC_RULETA || scene == ESC_TIENDA) return 2;
   if (scene == ESC_FINAL) return (finalTipo == 0 || finalTipo == 2) ? 2 : 0;
   if (scene == ESC_PLAZA) return 1;

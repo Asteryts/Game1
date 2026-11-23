@@ -127,7 +127,7 @@ String[] nombreLugarSec = {"la Cafeteria del colegio", "el Paseo de Campaña", "
 String[] textoSec = {
   "El piso esta mojado y todos pasan corriendo para grabarse resbalando. Me ayudas a poner los conos?",
   "Soy nuevo en el colegio. No me agregaron al grupo del salon en Conecta... y vi que hablan de mi.",
-  "Mijo, me llego un mensaje: 'Ganaste un celular! Envia tus datos'. Lo respondo?",
+  "Mij{o|a}, me llego un mensaje: 'Ganaste un celular! Envia tus datos'. Lo respondo?",
   "Se me perdio mi perrita, Luna. Me ayudas a compartir su foto en Conecta?",
   "Hola! Estoy grabando un video para mi canal. Te puedo grabar y subirlo sin avisarle a nadie?",
   "Han sido dias intensos con la eleccion. Que aprendiste de Conecta estos tres dias?"
@@ -137,7 +137,7 @@ String[] opcionSecB = {"Seguir de largo.", "Ignorarlo.", "Decirle que lo respond
 String[] respuestaSecA = {
   "Gracias! Eres el primero que me ayuda en todo el año.",
   "Gracias... nadie habia hecho eso por mi. Ah, mira lo que encontre en ese chat, te puede servir.",
-  "Uy! Casi les mando mis datos. Gracias, mijo.",
+  "Uy! Casi les mando mis datos. Gracias, mij{o|a}.",
   "Gracias! Ya varios vecinos estan buscando a Luna.",
   "Tienes razon. No subo nada sin permiso.",
   "Esa es la mejor respuesta que he escuchado hoy."
@@ -158,7 +158,7 @@ void prepararHistoria() {
   String[][] frase = {
     {"Andres: Hoy todo el mundo esta pegado a Conecta. Alguien ha dejado de seguir a @chismes_11B? Nadie."},
     {}, {},
-    {"Doña Marta: En este barrio todo se sabe por Conecta, mijo."},
+    {"Doña Marta: En este barrio todo se sabe por Conecta, mij{o|a}."},
     {"Mateo: Sofi estaba rara ayer... tu sabes algo?"},
     {"Luis: El sabado hay torneo. Juegas?"},
     {"Camila: Estoy escribiendo un articulo sobre noticias falsas. Se mas de @chismes_11B de lo que crees."},
