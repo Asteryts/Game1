@@ -269,7 +269,8 @@ void actualizarResponsable() {
     }
   }
   aplicarRecuerdos();
-  boolean sePuedeAvisar = !esMinijuego(scene) && !cargaActiva && revisionActiva == null;
+  boolean sePuedeAvisar = !esMinijuego(scene) && !cargaActiva && revisionActiva == null
+    && partidaEmpezada && scene != 0 && scene != ESC_SLOTS && scene != ESC_ELEGIR_PERSONAJE && scene != ESC_ARRANQUE;   // en el menu no llegan mensajes de la historia
   for (int i = mensajesPendientes.size() - 1; i >= 0 && sePuedeAvisar; i--) {
     Mensaje m = mensajesPendientes.get(i);
     if (frameCount < m.llega) continue;

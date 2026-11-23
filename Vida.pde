@@ -419,6 +419,7 @@ void vidaSetup() {
   prevConf = confiabilidad;
   prevImp = impacto;
   if (fuente != null) textFont(fuente);
+  empezarArranque();   // la cinematica al abrir el juego (Arranque.pde)
 }
 
 // se llama al principio de draw(). Si devuelve true, la escena es nueva y ya se dibujo aqui
@@ -451,6 +452,7 @@ void dibujarEscenaPropia() {
   if (scene == 0) dibujarMenu();
   else if (scene == ESC_ELEGIR_PERSONAJE) dibujarSeleccionPersonaje();
   else if (scene == ESC_SLOTS) dibujarSlots();   // (Slots.pde)
+  else if (scene == ESC_ARRANQUE) dibujarArranque();   // (Arranque.pde)
   else if (scene == 2) dibujarCreditos();
   else if (scene == ESC_MINIJUEGOS) dibujarSalaArcade();
   else if (scene == ESC_VERIFICADOR) dibujarVerificador();
@@ -559,7 +561,7 @@ void vidaDespuesDeDibujar() {
   dibujarTelefono();
   dibujarSituacion();   // (Situaciones.pde)
   if (pausaAbierta) dibujarPausa();
-  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE && scene != ESC_JUICIO && scene != ESC_SILENCIO && scene != ESC_FINAL_SECRETO && scene != ESC_CINE_RQ && scene != ESC_ANIM_FINAL && scene != ESC_GALERIA) dibujarAvisos();
+  if (scene != ESC_HISTORIAL && scene != ESC_FIN_DIA && scene != ESC_FIN_GRAVE && scene != ESC_JUICIO && scene != ESC_SILENCIO && scene != ESC_FINAL_SECRETO && scene != ESC_CINE_RQ && scene != ESC_ANIM_FINAL && scene != ESC_GALERIA && scene != ESC_ARRANQUE) dibujarAvisos();
   dibujarRevision();
   dibujarPantallaCarga();
   if (fundido > 0) {
@@ -626,6 +628,10 @@ boolean vidaKeyPressed() {
     if (scene == 0) return true;
     if (scene == ESC_ELEGIR_PERSONAJE) {
       abrirSlots();   // vuelve a las partidas (Slots.pde)
+      return true;
+    }
+    if (scene == ESC_ARRANQUE) {
+      terminarArranque();   // ESC: directo al menu
       return true;
     }
     if (scene == ESC_SLOTS) {
@@ -745,6 +751,10 @@ boolean teclaEscenaPropia() {
     teclaSlots();   // (Slots.pde)
     return true;
   }
+  if (scene == ESC_ARRANQUE) {
+    saltarArranque();   // (Arranque.pde)
+    return true;
+  }
   if (scene == 2) {
     if (enter || key == ' ') scene = 0;
     return true;
@@ -805,6 +815,7 @@ void clickEscenaPropia() {
   if (scene == 0) clickMenu();
   else if (scene == ESC_ELEGIR_PERSONAJE) clickSeleccionPersonaje();
   else if (scene == ESC_SLOTS) clickSlots();   // (Slots.pde)
+  else if (scene == ESC_ARRANQUE) saltarArranque();   // (Arranque.pde)
   else if (scene == 2) scene = 0;
   else if (scene == ESC_COMO_JUGAR) {
     if (clickVolver()) scene = regresoAyuda;
